@@ -143,7 +143,7 @@ function ModuleRef({ id }: { id: string }) {
   if (!m) return null
   return (
     <p className="mt-2 text-xs text-ink-muted">
-      <a href={`#/modules/${m.id}`} className="font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent">
+      <a href={`/modules/${m.id}`} className="font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent">
         Open the full module ({moduleNumber(m)}, {m.title})
       </a>
     </p>

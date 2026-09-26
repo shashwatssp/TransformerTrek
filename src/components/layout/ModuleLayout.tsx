@@ -21,7 +21,7 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
     <article className="min-w-0 flex-1 pb-24 pt-8">
       {/* Breadcrumb */}
       <div className="flex flex-wrap items-center gap-2 text-xs text-ink-muted">
-        <a href="#/" className="transition hover:text-ink">Trek</a>
+        <a href="/" className="transition hover:text-ink">Trek</a>
         <span>/</span>
         <span>{section ? `${SECTIONS.findIndex((s) => s.id === section.id) + 1}. ${section.title}` : meta.section}</span>
         <span>/</span>
@@ -45,7 +45,7 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
             {prereqs.map((p) => (
               <li key={p.id}>
                 <a
-                  href={`#/modules/${p.id}`}
+                  href={`/modules/${p.id}`}
                   className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-ink transition hover:border-accent/50 hover:text-accent"
                 >
                   <span className="font-mono text-[10px] text-ink-muted">{moduleNumber(p)}</span>
@@ -95,7 +95,7 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
             {related.map((r) => (
               <li key={r.id}>
                 <a
-                  href={`#/modules/${r.id}`}
+                  href={`/modules/${r.id}`}
                   className="block rounded-lg border border-border bg-surface p-3 transition hover:border-accent/50"
                 >
                   <span className="font-mono text-[10px] text-ink-muted">{moduleNumber(r)}</span>
@@ -125,7 +125,7 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
         <nav aria-label="Previous / next module" className="grid gap-2 text-sm sm:flex sm:items-center sm:justify-end sm:gap-3">
           {prev ? (
             <a
-              href={`#/modules/${prev.id}`}
+              href={`/modules/${prev.id}`}
               className="flex min-h-11 items-center gap-1 rounded-lg border border-border px-3 py-2 text-ink-muted transition hover:text-ink"
             >
               <span aria-hidden>←</span>
@@ -134,7 +134,7 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
           ) : <span />}
           {next ? (
             <a
-              href={`#/modules/${next.id}`}
+              href={`/modules/${next.id}`}
               className="flex min-h-11 items-center gap-1 rounded-lg border border-border px-3 py-2 text-ink-muted transition hover:text-ink sm:max-w-[16rem]"
             >
               <span className="truncate">{next.title}</span>

@@ -34,19 +34,19 @@ function Home() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <a
-            href={firstUnread ? `#/modules/${firstUnread.id}` : '#/modules/what-is-an-llm'}
+            href={firstUnread ? `/modules/${firstUnread.id}` : '/modules/what-is-an-llm'}
             className="min-h-11 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-primary/85 active:scale-[0.98]"
           >
             {allRead ? 'Trek complete ✓, revisit from the start' : readCount > 0 ? 'Continue the trek →' : 'Start the trek →'}
           </a>
           <a
-            href="#/visualizations"
+            href="/visualizations"
             className="min-h-11 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-ink transition-all hover:bg-surface-raised active:scale-[0.98]"
           >
             Tour the visualizations
           </a>
           <a
-            href="#/glossary"
+            href="/glossary"
             className="min-h-11 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-ink transition-all hover:bg-surface-raised active:scale-[0.98]"
           >
             Browse the glossary
@@ -90,7 +90,7 @@ function Home() {
                 {mods.map((m) => (
                   <li key={m.id}>
                     <a
-                      href={`#/modules/${m.id}`}
+                      href={`/modules/${m.id}`}
                       className="block h-full rounded-xl border border-border bg-surface p-4 transition-all hover:-translate-y-0.5 hover:border-accent/50 hover:bg-surface-raised/40 hover:shadow-[0_8px_24px_rgba(0,0,0,0.25)]"
                     >
                       <span className="font-mono text-[10px] text-ink-muted">Module {moduleNumber(m)}</span>
@@ -116,13 +116,13 @@ function NotFound() {
       <p className="mt-2 text-sm text-ink-muted">That route is not part of the trek.</p>
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <a
-          href="#/"
+          href="/"
           className="min-h-11 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-primary/85"
         >
           Back to the trek
         </a>
         <a
-          href="#/playground"
+          href="/playground"
           className="min-h-11 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-ink transition-all hover:bg-surface-raised"
         >
           Open the playground
@@ -138,7 +138,7 @@ function ModulePage({ id }: { id: string }) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-24 text-center">
         <h1 className="text-2xl font-bold">Module not found</h1>
-        <a href="#/" className="mt-4 inline-block text-sm text-accent hover:underline">← Back to the trek</a>
+      <a href="/" className="mt-4 inline-block text-sm text-accent hover:underline">← Back to the trek</a>
       </main>
     )
   }
@@ -177,7 +177,7 @@ function Glossary() {
             <dd className="mt-1 text-sm text-ink/80">
               {g.def}
               {g.module && (
-                <a href={`#/modules/${g.module}`} className="ml-2 whitespace-nowrap text-xs text-accent hover:underline">
+                <a href={`/modules/${g.module}`} className="ml-2 whitespace-nowrap text-xs text-accent hover:underline">
                   → module {moduleNumber(getModule(g.module)!)}
                 </a>
               )}
@@ -232,7 +232,7 @@ function Playground() {
               {mods.length === 1 ? (
                 // Single module: the entire card is one large tap/click target
                 <a
-                  href={`#/modules/${mods[0].id}?demo`}
+                  href={`/modules/${mods[0].id}?demo`}
                   aria-label={`Open ${label} (${mods[0].title})`}
                   className="flex h-full flex-col rounded-xl border border-border bg-surface p-4 transition hover:border-accent/50 hover:bg-surface-raised/40"
                 >
@@ -253,7 +253,7 @@ function Playground() {
                     {mods.map((m) => (
                       <li key={m.id}>
                         <a
-                          href={`#/modules/${m.id}?demo`}
+                          href={`/modules/${m.id}?demo`}
                           className="flex min-h-11 items-center justify-between gap-2 rounded-lg px-2 text-sm text-ink-muted transition hover:bg-surface-raised hover:text-accent"
                         >
                           <span>
@@ -328,7 +328,7 @@ export default function App() {
       <a
         href="#main-content"
         onClick={(e) => {
-          // Don't let the hash router treat this as a navigation
+          // Focus behavior instead of appending #main-content to the URL
           e.preventDefault()
           const main = document.getElementById('main-content')
           main?.focus()

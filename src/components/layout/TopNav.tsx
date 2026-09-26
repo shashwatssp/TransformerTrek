@@ -7,7 +7,7 @@ export function TopNav({ activePath }: { activePath: string }) {
   const completed = useCompletedCount()
   const theme = useTheme()
   const link = (href: string, label: ReactNode) => {
-    const active = activePath === href.replace(/^#/, '') || (href === '#/' && activePath === '/')
+    const active = activePath === href
     return (
       <a
         key={href}
@@ -25,20 +25,20 @@ export function TopNav({ activePath }: { activePath: string }) {
       {/* Wraps to a second row on narrow phones instead of overflowing the
           viewport, so Glossary and the theme toggle are always on screen. */}
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2 sm:flex-nowrap sm:gap-4 sm:px-6 sm:py-3">
-        <a href="#/" className="shrink-0 text-sm font-semibold tracking-tight sm:text-lg">
+        <a href="/" className="shrink-0 text-sm font-semibold tracking-tight sm:text-lg">
           Transformer<span className="text-accent">Trek</span>
         </a>
         <nav className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5 text-xs sm:gap-1 sm:text-sm">
-          {link('#/', 'Trek')}
-          {link('#/visualizations', 'Visuals')}
+          {link('/', 'Trek')}
+          {link('/visualizations', 'Visuals')}
           {link(
-            '#/playground',
+            '/playground',
             <>
               <span className="sm:hidden">Play</span>
               <span className="hidden sm:inline">Playground</span>
             </>,
           )}
-          {link('#/glossary', 'Glossary')}
+          {link('/glossary', 'Glossary')}
           <span
             aria-label={`${completed} of ${MODULES.length} modules marked as read on this device`}
             className="ml-2 hidden rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 font-mono text-xs text-success sm:inline"

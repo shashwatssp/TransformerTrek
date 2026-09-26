@@ -1,31 +1,72 @@
 /**
- * Minimal hash-based router, zero dependencies, Vercel-friendly.
- * Routes look like: #/modules/attention, #/playground, #/glossary
+ * Minimal history-based router, zero dependencies.
+ * Routes are clean paths: /modules/attention, /playground, /glossary.
+ * A Vercel rewrite serves index.html for every path so deep links and
+ * refreshes work; legacy #/... URLs are converted on boot.
  */
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useSyncExternalStore } from 'react'
 
 export type Route = { path: string; parts: string[]; demo?: boolean }
 
-function parseHash(): Route {
-  const raw = window.location.hash.replace(/^#/, '') || '/'
-  const qIdx = raw.indexOf('?')
-  const path = (qIdx === -1 ? raw : raw.slice(0, qIdx)) || '/'
+function parseLocation(): Route {
+  // Normalize trailing slashes so /modules/attention/ and /modules/attention match
+  const path = window.location.pathname.replace(/\/+$/, '') || '/'
   const parts = path.split('/').filter(Boolean)
   // "?demo" deep-links straight to the module's interactive widget
-  const demo = qIdx !== -1 && new URLSearchParams(raw.slice(qIdx + 1)).has('demo')
+  const demo = new URLSearchParams(window.location.search).has('demo')
   return { path, parts, demo: demo || undefined }
 }
 
+// One-time: convert legacy #/... bookmarks to clean paths so old links keep working.
+if (typeof window !== 'undefined' && window.location.hash.startsWith('#/')) {
+  history.replaceState(null, '', window.location.hash.slice(1) || '/')
+}
+
+// ── Tiny navigation store (reactive like lib/progress) ─────────
+type Listener = () => void
+const listeners = new Set<Listener>()
+let current = parseLocation()
+
+function sameRoute(a: Route, b: Route): boolean {
+  return a.path === b.path && a.demo === b.demo
+}
+
+function refresh() {
+  const next = parseLocation()
+  if (sameRoute(current, next)) return
+  current = next
+  for (const l of listeners) l()
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('popstate', refresh)
+
+  // Intercept plain internal links so <a href="/modules/x"> navigates
+  // SPA-style instead of triggering a full document reload.
+  document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const anchor = (e.target as HTMLElement | null)?.closest?.('a')
+    if (!anchor) return
+    const href = anchor.getAttribute('href')
+    // Only "/"-prefixed (internal, clean-path) hrefs are ours; hash anchors,
+    // external URLs, and protocol links fall through to the browser.
+    if (!href || !href.startsWith('/')) return
+    if (anchor.target && anchor.target !== '_self') return
+    if (anchor.hasAttribute('download')) return
+    e.preventDefault()
+    navigate(href)
+  })
+}
+
+function subscribe(listener: Listener): () => void {
+  listeners.add(listener)
+  return () => {
+    listeners.delete(listener)
+  }
+}
+
 export function useRoute(): Route {
-  const [route, setRoute] = useState(parseHash)
-
-  useEffect(() => {
-    const onChange = () => setRoute(parseHash())
-    window.addEventListener('hashchange', onChange)
-    return () => window.removeEventListener('hashchange', onChange)
-  }, [])
-
-  return route
+  return useSyncExternalStore(subscribe, () => current, () => current)
 }
 
 /**
@@ -46,7 +87,10 @@ function scrollToTopInstantly() {
 }
 
 export function navigate(to: string) {
-  window.location.hash = to
+  // Accept legacy "#/x" targets too, they become clean paths
+  const dest = to.startsWith('#') ? to.slice(1) : to
+  history.pushState(null, '', dest)
+  refresh()
   scrollToTopInstantly()
 }
 

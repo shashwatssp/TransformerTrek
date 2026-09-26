@@ -6,7 +6,7 @@ function ModuleRow({ m, active }: { m: ModuleMeta; active: boolean }) {
   const done = useIsCompleted(m.id)
   return (
     <a
-      href={`#/modules/${m.id}`}
+      href={`/modules/${m.id}`}
       aria-current={active ? 'page' : undefined}
       className={`flex items-center gap-2 rounded-md px-2 py-1.5 transition ${
         active

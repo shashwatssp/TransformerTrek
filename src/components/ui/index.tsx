@@ -344,13 +344,13 @@ export function KeyTakeaways({ points }: { points: string[] }) {
   )
 }
 
-/** Internal link to another module (hash routing) */
+/** Internal link to another module (clean-path routing) */
 export function ModuleLink({ id, children }: { id: string; children?: ReactNode }) {
   const meta = getModule(id)
   const label = children ?? meta?.title ?? id
   return (
     <a
-      href={`#/modules/${id}`}
+      href={`/modules/${id}`}
       className="rounded font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent"
       title={meta ? `Module ${moduleNumber(meta)}, ${meta.title}` : id}
     >
