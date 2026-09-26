@@ -35,9 +35,10 @@ export const SECTIONS: Section[] = [
   { id: 'foundations', title: 'Foundations', blurb: 'Start here, what LLMs are and how they behave.' },
   { id: 'transformers', title: 'Transformers', blurb: 'Tokens, embeddings, attention, and the architecture that changed everything.' },
   { id: 'training', title: 'Training LLMs', blurb: 'Pretraining, scaling laws, post-training, and how different LLMs are made.' },
-  { id: 'retrieval', title: 'Retrieval & Search', blurb: 'RAG, vector search, BM25, MiniLM, and hybrid retrieval.' },
+  { id: 'retrieval', title: 'Retrieval & Search', blurb: 'RAG, vector search, BM25, MiniLM, embedding models, vector databases, and hybrid retrieval.' },
   { id: 'agents', title: 'Agents & Protocols', blurb: 'Agents, tools, memory, MCP, A2A, LangChain, LangGraph, ADK.' },
-  { id: 'evals', title: 'Evaluations', blurb: 'How we measure LLM quality.' },
+  { id: 'system-design', title: 'System Design', blurb: 'Real products read as architecture diagrams, plus a production agent designed end to end.' },
+  { id: 'evals', title: 'Evaluations', blurb: 'How we measure LLM quality, from perplexity to eval tooling platforms.' },
 ]
 
 /**
@@ -371,6 +372,51 @@ export const MODULES: ModuleMeta[] = [
     ],
     component: lazy(() => import('./retrieval/HybridSearch')),
   },
+  {
+    id: 'embedding-models', section: 'retrieval', order: 16,
+    title: 'Embedding Models, Compared', blurb: 'MiniLM to Qwen3 and Voyage: dims, MTEB, cost, context, Matryoshka, and how to pick.',
+    steps: [
+      'What to measure: dims, context, cost, recall',
+      'The open-source workhorses',
+      'The API flagships',
+      'Matryoshka: one vector, many sizes',
+      'How to choose: a decision guide',
+    ],
+    prerequisites: ['tokenization-embeddings'],
+    related: ['minilm', 'vector-search', 'vector-databases', 'hybrid-search'],
+    sources: [
+      { title: 'MTEB leaderboard (Hugging Face Space)', url: 'https://huggingface.co/spaces/mteb/leaderboard', note: 'Live aggregate benchmark; numbers shift monthly.' },
+      { title: 'OpenAI embeddings guide', url: 'https://platform.openai.com/docs/guide/embeddings', note: 'text-embedding-3 dims, MRL, pricing.' },
+      { title: 'Cohere embed docs', url: 'https://docs.cohere.com/docs/embeddings', note: 'embed-v4 multimodal details.' },
+      { title: 'Voyage AI docs', url: 'https://docs.voyageai.com/', note: 'voyage-3 series specs.' },
+      { title: 'Jina Embeddings V3 paper', url: 'https://arxiv.org/abs/2409.10159', note: 'Task LoRA adapters, 8K context.' },
+      { title: 'Qwen3 Embedding blog', url: 'https://qwenlm.github.io/blog/qwen3-embedding/', note: 'Frontier open multilingual embeddings.' },
+      { title: 'Nomic embed model card', url: 'https://huggingface.co/nomic-ai/nomic-embed-text-v1', note: 'First open 8192-context embedder.' },
+    ],
+    component: lazy(() => import('./retrieval/EmbeddingModels')),
+  },
+  {
+    id: 'vector-databases', section: 'retrieval', order: 17,
+    title: 'Vector Databases, Compared', blurb: 'Pinecone, Qdrant, Weaviate, Milvus, pgvector: indexes, filtering, hosting, and how to choose.',
+    steps: [
+      'Why a dedicated database',
+      'The index zoo: HNSW, IVF, DiskANN',
+      'The landscape: managed, self-hosted, embedded',
+      'Filtering, hybrid, and operational realities',
+      'How to choose: a decision guide',
+    ],
+    prerequisites: ['vector-search'],
+    related: ['embedding-models', 'hybrid-search', 'rag'],
+    sources: [
+      { title: 'Pinecone, Vector database', url: 'https://www.pinecone.io/learn/vector-database/', note: 'The canonical overview of the category.' },
+      { title: 'Qdrant documentation', url: 'https://qdrant.tech/documentation/', note: 'Filtering and quantization concepts.' },
+      { title: 'Weaviate, Hybrid search explained', url: 'https://weaviate.io/blog/hybrid-search-explained' },
+      { title: 'pgvector (GitHub)', url: 'https://github.com/pgvector/pgvector', note: 'HNSW/IVFFlat in Postgres.' },
+      { title: 'ann-benchmarks', url: 'https://ann-benchmarks.com/', note: 'Public recall vs latency comparisons of ANN algorithms.' },
+      { title: 'Malkov & Yashunin, HNSW', url: 'https://arxiv.org/abs/1603.09320' },
+    ],
+    component: lazy(() => import('./retrieval/VectorDatabases')),
+  },
   // ── Agents & Protocols ───────────────────────────────────────
   {
     id: 'what-is-an-agent', section: 'agents', order: 16,
@@ -484,8 +530,9 @@ export const MODULES: ModuleMeta[] = [
     ],
     component: lazy(() => import('./agents/Frameworks')),
   },
+  // ── System Design ──────────────────────────────
   {
-    id: 'agent-case-studies', section: 'agents', order: 22,
+    id: 'agent-case-studies', section: 'system-design', order: 22,
     title: 'Case Studies: How Agent Products Work', blurb: 'Perplexity, ChatGPT, Claude, Cursor, Windsurf, and Devin, read as architecture diagrams.',
     steps: [
       'Why products beat abstractions',
@@ -533,7 +580,7 @@ export const MODULES: ModuleMeta[] = [
     component: lazy(() => import('./agents/BuildAnAgent')),
   },
   {
-    id: 'agent-system-design', section: 'agents', order: 24,
+    id: 'agent-system-design', section: 'system-design', order: 24,
     title: 'System Design: Agentic Systems', blurb: 'Design a production agent end to end: requirements, back-of-envelope math, architecture, failure modes, scaling.',
     steps: [
       'The problem statement',
@@ -558,20 +605,27 @@ export const MODULES: ModuleMeta[] = [
   // ── Evals ────────────────────────────────────────────────────
   {
     id: 'evals', section: 'evals', order: 22,
-    title: 'How LLMs Are Evaluated', blurb: 'Perplexity, MMLU/HumanEval/GSM8K, LLM-as-judge, contamination.',
+    title: 'How LLMs Are Evaluated', blurb: 'Perplexity, MMLU/HumanEval/GSM8K, LLM-as-judge, contamination, and the tooling platforms.',
     widget: 'evals',
     steps: [
       'Perplexity: measuring surprise',
       'Benchmarks: MMLU, HumanEval, GSM8K',
       'LLM-as-judge',
       'Contamination and benchmark rot',
+      'The eval tooling landscape',
     ],
     prerequisites: ['pretraining'],
-    related: ['pretraining', 'how-llms-are-trained'],
+    related: ['pretraining', 'how-llms-are-trained', 'build-an-agent'],
     sources: [
       { title: 'Hendrycks et al., MMLU', url: 'https://arxiv.org/abs/2009.03300' },
       { title: 'Liang et al., HELM', url: 'https://arxiv.org/abs/2209.01946' },
       { title: 'Chen et al., Evaluating Codex (HumanEval)', url: 'https://arxiv.org/abs/2107.03374' },
+      { title: 'LangSmith docs', url: 'https://docs.smith.langchain.com/', note: 'Tracing, datasets, and CI evals from the LangChain team.' },
+      { title: 'Langfuse docs', url: 'https://langfuse.com/docs', note: 'Open-source, self-hostable LLM observability.' },
+      { title: 'Braintrust docs', url: 'https://www.braintrust.dev/docs', note: 'Eval-first experiments and CI gating.' },
+      { title: 'Arize Phoenix docs', url: 'https://docs.arize.com/phoenix', note: 'OpenTelemetry-based LLM tracing.' },
+      { title: 'promptfoo docs', url: 'https://www.promptfoo.dev/docs/intro/', note: 'Config-driven evals and red teaming in CI.' },
+      { title: 'RAGAS docs', url: 'https://docs.ragas.io/', note: 'Reference-free RAG metrics.' },
     ],
     component: lazy(() => import('./evals/Evals')),
   },
@@ -620,7 +674,9 @@ export const GLOSSARY: { term: string; def: string; module?: string }[] = [
   { term: 'Hybrid search', def: 'Combining BM25 lexical scores with dense vector scores (often via RRF) for better recall.', module: 'hybrid-search' },
   { term: 'LangGraph', def: 'Orchestration runtime modeling agent workflows as state graphs: nodes, edges, reducers, cycles.', module: 'frameworks' },
   { term: 'LoRA / QLoRA', def: 'Parameter-efficient fine-tuning: train tiny adapter matrices instead of full weights (QLoRA adds 4-bit quantization).', module: 'fine-tuning' },
+  { term: 'Matryoshka embeddings', def: 'Embeddings trained so every prefix of the vector stays useful, trade dimension (storage) for recall at will.', module: 'embedding-models' },
   { term: 'MCP', def: 'Model Context Protocol, standard protocol connecting agents to tools, resources, and prompts (2026: stateless core, Tasks).', module: 'mcp' },
+  { term: 'MTEB', def: 'Massive Text Embedding Benchmark, aggregate score across retrieval, clustering, and similarity tasks; a shortlist filter, not a verdict.', module: 'embedding-models' },
   { term: 'MiniLM', def: 'Distilled 6-layer transformer encoder producing 384-dim sentence embeddings via mean pooling.', module: 'minilm' },
   { term: 'MoE', def: 'Mixture of Experts, route each token to a few specialized feed-forward experts for huge capacity at sub-linear cost.', module: 'how-llms-are-trained' },
   { term: 'Perplexity', def: 'exp(cross-entropy), how "surprised" a model is by held-out text. Lower is better.', module: 'evals' },
@@ -634,4 +690,5 @@ export const GLOSSARY: { term: string; def: string; module?: string }[] = [
   { term: 'Temperature', def: 'Divide logits by T before softmax: T→0 sharpens (deterministic), T→∞ flattens (random).', module: 'how-llms-work' },
   { term: 'Token', def: 'Subword unit from a fixed vocabulary, the atoms LLMs read and write.', module: 'tokenization-embeddings' },
   { term: 'Top-k / Top-p', def: 'Sampling filters: keep k highest-probability tokens, or the smallest nucleus whose mass ≥ p.', module: 'next-token-lab' },
+  { term: 'Vector database', def: 'Database purpose-built for ANN search over embeddings, with CRUD, metadata filtering, and hybrid retrieval.', module: 'vector-databases' },
 ]

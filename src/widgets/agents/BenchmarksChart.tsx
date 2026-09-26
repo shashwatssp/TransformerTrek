@@ -234,7 +234,7 @@ export function BenchmarksChart() {
                 <li key={d.ability} className="flex items-center justify-between gap-2 rounded-lg border border-border bg-surface-raised/30 px-2.5 py-1.5">
                   <span className="min-w-0 truncate text-ink-muted" title={ab.label}>{ab.label}</span>
                   <span className="shrink-0 font-mono text-ink/85">
-                    {va != null ? `${va.toFixed(1)}%` : '—'} vs {vb != null ? `${vb.toFixed(1)}%` : '—'}
+                    {va != null ? `${va.toFixed(1)}%` : 'n/a'} vs {vb != null ? `${vb.toFixed(1)}%` : 'n/a'}
                   </span>
                   {leader && gap != null && gap >= 5 ? (
                     <span className="shrink-0 rounded-full bg-accent/15 px-2 py-0.5 font-medium text-accent">
@@ -267,10 +267,10 @@ export function BenchmarksChart() {
                   <tr key={ab.key} className="border-t border-border">
                     <td className="py-1 pr-3 text-ink/85">{ab.label}</td>
                     <td className="py-1 pr-3 font-mono text-ink/85">
-                      {a.scores[ab.key] != null ? a.scores[ab.key]!.toFixed(1) : '—'}
+                      {a.scores[ab.key] != null ? a.scores[ab.key]!.toFixed(1) : 'n/a'}
                     </td>
                     <td className="py-1 font-mono text-accent">
-                      {b.scores[ab.key] != null ? b.scores[ab.key]!.toFixed(1) : '—'}
+                      {b.scores[ab.key] != null ? b.scores[ab.key]!.toFixed(1) : 'n/a'}
                     </td>
                   </tr>
                 ))}

@@ -144,11 +144,63 @@ export default function Evals() {
           variance, because few-shot formatting changes scores by points; and re-benchmark
           anything you didn't measure yourself.
         </p>
-        <Callout kind="warn" title="The regression you won't notice">
+      <Callout kind="warn" title="The regression you won't notice">
           Every upstream change, a new checkpoint, a new judge prompt, a new retrieval stage in{' '}
           <ModuleLink id="rag" />, can silently move quality. A small private eval suite run on
           every change is the single highest-leverage habit in LLM engineering.
         </Callout>
+      </Prose>
+
+      {/* ── Step 5 ─────────────────────────────────────── */}
+      <H2>Step 5: The eval tooling landscape</H2>
+      <Prose>
+        <p>
+          The steps above tell you <em>what</em> to measure; a young ecosystem of platforms tells
+          you <em>where</em> to record it. Tools sort into overlapping jobs:
+        </p>
+        <ul className="my-4 list-disc space-y-1.5 pl-6 text-sm text-ink/90">
+          <li>
+            <strong>Tracing & observability</strong> capture every prompt, tool call, retrieval,
+            and cost as spans you can replay. <strong>LangSmith</strong> (LangChain-native, managed)
+            and <strong>Langfuse</strong> (open source, self-hostable, framework-agnostic) dominate;
+            <strong> Arize Phoenix</strong> builds on OpenTelemetry, so it plugs into ML observability
+            you may already run.
+          </li>
+          <li>
+            <strong>Datasets & experiments</strong> version test sets and score model versions
+            against them. <strong>Braintrust</strong> is the eval-first pick (its experiments and
+            CI gating are the product); <strong>W&amp;B Weave</strong> fits teams already living in
+            Weights &amp; Biases.
+          </li>
+          <li>
+            <strong>CI eval frameworks</strong> run assertions in your pipeline: <strong>promptfoo</strong>{' '}
+            (config-driven, also does red teaming) and <strong>DeepEval</strong> (pytest-style unit
+            tests for LLM outputs) treat evals as code, no platform required.
+          </li>
+          <li>
+            <strong>RAG-specific metrics</strong>: <strong>RAGAS</strong> scores faithfulness, answer
+            relevancy, and context precision/recall without reference answers, a quick scoreboard
+            for the pipeline in <ModuleLink id="rag" />.
+          </li>
+          <li>
+            <strong>Human preference at scale</strong> lives in <strong>LMArena</strong>'s crowd
+            battles (great for ranking frontier models, useless for your private prompts), and a
+            lightweight proxy like <strong>Helicone</strong> can add logging without touching app
+            code.
+          </li>
+        </ul>
+        <p>
+          Two axes to keep straight: <strong>offline vs online</strong>. Offline evals run before
+          release (CI on every change, experiment runs). Online evals run in production: sampled
+          LLM-as-judge, user feedback, and drift alerts on traced quality. Mature teams do both,
+          because the lab never fully predicts the street.
+        </p>
+        <p>
+          A pragmatic adoption path: start with promptfoo or DeepEval in CI (evals as code, zero
+          vendor), add Langfuse or Phoenix for production tracing once real traffic flows, and
+          graduate to Braintrust or LangSmith when shared datasets and dashboards need to outlive
+          individual contributors. Platforms are optional; the habits (step 4) are not.
+        </p>
       </Prose>
 
       <KeyTakeaways
@@ -157,6 +209,7 @@ export default function Evals() {
           'Benchmarks pair fixed task sets with automatic scoring: MMLU (knowledge), HumanEval (executable code), GSM8K (math), protocol details change the numbers.',
           'LLM-as-judge scales to open-ended quality but carries verbosity, position, and self-preference biases, randomize, blind, and calibrate it against humans.',
           'Benchmarks rot: contamination inflates scores (GSM1k proved it), saturation flattens them, private held-out sets and executable evals are the durable core of any eval strategy.',
+          'Tooling sorts into tracing (LangSmith, Langfuse, Phoenix), datasets/experiments (Braintrust, Weave), CI frameworks (promptfoo, DeepEval), and RAG metrics (RAGAS); run evals as code offline and sampled judges online.',
         ]}
       />
     </ModuleLayout>

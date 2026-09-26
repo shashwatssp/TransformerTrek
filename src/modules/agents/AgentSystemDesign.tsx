@@ -2,7 +2,7 @@
  * Module, System Design: Agentic Systems
  * Body content only; sections follow the registry `steps` order exactly.
  * A single end-to-end case study: a production customer-support agent,
- * designed the way a systems interview would score it — requirements,
+ * designed the way a systems interview would score it: requirements,
  * back-of-envelope math, architecture, failure modes, scaling.
  */
 import {
@@ -28,7 +28,7 @@ export default function AgentSystemDesign() {
             tools (<ModuleLink id="tools-react" />), memory (<ModuleLink id="memory-planning" />),
             retrieval (<ModuleLink id="rag" />), protocols (<ModuleLink id="mcp" />), and how real
             products compose them (<ModuleLink id="agent-case-studies" />). This module is the capstone:
-            we design one complete system the way you would in a system-design interview — from a
+            we design one complete system the way you would in a system-design interview, from a
             one-paragraph problem statement to an architecture you can defend.
           </p>
           <Callout kind="info" title="The case: SupportPilot">
@@ -63,31 +63,31 @@ export default function AgentSystemDesign() {
           </p>
           <ul className="list-disc space-y-1 pl-6">
             <li>
-              <strong>FR1 — Intake &amp; triage.</strong> Accept tickets from the web form and email;
+              <strong>FR1: Intake &amp; triage.</strong> Accept tickets from the web form and email;
               classify (billing, shipping, product, abuse) and route. Abusive or legal-threat tickets
               skip the agent entirely and go straight to a human queue.
             </li>
             <li>
-              <strong>FR2 — Grounded answers.</strong> Every policy answer must come from knowledge-base
+              <strong>FR2: Grounded answers.</strong> Every policy answer must come from knowledge-base
               retrieval with citations, the full pipeline of <ModuleLink id="rag" />. No retrieval, no
-              answer — the agent says it will check and escalates instead of guessing.
+              answer: the agent says it will check and escalates instead of guessing.
             </li>
             <li>
-              <strong>FR3 — Safe actions.</strong> A small, versioned tool set: order lookup
+              <strong>FR3: Safe actions.</strong> A small, versioned tool set: order lookup
               (read-only), refund up to $100, resend shipping label, update address. Anything beyond
               those boundaries is a human job.
             </li>
             <li>
-              <strong>FR4 — Escalation.</strong> Hand off to a human with a summary, the full trace,
+              <strong>FR4: Escalation.</strong> Hand off to a human with a summary, the full trace,
               and everything already tried. The customer is never dead-ended by the agent.
             </li>
             <li>
-              <strong>FR5 — Memory.</strong> Within a ticket, the full conversation is working memory
+              <strong>FR5: Memory.</strong> Within a ticket, the full conversation is working memory
               (<ModuleLink id="memory-planning" />). Across tickets, customer facts come only from the
-              approved profile API — never from the model&apos;s own recollection.
+              approved profile API, never from the model&apos;s own recollection.
             </li>
             <li>
-              <strong>FR6 — Audit.</strong> Every prompt, tool call, and side effect is recorded
+              <strong>FR6: Audit.</strong> Every prompt, tool call, and side effect is recorded
               append-only with a session id, so any outcome can be replayed.
             </li>
           </ul>
@@ -116,7 +116,7 @@ export default function AgentSystemDesign() {
             rows={[
               {
                 label: 'Latency: p95 first response',
-                values: { target: '< 30 s', why: 'A human agent takes ~2 min; customers tolerate a short wait for a good answer. The queue absorbs bursts — the model never sees raw load.' },
+                values: { target: '< 30 s', why: 'A human agent takes ~2 min; customers tolerate a short wait for a good answer. The queue absorbs bursts; the model never sees raw load.' },
               },
               {
                 label: 'Availability',
@@ -141,7 +141,7 @@ export default function AgentSystemDesign() {
             ]}
           />
           <p>
-            The evaluation gate is not an afterthought — it is an NFR with the same standing as
+            The evaluation gate is not an afterthought; it is an NFR with the same standing as
             latency. How to build that eval set is the subject of <ModuleLink id="evals" />.
           </p>
         </Prose>
@@ -153,7 +153,7 @@ export default function AgentSystemDesign() {
         <Prose>
           <p>
             Before drawing a single box, do the arithmetic. These five minutes decide the queue sizes,
-            the model routing, and the budget — and they tell you which parts of the design are load-bearing.
+            the model routing, and the budget, and they tell you which parts of the design are load-bearing.
           </p>
           <CodeBlock
             language="text"
@@ -182,9 +182,9 @@ Retrieval corpus
           <Callout kind="math" title="What the math already decided">
             Three conclusions fall out before any architecture exists. First, concurrency is tiny
             (dozens, not thousands), so the hard problem is correctness and cost, not throughput.
-            Second, the naive $0.13/ticket busts nothing but leaves no margin — so triage turns get
+            Second, the naive $0.13/ticket busts nothing but leaves no margin, so triage turns get
             routed to a small model and the static prefix gets cached, landing under $0.15. Third,
-            the corpus fits on one node, so the vector database is boring on day one — spend the
+            the corpus fits on one node, so the vector database is boring on day one, spend the
             complexity budget elsewhere.
           </Callout>
         </Prose>
@@ -196,12 +196,12 @@ Retrieval corpus
         <Prose>
           <p>
             The system has five planes: intake, orchestration, model access, tools, and state. The
-            orchestrator is a <strong>durable state machine</strong> — one per ticket — and the model
+            orchestrator is a <strong>durable state machine</strong> (one per ticket), and the model
             is a component inside it, not the system itself.
           </p>
           <CodeBlock
             language="text"
-            filename="SupportPilot — component view"
+            filename="SupportPilot: component view"
             code={`Tickets (web form, email)
    │
    ▼
@@ -242,7 +242,7 @@ Response + citations ─▶ customer · sampled 2% ─▶ human review queue`}
             <li>
               <strong>Tool layer as MCP servers</strong> (<ModuleLink id="mcp" />). Tools are versioned
               and permissioned independently of prompts: the refund tool is the only component that can
-              touch payments, and it enforces the $100 bound itself — the model cannot talk it out of it.
+              touch payments, and it enforces the $100 bound itself; the model cannot talk it out of it.
             </li>
             <li>
               <strong>Postgres for state and audit.</strong> One durable store for session state and the
@@ -251,7 +251,7 @@ Response + citations ─▶ customer · sampled 2% ─▶ human review queue`}
           </ul>
           <p>
             The shape rhymes with what you saw in <ModuleLink id="agent-case-studies" />: Devin&apos;s
-            durable workspace, Cursor&apos;s context assembly, Claude&apos;s loop-with-verification —
+            durable workspace, Cursor&apos;s context assembly, Claude&apos;s loop-with-verification,
             minus the product branding.
           </p>
           <SourceList
@@ -269,7 +269,7 @@ Response + citations ─▶ customer · sampled 2% ─▶ human review queue`}
         <Prose>
           <p>
             A design that cannot say how it fails is a demo. Each failure below is paired with a
-            guardrail that has a number or a mechanism attached — the agent-equivalent of idempotency
+            guardrail that has a number or a mechanism attached, the agent-equivalent of idempotency
             and backpressure in classic distributed systems.
           </p>
           <ComparisonTable
@@ -310,7 +310,7 @@ Response + citations ─▶ customer · sampled 2% ─▶ human review queue`}
           />
           <Callout kind="warn" title="The pattern behind every guardrail">
             Each one converts an unbounded risk into a bounded number: a step budget, a dollar cap, a
-            timeout, a sample rate. Where you cannot bound it, you gate it behind a human — that is the
+            timeout, a sample rate. Where you cannot bound it, you gate it behind a human: that is the
             APPROVE state, and it is a feature of the state machine, not an apology.
           </Callout>
         </Prose>
@@ -321,8 +321,8 @@ Response + citations ─▶ customer · sampled 2% ─▶ human review queue`}
         <H2>Step 7: Scaling levers</H2>
         <Prose>
           <p>
-            The design above comfortably handles 10×. When growth comes, pull these levers in order —
-            cheapest first — instead of reaching for a rewrite:
+            The design above comfortably handles 10×. When growth comes, pull these levers in order,
+            cheapest first, instead of reaching for a rewrite:
           </p>
           <ul className="list-disc space-y-1 pl-6">
             <li>
@@ -340,7 +340,7 @@ Response + citations ─▶ customer · sampled 2% ─▶ human review queue`}
             </li>
             <li>
               <strong>Scale out orchestrators.</strong> Workers are stateless over durable state
-              (Postgres), so scaling is adding workers behind the queue — no shard rebalancing.
+              (Postgres), so scaling is adding workers behind the queue, no shard rebalancing.
             </li>
             <li>
               <strong>Shard retrieval when it stops being boring.</strong> 0.6 GB → 60 GB means a real
@@ -359,7 +359,7 @@ Response + citations ─▶ customer · sampled 2% ─▶ human review queue`}
           <KeyTakeaways
             points={[
               'Requirements come first: the agent exists to hit measurable NFRs, not to demo tool calls.',
-              'Back-of-envelope math does the real design work — budgets chose the routing, caching, and queue before any box was drawn.',
+              'Back-of-envelope math does the real design work: budgets chose the routing, caching, and queue before any box was drawn.',
               'The orchestrator is a durable state machine; the model is a component inside it.',
               'Every failure mode gets a guardrail with a number attached; what cannot be bounded gets gated by a human.',
               'Scaling levers are boring on purpose: routing, caching, stateless workers, and evals in CI.',
