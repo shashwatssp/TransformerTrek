@@ -85,6 +85,44 @@ export const MODULES: ModuleMeta[] = [
     ],
     component: lazy(() => import('./foundations/HowLLMsWork')),
   },
+  {
+    id: 'why-llms-hallucinate', section: 'foundations', order: 3,
+    title: 'Why LLMs Hallucinate', blurb: 'Confident nonsense is the default failure mode, why it happens and the mitigation ladder that works.',
+    steps: [
+      'Plausibility is the objective, not truth',
+      'Why evals accidentally reward guessing',
+      'The mitigation ladder: grounding, citations, abstention',
+      'Measuring truthfulness like an engineer',
+    ],
+    prerequisites: ['how-llms-work'],
+    related: ['prompting-patterns', 'rag', 'evals'],
+    sources: [
+      { title: 'OpenAI, Why Language Models Hallucinate (2025)', url: 'https://arxiv.org/abs/2509.04964', note: 'How binary-graded evals make guessing rational.' },
+      { title: 'Ji et al., Survey of Hallucination in Natural Language Generation', url: 'https://arxiv.org/abs/2202.03629' },
+      { title: 'Anthropic docs, Reducing hallucinations', url: 'https://docs.claude.com/en/docs/test-and-evaluate/strengthen-guardrails/reduce-hallucinations' },
+    ],
+    component: lazy(() => import('./foundations/WhyLLMsHallucinate')),
+  },
+  {
+    id: 'prompting-patterns', section: 'foundations', order: 4,
+    title: 'Prompting Patterns', blurb: 'Few-shot examples, chain-of-thought, structured output, and evaluating prompt changes like code.',
+    widget: 'system-prompt',
+    steps: [
+      'Zero-shot, one-shot, few-shot',
+      'Chain-of-thought: when reasoning out loud helps',
+      'Structured output: JSON you can ship',
+      'System prompts: the persistent contract',
+      'Evaluate prompt changes, never vibes-review them',
+    ],
+    prerequisites: ['how-llms-work'],
+    related: ['build-an-agent', 'why-llms-hallucinate'],
+    sources: [
+      { title: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/' },
+      { title: 'OpenAI, Text generation: prompt engineering', url: 'https://platform.openai.com/docs/guides/prompt-engineering' },
+      { title: 'Anthropic, Prompt engineering overview', url: 'https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview' },
+    ],
+    component: lazy(() => import('./foundations/PromptingPatterns')),
+  },
   // ── Transformers ─────────────────────────────────────────────
   {
     id: 'tokenization-embeddings', section: 'transformers', order: 3,
@@ -259,10 +297,10 @@ export const MODULES: ModuleMeta[] = [
     widget: 'rag',
     steps: [
       'Why RAG exists: knowledge vs behavior',
-      'Stages 1–2: ingest, chunk, embed',
-      'Stages 3–4: query and retrieve',
+      'Stages 1-2: ingest, chunk, embed',
+      'Stages 3-4: query and retrieve',
       'Stage 5: rerank and assemble context',
-      'Stages 6–7: prompt, generate, cite',
+      'Stages 6-7: prompt, generate, cite',
       'Failure modes: retrieval that lies',
     ],
     prerequisites: ['how-llms-work'],
@@ -580,6 +618,25 @@ export const MODULES: ModuleMeta[] = [
     component: lazy(() => import('./agents/BuildAnAgent')),
   },
   {
+    id: 'agent-security', section: 'agents', order: 24,
+    title: 'Prompt Injection & Agent Security', blurb: 'Direct and indirect injection, least-privilege tools, human approval, and red-teaming your own agent.',
+    steps: [
+      'What prompt injection is: direct vs indirect',
+      'Why agents raise the stakes: tools and data access',
+      'Defenses: least privilege, sandboxing, human approval',
+      'Jailbreaks vs injection vs data leakage',
+      'Red-teaming: an adversarial suite in CI',
+    ],
+    prerequisites: ['tools-react', 'mcp'],
+    related: ['build-an-agent', 'a2a-multiagent'],
+    sources: [
+      { title: 'OWASP GenAI, LLM Top 10 (LLM01: Prompt Injection)', url: 'https://genai.owasp.org/llm-top-10/' },
+      { title: 'Simon Willison, prompt injection writings', url: 'https://simonwillison.net/tags/prompt-injection/' },
+      { title: 'Anthropic docs, Reducing jailbreaks & prompt injection', url: 'https://docs.claude.com/en/docs/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks' },
+    ],
+    component: lazy(() => import('./agents/AgentSecurity')),
+  },
+  {
     id: 'agent-system-design', section: 'system-design', order: 24,
     title: 'System Design: Agentic Systems', blurb: 'Design a production agent end to end: requirements, back-of-envelope math, architecture, failure modes, scaling.',
     steps: [
@@ -601,6 +658,25 @@ export const MODULES: ModuleMeta[] = [
       { title: 'MCP, official docs', url: 'https://modelcontextprotocol.io/introduction', note: 'The tool-server interface used in the design.' },
     ],
     component: lazy(() => import('./agents/AgentSystemDesign')),
+  },
+  {
+    id: 'serving-inference', section: 'system-design', order: 25,
+    title: 'Serving & Inference', blurb: 'Prefill vs decode, the KV cache, batching, quantization, and speculative decoding, why tokens cost what they cost.',
+    steps: [
+      'Prefill vs decode: two very different phases',
+      'The KV cache: why the first token is the expensive one',
+      'Batching and continuous batching',
+      'Quantization: fewer bits, faster decode',
+      'Speculative decoding and the latency levers',
+    ],
+    prerequisites: ['architecture', 'how-llms-work'],
+    related: ['agent-system-design', 'evals', 'tokenization-embeddings'],
+    sources: [
+      { title: 'Kwon et al., Efficient Memory Management for LLM Serving with PagedAttention (vLLM)', url: 'https://arxiv.org/abs/2309.06180' },
+      { title: 'Dao et al., FlashAttention', url: 'https://arxiv.org/abs/2205.14135' },
+      { title: 'Leviathan et al., Fast Inference via Speculative Decoding', url: 'https://arxiv.org/abs/2211.17192' },
+    ],
+    component: lazy(() => import('./system-design/ServingInference')),
   },
   // ── Evals ────────────────────────────────────────────────────
   {
@@ -628,6 +704,25 @@ export const MODULES: ModuleMeta[] = [
       { title: 'RAGAS docs', url: 'https://docs.ragas.io/', note: 'Reference-free RAG metrics.' },
     ],
     component: lazy(() => import('./evals/Evals')),
+  },
+  {
+    id: 'retrieval-evals', section: 'evals', order: 23,
+    title: 'Measuring Retrieval Quality', blurb: 'Recall@k, MRR, nDCG, and faithfulness, why generation metrics hide retrieval failures, implemented in TypeScript.',
+    steps: [
+      'Generation metrics hide retrieval failures',
+      'Recall@k and precision@k',
+      'MRR: how high is the first hit?',
+      'nDCG: position-aware, graded relevance',
+      'A five-minute golden set, in TypeScript',
+    ],
+    prerequisites: ['rag', 'evals'],
+    related: ['rag', 'hybrid-search', 'evals'],
+    sources: [
+      { title: 'RAGAS docs, RAG evaluation metrics', url: 'https://docs.ragas.io/' },
+      { title: 'Thakur et al., BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Retrieval Models', url: 'https://arxiv.org/abs/2104.08663' },
+      { title: 'ann-benchmarks, ANN algorithm comparisons', url: 'https://ann-benchmarks.com/' },
+    ],
+    component: lazy(() => import('./evals/RetrievalEvals')),
   },
 ]
 

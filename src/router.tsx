@@ -6,15 +6,17 @@
  */
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
 
-export type Route = { path: string; parts: string[]; demo?: boolean }
+export type Route = { path: string; parts: string[]; search: string; demo?: boolean }
 
 function parseLocation(): Route {
   // Normalize trailing slashes so /modules/attention/ and /modules/attention match
   const path = window.location.pathname.replace(/\/+$/, '') || '/'
   const parts = path.split('/').filter(Boolean)
-  // "?demo" deep-links straight to the module's interactive widget
-  const demo = new URLSearchParams(window.location.search).has('demo')
-  return { path, parts, demo: demo || undefined }
+  const search = window.location.search
+  // "?demo" deep-links straight to the module's interactive widget;
+  // pages like /review?module=x read the raw search themselves
+  const demo = new URLSearchParams(search).has('demo')
+  return { path, parts, search, demo: demo || undefined }
 }
 
 // One-time: convert legacy #/... bookmarks to clean paths so old links keep working.
@@ -28,7 +30,7 @@ const listeners = new Set<Listener>()
 let current = parseLocation()
 
 function sameRoute(a: Route, b: Route): boolean {
-  return a.path === b.path && a.demo === b.demo
+  return a.path === b.path && a.demo === b.demo && a.search === b.search
 }
 
 function refresh() {

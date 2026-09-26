@@ -5,6 +5,7 @@ import { TopNav } from './components/layout/TopNav'
 import { Sidebar } from './components/layout/Sidebar'
 import { ModuleLayout } from './components/layout/ModuleLayout'
 import VisualizationsGallery from './components/VisualizationsGallery'
+import RapidReview from './components/RapidReview'
 import { Prose, Reveal } from './components/ui'
 import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, type ReactNode } from 'react'
@@ -50,6 +51,12 @@ function Home() {
             className="min-h-11 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-ink transition-all hover:bg-surface-raised active:scale-[0.98]"
           >
             Browse the glossary
+          </a>
+          <a
+            href="/review"
+            className="min-h-11 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-ink transition-all hover:bg-surface-raised active:scale-[0.98]"
+          >
+            Rapid review
           </a>
         </div>
         {readCount > 0 && !allRead && (
@@ -305,6 +312,7 @@ export default function App() {
   else if (route.parts[0] === 'glossary') page = <Glossary />
   else if (route.parts[0] === 'playground') page = <Playground />
   else if (route.parts[0] === 'visualizations') page = <VisualizationsGallery />
+  else if (route.parts[0] === 'review') page = <RapidReview />
   else if (route.parts.length === 0) page = <Home />
   else page = <NotFound />
 
@@ -318,7 +326,9 @@ export default function App() {
           ? 'Playground · TransformerTrek'
           : route.parts[0] === 'glossary'
             ? 'Glossary · TransformerTrek'
-            : 'TransformerTrek · See how AI actually works'
+            : route.parts[0] === 'review'
+              ? 'Rapid review · TransformerTrek'
+              : 'TransformerTrek · See how AI actually works'
   useEffect(() => {
     document.title = pageTitle
   }, [pageTitle])

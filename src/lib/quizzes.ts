@@ -28,7 +28,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Images of the text rendered as pixels',
       ],
       answer: 1,
-      why: 'Text is chopped into subword tokens from a fixed vocabulary (often 50k–200k entries). Everything downstream operates on these integer IDs, never on raw letters or words.',
+      why: 'Text is chopped into subword tokens from a fixed vocabulary (often 50k-200k entries). Everything downstream operates on these integer IDs, never on raw letters or words.',
     },
     {
       q: 'The model has produced a probability distribution over the vocabulary. What happens next?',
@@ -188,7 +188,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       options: [
         'Encoder-only',
         'Decoder-only',
-        'Encoder–decoder',
+        'Encoder-decoder',
         'Diffusion',
       ],
       answer: 1,
@@ -406,7 +406,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Impossible with RAG',
       ],
       answer: 0,
-      why: 'Retrieval that lies — wrong or missing chunks — is the dominant RAG failure mode. Fix ranking, chunking, and evaluation before blaming the generator.',
+      why: 'Retrieval that lies, wrong or missing chunks, is the dominant RAG failure mode. Fix ranking, chunking, and evaluation before blaming the generator.',
     },
   ],
   'rag-vs-fine-tuning': [
@@ -489,7 +489,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'The learning rate',
       ],
       answer: 0,
-      why: 'k1 caps how much extra score a term earns by repeating. Once a term appears several times, extra occurrences matter less — keyword spam does not win.',
+      why: 'k1 caps how much extra score a term earns by repeating. Once a term appears several times, extra occurrences matter less, keyword spam does not win.',
     },
     {
       q: 'The parameter b controls…',
@@ -581,7 +581,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Re-ranking by document length',
       ],
       answer: 0,
-      why: 'Bi-encoders embed query and document independently (fast but coarse). A cross-encoder reads them together and scores the pair, which is far more accurate — that is why it is used to rerank a shortlist.',
+      why: 'Bi-encoders embed query and document independently (fast but coarse). A cross-encoder reads them together and scores the pair, which is far more accurate, that is why it is used to rerank a shortlist.',
     },
   ],
   'embedding-models': [
@@ -594,7 +594,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'A vector database benchmark',
       ],
       answer: 0,
-      why: 'The Massive Text Embedding Benchmark aggregates retrieval, clustering, similarity, and more. Use it to shortlist, then evaluate on your own data — leaderboard leaders rotate monthly.',
+      why: 'The Massive Text Embedding Benchmark aggregates retrieval, clustering, similarity, and more. Use it to shortlist, then evaluate on your own data, leaderboard leaders rotate monthly.',
     },
     {
       q: 'Matryoshka (MRL) embeddings are valuable because…',
@@ -616,7 +616,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Release year only',
       ],
       answer: 0,
-      why: 'Practical fit beats a single leaderboard number: match dims (storage), context (long docs), price (volume), languages, and — critically — recall on your own labeled queries.',
+      why: 'Practical fit beats a single leaderboard number: match dims (storage), context (long docs), price (volume), languages, and, critically, recall on your own labeled queries.',
     },
   ],
   'vector-databases': [
@@ -666,7 +666,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'A longer system prompt',
       ],
       answer: 1,
-      why: 'The agent loop — perceive → reason → act → observe — lets the system affect the world (APIs, files, searches) and react to what happened, instead of only producing text.',
+      why: 'The agent loop, perceive → reason → act → observe, lets the system affect the world (APIs, files, searches) and react to what happened, instead of only producing text.',
     },
     {
       q: 'Tools change everything because they…',
@@ -677,7 +677,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Guarantee the plan will succeed',
       ],
       answer: 0,
-      why: 'A model\'s weights are frozen and its knowledge ages. Tools connect it to live state and side effects — search results, databases, emails — which no amount of parameters provides.',
+      why: 'A model\'s weights are frozen and its knowledge ages. Tools connect it to live state and side effects, search results, databases, emails, which no amount of parameters provides.',
     },
     {
       q: 'When is building an agent the wrong choice?',
@@ -717,7 +717,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
     {
       q: 'Good tool descriptions matter because…',
       options: [
-        'The model chooses tools based on their names, descriptions, and schemas — vague tools get ignored or misused',
+        'The model chooses tools based on their names, descriptions, and schemas, vague tools get ignored or misused',
         'They are compiled into the weights',
         'They are only read by humans',
         'They determine the context window size',
@@ -747,7 +747,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Screenshots of previous chats',
       ],
       answer: 0,
-      why: 'Write durable facts and artifacts to a vector database (or similar), then retrieve relevant items into context when a new task starts — memory becomes retrieval.',
+      why: 'Write durable facts and artifacts to a vector database (or similar), then retrieve relevant items into context when a new task starts, memory becomes retrieval.',
     },
     {
       q: 'Reflexion-style reflection helps because…',
@@ -841,7 +841,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'A fixed neural architecture',
       ],
       answer: 0,
-      why: 'LangGraph generalizes LangChain\'s chains into a graph with shared state, so control flow can loop (cycles) — essential for agent retry/refine behavior.',
+      why: 'LangGraph generalizes LangChain\'s chains into a graph with shared state, so control flow can loop (cycles), essential for agent retry/refine behavior.',
     },
     {
       q: 'Reducers in LangGraph exist to…',
@@ -878,7 +878,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'A single embedding lookup',
       ],
       answer: 0,
-      why: 'Perplexity treats search as the core: it reformulates queries, searches multiple sources, and generates answers with inline citations — RAG as the product.',
+      why: 'Perplexity treats search as the core: it reformulates queries, searches multiple sources, and generates answers with inline citations, RAG as the product.',
     },
     {
       q: 'Cursor and Windsurf stand out because they…',
@@ -894,13 +894,13 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
     {
       q: 'Devin-style products illustrate which profile?',
       options: [
-        'Planner–executor: decompose the goal, work long-horizon, report progress',
+        'Planner-executor: decompose the goal, work long-horizon, report progress',
         'Single-shot Q&A',
         'Pure autocomplete',
         'Retrieval-free generation',
       ],
       answer: 0,
-      why: 'Long-horizon coding agents separate planning from execution, maintain task state, and check their work — the planner-executor architecture under the demo.',
+      why: 'Long-horizon coding agents separate planning from execution, maintain task state, and check their work, the planner-executor architecture under the demo.',
     },
   ],
   'build-an-agent': [
@@ -924,7 +924,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Never; the model reads its weights',
       ],
       answer: 0,
-      why: 'The system prompt is the agent\'s spec: it defines behavior boundaries and how to use tools. Treat it like code — reviewed, versioned, and evaluated.',
+      why: 'The system prompt is the agent\'s spec: it defines behavior boundaries and how to use tools. Treat it like code, reviewed, versioned, and evaluated.',
     },
     {
       q: '"Evaluate like a product, not a demo" means…',
@@ -970,7 +970,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Increasing everyone\'s latency equally',
       ],
       answer: 0,
-      why: 'Scale comes from architecture: cheap models for easy steps, caches for repeated work, async queues for long tasks, and parallel tools — not a single heroic server.',
+      why: 'Scale comes from architecture: cheap models for easy steps, caches for repeated work, async queues for long tasks, and parallel tools, not a single heroic server.',
     },
   ],
 
@@ -985,7 +985,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Latency in milliseconds',
       ],
       answer: 0,
-      why: 'Perplexity quantifies how well the model predicts unseen text. It is a great pretraining signal but says little about instruction-following or safety — hence benchmarks.',
+      why: 'Perplexity quantifies how well the model predicts unseen text. It is a great pretraining signal but says little about instruction-following or safety, hence benchmarks.',
     },
     {
       q: 'MMLU, HumanEval, and GSM8K test respectively…',
@@ -996,7 +996,7 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
         'Tokenization speed',
       ],
       answer: 0,
-      why: 'Each benchmark probes a different capability slice. A model\'s aggregate "score" hides this — always check which slices matter for your use case.',
+      why: 'Each benchmark probes a different capability slice. A model\'s aggregate "score" hides this, always check which slices matter for your use case.',
     },
     {
       q: '"Benchmark contamination" refers to…',
@@ -1008,6 +1008,181 @@ export const QUIZZES: Record<string, QuizQuestion[]> = {
       ],
       answer: 0,
       why: 'When eval items end up in pretraining data, scores look great and mean little. That "benchmark rot" is why fresh, private, task-specific evals matter for real decisions.',
+    },
+  ],
+  'why-llms-hallucinate': [
+    {
+      q: 'Why do LLMs hallucinate?',
+      options: [
+        'They are trained to be plausible, not truthful, fluent fabrication is good next-token prediction',
+        'They contain a random-number bug that leaks into outputs',
+        'Only small models hallucinate; frontier models are immune',
+        'Hallucinations only happen at high temperature',
+      ],
+      answer: 0,
+      why: 'The training objective rewards likely continuations, not verified claims, and binary-graded evals reward guessing over abstaining, so confident answers stay rational even at the edge of knowledge.',
+    },
+    {
+      q: 'Does lowering temperature reduce hallucinations?',
+      options: [
+        'Yes, low temperature makes models more accurate',
+        'No, temperature changes sampling randomness, not whether the top choice is true',
+        'Yes, but only below 0.5',
+        'No, only top-p affects truthfulness',
+      ],
+      answer: 1,
+      why: 'Temperature sharpens or flattens the distribution; it cannot add knowledge. A temperature-0 model repeats the same wrong answer with total confidence. Truthfulness comes from grounding, evals, and abstention.',
+    },
+    {
+      q: 'Which ordering best describes the hallucination mitigation ladder?',
+      options: [
+        'More parameters → more training → longer context',
+        'Ground with RAG → force citations → gate abstention in code → verify faithfulness → human review for high stakes',
+        'Add emojis → raise temperature → hope',
+        'Prompt harder → fine-tune on everything → shut down retrieval',
+      ],
+      answer: 1,
+      why: 'You contain the blast radius instead of patching the model: move knowledge into a retrievable, citable index, let the system say "I couldn\'t find this", and verify claims against context before they reach users.',
+    },
+  ],
+  'prompting-patterns': [
+    {
+      q: 'What do few-shot examples actually do?',
+      options: [
+        'Fine-tune the model during the API call',
+        'Condition the model in-context: format, tone, and edge-case handling without any weight updates',
+        'Increase the context window',
+        'Reduce the cost per token',
+      ],
+      answer: 1,
+      why: 'Examples are conditioning, not training, the model imitates the pattern they demonstrate. Keep them diverse, or it over-imitates and answers every input like the last example.',
+    },
+    {
+      q: 'When does chain-of-thought prompting help most?',
+      options: [
+        'On every task, always, it is free',
+        'On math, logic, and multi-step tasks; it costs tokens and can even hurt on simple ones',
+        'Only for creative writing',
+        'Only when the model is large enough to refuse',
+      ],
+      answer: 1,
+      why: 'Intermediate tokens become context for later predictions, more compute per answer. That is why reasoning models do it natively, and why simple tasks (where it adds cost and noise) should skip it.',
+    },
+    {
+      q: 'The production pattern for reliable JSON from an LLM is…',
+      options: [
+        'Ask nicely in prose and parse with regex',
+        'Constrain with a schema at decode time, validate the parse, and retry once with the validation error',
+        'Set temperature to 2 so the JSON is more creative',
+        'Avoid JSON; use screenshots',
+      ],
+      answer: 1,
+      why: 'Schema-constrained decoding removes most failures; validating against the shape your code needs and retrying with the error message covers the rest. The schema is a contract, the retry is its enforcement.',
+    },
+  ],
+  'serving-inference': [
+    {
+      q: 'Why is the first generated token slower than the rest?',
+      options: [
+        'The model warms up its weights during the first token',
+        'Prefill processes the whole prompt in one parallel, compute-bound pass; afterwards decode runs one token at a time from the KV cache',
+        'The first token is downloaded from the provider',
+        'Tokenization only happens after the first token',
+      ],
+      answer: 1,
+      why: 'TTFT is the prefill bill (grows with prompt length); every later token is a memory-bandwidth-bound decode step reading the cached K/V. Long prompts cost TTFT, not stream speed.',
+    },
+    {
+      q: 'What makes "long context" expensive to serve?',
+      options: [
+        'The KV cache grows linearly with tokens, layers × KV-heads × head-dim × 2 × bytes per sequence',
+        'Long prompts require retraining',
+        'Embedding models cannot handle long text',
+        'It does not; context is free',
+      ],
+      answer: 0,
+      why: 'Cached keys and values are RAM per sequence. A 70B-class model at 128K tokens holds ~20 GiB of cache for one user, which is why PagedAttention treats the cache like virtual memory.',
+    },
+    {
+      q: 'What does speculative decoding promise?',
+      options: [
+        'The same output distribution, 2-3× faster: a small draft model proposes tokens, the big model verifies them in one pass',
+        'A smarter model with no extra compute',
+        'Perfect predictions of future prompts',
+        'Fewer tokens in the vocabulary',
+      ],
+      answer: 0,
+      why: 'Verification of several drafted tokens is one cheap parallel pass, so accepted tokens cost a single step instead of several. The big model keeps veto power, quality is unchanged.',
+    },
+  ],
+  'retrieval-evals': [
+    {
+      q: 'Why evaluate retrieval separately from generation?',
+      options: [
+        'To make dashboards look busier',
+        'Because if the right chunk never reached the prompt, no generator can recover, and end-to-end scores blame the wrong component',
+        'Because generation metrics are illegal in production',
+        'Because retrieval and generation use the same tokenizer',
+      ],
+      answer: 1,
+      why: 'Most "the AI is wrong" bugs are retrieval misses. Log the retrieval boundary, label a small golden set of queries, and localize: retrieval miss vs retrieved-but-ignored.',
+    },
+    {
+      q: 'Recall@k, MRR, and nDCG answer, respectively…',
+      options: [
+        'Did a relevant doc make top-k? How high is the first hit? How good is the ranking with position discounting?',
+        'How fast is search? How much RAM? How many GPUs?',
+        'All three measure the same thing with different names',
+        'Only nDCG is used in production',
+      ],
+      answer: 0,
+      why: 'Recall@k is your coverage ceiling; MRR scores single-answer lookups by first-hit position; nDCG handles graded relevance when ranking order matters. Pick per question type, not habit.',
+    },
+    {
+      q: 'You have no labeled data. How do you bootstrap an eval set?',
+      options: [
+        'Wait for the vendor to send one',
+        'Collect 30-50 real queries, hand-label the relevant documents, version it, and run recall@k in CI on every retrieval change',
+        'Use training data as the eval set',
+        'Copy the MTEB leaderboard into a spreadsheet',
+      ],
+      answer: 1,
+      why: 'A tiny, honest, private golden set beats any public benchmark for your system, an hour of labeling buys regression detection for every chunking, embedding, and fusion change.',
+    },
+  ],
+  'agent-security': [
+    {
+      q: 'What is the root cause of prompt injection?',
+      options: [
+        'Models are trained on malicious data',
+        'LLMs have no privilege separation between instructions and data, everything arrives as tokens in one context',
+        'JSON is inherently insecure',
+        'Only chat UIs are vulnerable',
+      ],
+      answer: 1,
+      why: 'The system prompt, the user message, and a hostile web page are indistinguishable at the token level. The model guesses what to obey, so defense must be architectural, not string matching.',
+    },
+    {
+      q: 'Which is the agent-specific threat?',
+      options: [
+        'Direct injection from the user\'s own keyboard',
+        'Indirect injection: hostile instructions hidden in emails, pages, tickets, or tool results the agent reads as data',
+        'Slow API responses',
+        'Lexical search returning old documents',
+      ],
+      answer: 1,
+      why: 'The attacker never talks to your agent, they leave a note where it will look. The blast radius is the tool list, which is why tool design is a security decision.',
+    },
+    {
+      q: 'The containment playbook for an agent with tools is…',
+      options: [
+        'Longer system prompts listing every forbidden phrase',
+        'Least-privilege tools, sandboxed execution, human approval for irreversible actions, and an adversarial red-team suite in CI',
+        'Trust the model; it was aligned',
+        'Remove all logging so attackers learn nothing',
+      ],
+      answer: 1,
+      why: 'You cannot fully patch the model, so you contain the blast radius: read-only defaults, scoped credentials, the human fires destructive actions, and evals assert refusal and abstention behavior on every change.',
     },
   ],
 }

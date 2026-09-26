@@ -6,7 +6,7 @@ TransformerTrek is an interactive, client-side application for learning how tran
 
 ## Where we are
 
-The core curriculum is in place: 28 modules across 7 sections (Foundations, Transformers, Training, Retrieval & Search, Agents & Protocols, System Design, Evals), each with step-by-step prose, real citations, prerequisites, and key takeaways.
+The core curriculum is in place: 33 modules across 7 sections (Foundations, Transformers, Training, Retrieval & Search, Agents & Protocols, System Design, Evals), each with step-by-step prose, real citations, prerequisites, and key takeaways.
 
 Shipped highlights:
 
@@ -14,11 +14,13 @@ Shipped highlights:
 - A Visualizations gallery collecting every widget on one page, grouped by theme.
 - A Playground page listing every demo as a one-tap jump that deep-links straight into the widget inside its module.
 - Topical deep dives: case studies of real agent products (Perplexity, ChatGPT, Claude, Cursor, Windsurf, Devin), a build-your-own-agent guide with a system prompt lab, and an honest comparison of open-weight model families.
+- The questions engineers actually get asked, now first-class modules: why LLMs hallucinate, prompting patterns, serving and inference (KV cache, batching, quantization, speculative decoding), measuring retrieval quality (recall@k, MRR, nDCG in TypeScript), and prompt injection and agent security.
+- Knowledge checks: a three-question quiz at the end of every module, plus a Rapid review page of say-it-out-loud flashcards with tight model answers and short TypeScript snippets.
+- Clean-path URLs (/modules/attention) with legacy hash links redirected on load.
 - Dark and light themes, mobile-first responsive layout, reduced-motion support, keyboard-friendly widgets, and reading progress saved locally.
 
 ## Now (next 4 to 6 weeks)
 
-- Knowledge checks: a short quiz at the end of each module so readers can verify understanding, not just recognize it.
 - Full-text search across modules, glossary terms, and widget titles.
 - Copy quality pass: consistent voice, sentence-level polish, and a style guide so new modules stay consistent.
 - Accessibility audit: contrast checks in both themes, screen-reader labels on every widget control, and focus order cleanup.
@@ -29,9 +31,6 @@ Shipped highlights:
 - Real embeddings in the browser: run an actual MiniLM-class model via ONNX in the Embedding Explorer so similarity scores come from a trained model instead of a toy space.
 - Progress export and import: let readers move their reading progress between devices without accounts.
 - Shareable widget links: deep links that open a widget pre-set to an interesting state (a chosen attention head, a specific query, a tuned k1/b pair).
-- Agent security and safety: prompt injection, tool permissions, and sandboxing, taught with the same live-widget approach.
-- Evaluating retrieval: recall@k, MRR, nDCG, and RAG faithfulness metrics with a live metric lab over the BM25 corpus.
-- Inference efficiency: KV cache, flash attention, quantization, and speculative decoding as a visual module.
 - Guided paths: curated routes through the material, such as "RAG engineer in a weekend" or "Agent fundamentals", each pairing modules with exercises.
 - More case studies: coding agents, customer-support agents, and a failure-story teardown of a real production incident.
 

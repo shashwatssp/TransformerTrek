@@ -38,6 +38,7 @@ export function TopNav({ activePath }: { activePath: string }) {
               <span className="hidden sm:inline">Playground</span>
             </>,
           )}
+          {link('/review', 'Review')}
           {link('/glossary', 'Glossary')}
           <span
             aria-label={`${completed} of ${MODULES.length} modules marked as read on this device`}

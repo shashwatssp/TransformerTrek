@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { getModule, moduleNumber, neighbors, SECTIONS, type ModuleMeta } from '../../modules/registry'
 import { toggleCompleted, useIsCompleted } from '../../lib/progress'
+import { getReview } from '../../lib/review'
 import { Quiz } from '../Quiz'
 import { SourceList, StepList } from '../ui'
 
@@ -73,6 +74,16 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
 
       {/* Knowledge check, when this module has quiz questions */}
       <Quiz moduleId={meta.id} title={meta.title} />
+
+      {/* Rapid review: flashcard recall for this module */}
+      {getReview(meta.id).length > 0 && (
+        <a
+          href={`/review?module=${meta.id}`}
+          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:border-accent/50 hover:text-accent"
+        >
+          ⚡ Rapid review this module: say it out loud, then reveal
+        </a>
+      )}
 
       {/* Sources & further reading */}
       {meta.sources.length > 0 && (
