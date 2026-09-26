@@ -1,4 +1,4 @@
-import type { ComponentType, LazyExoticComponent } from 'react'
+import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 
 export type Section = {
   id: string
@@ -63,7 +63,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Language Models are Few-Shot Learners (GPT-3)', url: 'https://arxiv.org/abs/2005.14165', note: 'The paper that defined the modern LLM paradigm.' },
       { title: 'Hugging Face LLM Course, ch. 1', url: 'https://huggingface.co/learn/llm-course/chapter1/1', note: 'Hands-on companion.' },
     ],
-    component: null,
+    component: lazy(() => import('./foundations/WhatIsAnLLM')),
   },
   {
     id: 'how-llms-work', section: 'foundations', order: 2,
@@ -82,7 +82,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'The Illustrated GPT-2 (Visualizing the Language Model)', url: 'https://jalammar.github.io/illustrated-gpt2/' },
       { title: 'OpenAI — Better Language Models (GPT-2)', url: 'https://openai.com/index/better-language-models/' },
     ],
-    component: null,
+    component: lazy(() => import('./foundations/HowLLMsWork')),
   },
   // ── Transformers ─────────────────────────────────────────────
   {
@@ -102,7 +102,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Sennrich et al. — Neural Machine Translation of Rare Words with Subword Units (BPE)', url: 'https://arxiv.org/abs/1508.07909' },
       { title: 'The Illustrated Word2Vec', url: 'https://jalammar.github.io/illustrated-word2vec/' },
     ],
-    component: null,
+    component: lazy(() => import('./transformer/TokenizationEmbeddings')),
   },
   {
     id: 'attention', section: 'transformers', order: 4,
@@ -124,7 +124,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Transformer Explainer (Polo Club)', url: 'https://poloclub.github.io/transformer-explainer/', note: 'Interactive Sankey-style walkthrough.' },
       { title: 'BertViz — attention head visualization', url: 'https://github.com/jessevig/bertviz' },
     ],
-    component: null,
+    component: lazy(() => import('./transformer/Attention')),
   },
   {
     id: 'architecture', section: 'transformers', order: 5,
@@ -143,7 +143,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Vaswani et al. — Attention Is All You Need', url: 'https://arxiv.org/abs/1706.03762' },
       { title: 'Transformer Explainer (Polo Club)', url: 'https://poloclub.github.io/transformer-explainer/' },
     ],
-    component: null,
+    component: lazy(() => import('./transformer/Architecture')),
   },
   {
     id: 'next-token-lab', section: 'transformers', order: 6,
@@ -162,7 +162,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Hugging Face — Generation strategies', url: 'https://huggingface.co/docs/transformers/generation_strategies' },
       { title: 'Holtzman et al. — The Curious Case of Neural Text Degeneration (top-p)', url: 'https://arxiv.org/abs/1904.09751' },
     ],
-    component: null,
+    component: lazy(() => import('./transformer/NextTokenLab')),
   },
   // ── Training ─────────────────────────────────────────────────
   {
