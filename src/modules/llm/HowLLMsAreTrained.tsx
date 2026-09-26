@@ -127,19 +127,19 @@ function MoERoutingLab() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full min-w-[480px] text-sm">
+        <table className="w-full text-xs sm:text-sm">
           <caption className="sr-only">Router probabilities for each token and the experts selected</caption>
           <thead>
-            <tr className="bg-surface-raised/60 text-left text-xs text-ink-muted">
-              <th className="px-3 py-2 font-medium">Token</th>
-              <th className="px-3 py-2 font-medium">Top-{k} experts (router probability)</th>
+            <tr className="bg-surface-raised/60 text-left text-[10px] text-ink-muted sm:text-xs">
+              <th className="px-2 py-1.5 font-medium sm:px-3 sm:py-2">Token</th>
+              <th className="px-2 py-1.5 font-medium sm:px-3 sm:py-2">Top-{k} experts (router probability)</th>
             </tr>
           </thead>
           <tbody>
             {routes.map((r) => (
               <tr key={r.token} className="border-t border-border">
-                <td className="px-3 py-2 font-mono text-ink/90">{r.token}</td>
-                <td className="px-3 py-2 font-mono text-ink/80">
+                <td className="px-2 py-1.5 font-mono text-ink/90 sm:px-3 sm:py-2">{r.token}</td>
+                <td className="break-words px-2 py-1.5 font-mono text-ink/80 sm:px-3 sm:py-2">
                   {r.chosen.map((e) => `E${e + 1} (${(100 * r.probs[e]).toFixed(1)}%)`).join(' + ')}
                 </td>
               </tr>

@@ -245,7 +245,7 @@ export default function HybridFusion() {
               <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-ink-muted">
                 <Pill>bm25 #{f.bm25Rank}</Pill>
                 <Pill>dense #{f.denseRank}</Pill>
-                <span className="font-mono">
+                <span className="break-all font-mono">
                   1/({k}+{f.bm25Rank}) + 1/({k}+{f.denseRank}) = {(1 / (k + f.bm25Rank)).toFixed(4)} +{' '}
                   {(1 / (k + f.denseRank)).toFixed(4)} = {f.rrf.toFixed(4)}
                 </span>

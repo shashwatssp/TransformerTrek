@@ -145,13 +145,13 @@ function JudgeMechanicsTab({ humanPick }: { humanPick: 'A' | 'B' | null }) {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full min-w-[480px] border-collapse text-left text-xs">
+        <table className="w-full border-collapse text-left text-[11px] sm:text-xs">
           <thead>
             <tr className="bg-surface-raised/60 text-ink-muted">
-              <th className="px-3 py-2 font-medium">Dimension</th>
-              <th className="px-3 py-2 font-medium">Weight</th>
-              <th className="px-3 py-2 font-medium">A score</th>
-              <th className="px-3 py-2 font-medium">B score</th>
+              <th className="px-2 py-1.5 font-medium sm:px-3 sm:py-2">Dimension</th>
+              <th className="px-2 py-1.5 font-medium sm:px-3 sm:py-2">Weight</th>
+              <th className="px-2 py-1.5 font-medium sm:px-3 sm:py-2">A score</th>
+              <th className="px-2 py-1.5 font-medium sm:px-3 sm:py-2">B score</th>
             </tr>
           </thead>
           <tbody>
@@ -163,17 +163,17 @@ function JudgeMechanicsTab({ humanPick }: { humanPick: 'A' | 'B' | null }) {
               ] as const
             ).map(([dim, label]) => (
               <tr key={dim} className="border-t border-border">
-                <td className="px-3 py-2 text-ink/85">{label}</td>
-                <td className="px-3 py-2 font-mono text-accent">{(WEIGHTS[mode][dim] * 100).toFixed(0)}%</td>
-                <td className="px-3 py-2 font-mono text-ink/85">{SCORES.A[dim].toFixed(1)}</td>
-                <td className="px-3 py-2 font-mono text-ink/85">{SCORES.B[dim].toFixed(1)}</td>
+                <td className="px-2 py-1.5 text-ink/85 sm:px-3 sm:py-2">{label}</td>
+                <td className="px-2 py-1.5 font-mono text-accent sm:px-3 sm:py-2">{(WEIGHTS[mode][dim] * 100).toFixed(0)}%</td>
+                <td className="px-2 py-1.5 font-mono text-ink/85 sm:px-3 sm:py-2">{SCORES.A[dim].toFixed(1)}</td>
+                <td className="px-2 py-1.5 font-mono text-ink/85 sm:px-3 sm:py-2">{SCORES.B[dim].toFixed(1)}</td>
               </tr>
             ))}
             <tr className="border-t border-border bg-surface-raised/40">
-              <td className="px-3 py-2 font-semibold text-ink">Weighted total</td>
-              <td className="px-3 py-2 font-mono text-ink-muted">100%</td>
-              <td className={`px-3 py-2 font-mono font-semibold ${winner === 'A' ? 'text-accent' : 'text-ink/85'}`}>{aTotal.toFixed(2)}</td>
-              <td className={`px-3 py-2 font-mono font-semibold ${winner === 'B' ? 'text-accent' : 'text-ink/85'}`}>{bTotal.toFixed(2)}</td>
+              <td className="px-2 py-1.5 font-semibold text-ink sm:px-3 sm:py-2">Weighted total</td>
+              <td className="px-2 py-1.5 font-mono text-ink-muted sm:px-3 sm:py-2">100%</td>
+              <td className={`px-2 py-1.5 font-mono font-semibold sm:px-3 sm:py-2 ${winner === 'A' ? 'text-accent' : 'text-ink/85'}`}>{aTotal.toFixed(2)}</td>
+              <td className={`px-2 py-1.5 font-mono font-semibold sm:px-3 sm:py-2 ${winner === 'B' ? 'text-accent' : 'text-ink/85'}`}>{bTotal.toFixed(2)}</td>
             </tr>
           </tbody>
         </table>

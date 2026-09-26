@@ -165,14 +165,14 @@ export function NextTokenSampler({
 
       {/* Candidate table */}
       <div className="mt-4 overflow-x-auto">
-        <table className="w-full min-w-[520px] border-collapse text-xs" aria-label={`Candidate next tokens for “${preset.prompt}”`}>
+        <table className="w-full border-collapse text-[11px] sm:text-xs" aria-label={`Candidate next tokens for “${preset.prompt}”`}>
           <thead>
             <tr className="text-left text-ink-muted">
-              <th scope="col" className="py-1.5 pr-2 font-medium">candidate</th>
-              <th scope="col" className="py-1.5 pr-2 font-medium">logit</th>
-              <th scope="col" className="py-1.5 pr-2 font-medium">p after T</th>
-              <th scope="col" className="py-1.5 pr-2 font-medium">final p</th>
-              <th scope="col" className="py-1.5 font-medium">probability</th>
+              <th scope="col" className="py-1 pr-1.5 font-medium sm:py-1.5 sm:pr-2">candidate</th>
+              <th scope="col" className="py-1 pr-1.5 font-medium sm:py-1.5 sm:pr-2">logit</th>
+              <th scope="col" className="py-1 pr-1.5 font-medium sm:py-1.5 sm:pr-2">p after T</th>
+              <th scope="col" className="py-1 pr-1.5 font-medium sm:py-1.5 sm:pr-2">final p</th>
+              <th scope="col" className="py-1 font-medium sm:py-1.5">probability</th>
             </tr>
           </thead>
           <tbody>
@@ -197,10 +197,10 @@ export function NextTokenSampler({
                     {argmaxIdx === i && <span aria-hidden className="mr-1 text-success" title="greedy pick (argmax)">★</span>}
                     {c.token}
                   </td>
-                  <td className="py-1.5 pr-2 font-mono text-ink-muted">{c.logit.toFixed(2)}</td>
-                  <td className="py-1.5 pr-2 font-mono text-ink-muted">{pct(probs[i])}</td>
-                  <td className={`py-1.5 pr-2 font-mono ${cut ? 'text-ink-muted line-through' : 'text-accent'}`}>{pct(final[i])}</td>
-                  <td className="py-1.5">
+                  <td className="py-1 pr-1.5 font-mono text-ink-muted sm:py-1.5 sm:pr-2">{c.logit.toFixed(2)}</td>
+                  <td className="py-1 pr-1.5 font-mono text-ink-muted sm:py-1.5 sm:pr-2">{pct(probs[i])}</td>
+                  <td className={`py-1 pr-1.5 font-mono sm:py-1.5 sm:pr-2 ${cut ? 'text-ink-muted line-through' : 'text-accent'}`}>{pct(final[i])}</td>
+                  <td className="py-1 sm:py-1.5">
                     <div className="relative h-4 w-full max-w-[240px] overflow-hidden rounded bg-surface-raised">
                       <motion.div
                         className={`h-full rounded ${cut ? 'bg-border' : 'bg-accent'}`}

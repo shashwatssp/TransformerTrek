@@ -194,7 +194,7 @@ function PrimitivesTab() {
             <span className="text-sm font-semibold text-ink">{p.name}</span>
             <span className="text-[11px] text-accent">{p.control}</span>
           </div>
-          <pre className="mt-2 overflow-x-auto rounded border border-border bg-surface p-2 font-mono text-[11px] leading-5 text-ink/85">
+          <pre className="mt-2 whitespace-pre-wrap break-words rounded border border-border bg-surface p-2 font-mono text-[11px] leading-5 text-ink/85 sm:whitespace-pre">
 {p.code}
           </pre>
           <p className="mt-1.5 text-[11px] text-ink-muted">{p.who}</p>

@@ -45,12 +45,12 @@ function Matrix({
   )
   return (
     <div className="overflow-x-auto">
-      <table className="border-collapse text-[11px]" aria-label={caption}>
+      <table className="border-collapse text-[10px] sm:text-[11px]" aria-label={caption}>
         <thead>
           <tr>
-            <th scope="col" className="px-1.5 py-1 text-left font-medium text-ink-muted">q \ k</th>
+            <th scope="col" className="px-1 py-0.5 text-left font-medium text-ink-muted sm:px-1.5 sm:py-1">q \\ k</th>
             {tokens.map((t) => (
-              <th scope="col" key={t} className="px-1.5 py-1 font-mono font-medium text-ink-muted">{t}</th>
+              <th scope="col" key={t} className="px-1 py-0.5 font-mono font-medium text-ink-muted sm:px-1.5 sm:py-1">{t}</th>
             ))}
           </tr>
         </thead>
@@ -59,7 +59,7 @@ function Matrix({
             <tr key={i}>
               <th
                 scope="row"
-                className={`px-1.5 py-1 text-left font-mono ${i === selRow ? 'font-semibold text-accent' : 'text-ink-muted'}`}
+                className={`px-1 py-0.5 text-left font-mono sm:px-1.5 sm:py-1 ${i === selRow ? 'font-semibold text-accent' : 'text-ink-muted'}`}
               >
                 {i === selRow ? '▶ ' : ''}{tokens[i]}
               </th>
@@ -68,7 +68,7 @@ function Matrix({
                 return (
                   <td
                     key={j}
-                    className="px-1.5 py-1 text-center font-mono"
+                    className="px-1 py-0.5 text-center font-mono sm:px-1.5 sm:py-1"
                     style={style}
                     title={`query "${tokens[i]}" vs key "${tokens[j]}": ${fmt(v)}`}
                   >
@@ -247,24 +247,24 @@ export function AttentionPlayground() {
                   value of d_head = {D_HEAD} each. Below: the actual vectors (fixed random seed).
                 </p>
                 <div className="mt-3 overflow-x-auto">
-                  <table className="border-collapse text-xs" aria-label="Query, key and value vectors per token">
+                  <table className="w-full border-collapse text-[10px] sm:text-xs" aria-label="Query, key and value vectors per token">
                     <thead>
                       <tr className="text-left text-ink-muted">
-                        <th scope="col" className="py-1 pr-3 font-medium">token</th>
-                        <th scope="col" className="py-1 pr-3 font-medium">q = x·W_Q</th>
-                        <th scope="col" className="py-1 pr-3 font-medium">k = x·W_K</th>
+                        <th scope="col" className="py-1 pr-2 font-medium sm:pr-3">token</th>
+                        <th scope="col" className="py-1 pr-2 font-medium sm:pr-3">q = x·W_Q</th>
+                        <th scope="col" className="py-1 pr-2 font-medium sm:pr-3">k = x·W_K</th>
                         <th scope="col" className="py-1 font-medium">v = x·W_V</th>
                       </tr>
                     </thead>
                     <tbody>
                       {seqs.map((t, i) => (
                         <tr key={i} className="border-t border-border/60">
-                          <th scope="row" className={`py-1 pr-3 text-left font-mono ${i === selRow ? 'text-accent' : 'text-ink'}`}>
+                          <th scope="row" className={`py-1 pr-2 text-left font-mono sm:pr-3 ${i === selRow ? 'text-accent' : 'text-ink'}`}>
                             {i === selRow ? '▶ ' : ''}{t}
                           </th>
-                          <td className="py-1 pr-3 font-mono text-[11px] text-ink/80">{vec(proj.Q[i])}</td>
-                          <td className="py-1 pr-3 font-mono text-[11px] text-ink/80">{vec(proj.K[i])}</td>
-                          <td className="py-1 font-mono text-[11px] text-ink/80">{vec(proj.V[i])}</td>
+                          <td className="break-all py-1 pr-2 font-mono text-[10px] text-ink/80 sm:pr-3 sm:text-[11px]">{vec(proj.Q[i])}</td>
+                          <td className="break-all py-1 pr-2 font-mono text-[10px] text-ink/80 sm:pr-3 sm:text-[11px]">{vec(proj.K[i])}</td>
+                          <td className="break-all py-1 font-mono text-[10px] text-ink/80 sm:text-[11px]">{vec(proj.V[i])}</td>
                         </tr>
                       ))}
                     </tbody>

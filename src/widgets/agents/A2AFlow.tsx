@@ -63,7 +63,7 @@ function AgentCardTab() {
         spec versions. No central registry: you can discover any agent with one GET.
       </p>
       <div className="grid gap-3 md:grid-cols-2">
-        <pre className="overflow-x-auto rounded-lg border border-border bg-surface p-3 font-mono text-[11px] leading-5 text-ink/85">
+        <pre className="whitespace-pre-wrap break-words rounded-lg border border-border bg-surface p-3 font-mono text-[11px] leading-5 text-ink/85 sm:whitespace-pre">
 {CARD_JSON}
         </pre>
         <ul className="space-y-2 text-xs text-ink/85">

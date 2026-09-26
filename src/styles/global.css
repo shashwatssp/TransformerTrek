@@ -127,6 +127,12 @@ h3[id] {
   padding: 0.125rem 0.375rem;
   font-family: var(--font-mono);
   font-size: 0.875em;
+  overflow-wrap: anywhere;
+}
+
+/* Long URLs in prose wrap instead of overflowing narrow phones */
+.prose-trek a {
+  overflow-wrap: anywhere;
 }
 
 /* Range inputs: touch-friendly, theme-consistent thumbs */

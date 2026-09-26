@@ -179,13 +179,14 @@ export default function MiniLMViz() {
             </Pill>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[480px] text-left font-mono text-[11px]">
+            {/* 6 of the 8 dims on phones; the table always fits the width */}
+            <table className="w-full text-left font-mono text-[10px] sm:text-[11px]">
               <caption className="sr-only">Token embedding rows being averaged into the sentence vector</caption>
               <thead>
                 <tr className="text-ink-muted">
-                  <th className="py-1 pr-2 font-medium">token</th>
+                  <th className="py-1 pr-1.5 font-medium sm:pr-2">token</th>
                   {Array.from({ length: POOL_DIMS }, (_, d) => (
-                    <th key={d} className="py-1 pr-2 font-medium">d{d}</th>
+                    <th key={d} className={`py-1 pr-1.5 font-medium sm:pr-2 ${d >= 6 ? 'hidden sm:table-cell' : ''}`}>d{d}</th>
                   ))}
                 </tr>
               </thead>
@@ -196,11 +197,11 @@ export default function MiniLMViz() {
                     className={i < poolStep ? 'bg-accent/10' : ''}
                     aria-label={i < poolStep ? `${t}: included in the average` : `${t}: not yet included`}
                   >
-                    <td className="py-1 pr-2 text-ink/85">{t}</td>
+                    <td className="py-1 pr-1.5 text-ink/85 sm:pr-2">{t}</td>
                     {TOKEN_ROWS[i].map((v, d) => (
                       <td
                         key={d}
-                        className="py-1 pr-2"
+                        className={`py-1 pr-1.5 sm:pr-2 ${d >= 6 ? 'hidden sm:table-cell' : ''}`}
                         style={{ color: v >= 0 ? pal.accent : pal.highlight }}
                       >
                         {v.toFixed(1)}
@@ -210,9 +211,9 @@ export default function MiniLMViz() {
                 ))}
                 {pooled && (
                   <tr className="border-t border-accent/40">
-                    <td className="py-1 pr-2 font-semibold text-success">mean</td>
+                    <td className="py-1 pr-1.5 font-semibold text-success sm:pr-2">mean</td>
                     {pooled.map((v, d) => (
-                      <td key={d} className="py-1 pr-2 font-semibold text-success">{v.toFixed(1)}</td>
+                      <td key={d} className={`py-1 pr-1.5 font-semibold text-success sm:pr-2 ${d >= 6 ? 'hidden sm:table-cell' : ''}`}>{v.toFixed(1)}</td>
                     ))}
                   </tr>
                 )}

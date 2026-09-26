@@ -166,7 +166,7 @@ export function SystemPromptLab() {
         </p>
       </div>
 
-      <pre className="max-h-72 overflow-auto rounded-lg border border-border bg-surface p-3 font-mono text-[11px] leading-5 text-ink/90" aria-label="Assembled system prompt">
+      <pre className="max-h-72 overflow-y-auto whitespace-pre-wrap break-words rounded-lg border border-border bg-surface p-3 font-mono text-[11px] leading-5 text-ink/90" aria-label="Assembled system prompt">
         {assembled || '(empty)'}
       </pre>
 

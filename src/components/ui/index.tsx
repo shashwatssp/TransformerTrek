@@ -80,7 +80,8 @@ export function CodeBlock({
           {copied ? 'copied ✓' : 'copy'}
         </button>
       </div>
-      <pre className="overflow-x-auto p-4 text-[13px] leading-6">
+      {/* Wraps on phones so code never forces horizontal scrolling */}
+      <pre className="whitespace-pre-wrap break-words p-4 text-[13px] leading-6 sm:whitespace-pre">
         <code className="font-mono text-ink/90">{code}</code>
       </pre>
     </div>
@@ -212,11 +213,12 @@ export function WidgetFrame({
 
   const shell = expanded
     ? 'fixed inset-0 z-[100] my-0 flex h-dvh flex-col rounded-none border-0 bg-surface'
-    : 'my-8 overflow-hidden rounded-xl border border-border bg-surface'
+    : 'my-8 scroll-mt-20 overflow-hidden rounded-xl border border-border bg-surface'
 
   return (
     <motion.section
       ref={frameRef}
+      data-demo=""
       initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.985 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-60px' }}
@@ -398,12 +400,12 @@ export function ComparisonTable< ColId extends string >({
 }) {
   return (
     <div className="my-6 overflow-x-auto rounded-xl border border-border">
-      <table className="w-full min-w-[560px] border-collapse text-sm">
+      <table className="w-full border-collapse text-xs sm:text-sm">
         <thead>
           <tr className="bg-surface-raised/60">
-            <th className="px-4 py-2.5 text-left font-medium text-ink-muted">Dimension</th>
+            <th className="px-2.5 py-2 text-left font-medium text-ink-muted sm:px-4 sm:py-2.5">Dimension</th>
             {columns.map((c) => (
-              <th key={c.id} className="px-4 py-2.5 text-left font-semibold text-accent">
+              <th key={c.id} className="px-2.5 py-2 text-left font-semibold text-accent sm:px-4 sm:py-2.5">
                 {c.label}
               </th>
             ))}
@@ -412,9 +414,9 @@ export function ComparisonTable< ColId extends string >({
         <tbody>
           {rows.map((r, i) => (
             <tr key={i} className="border-t border-border align-top">
-              <td className="px-4 py-3 font-medium text-ink/85">{r.label}</td>
+              <td className="px-2.5 py-2 font-medium text-ink/85 sm:px-4 sm:py-3">{r.label}</td>
               {columns.map((c) => (
-                <td key={c.id} className="px-4 py-3 text-ink/80">{r.values[c.id]}</td>
+                <td key={c.id} className="px-2.5 py-2 text-ink/80 sm:px-4 sm:py-3">{r.values[c.id]}</td>
               ))}
             </tr>
           ))}
@@ -436,7 +438,7 @@ export function SourceList({ sources }: { sources: SourceRef[] }) {
               href={s.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent"
+              className="[overflow-wrap:anywhere] font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent"
             >
               {s.title}
             </a>

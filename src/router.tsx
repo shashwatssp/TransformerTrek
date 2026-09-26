@@ -4,13 +4,16 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 
-export type Route = { path: string; parts: string[] }
+export type Route = { path: string; parts: string[]; demo?: boolean }
 
 function parseHash(): Route {
   const raw = window.location.hash.replace(/^#/, '') || '/'
-  const path = raw.split('?')[0]
+  const qIdx = raw.indexOf('?')
+  const path = (qIdx === -1 ? raw : raw.slice(0, qIdx)) || '/'
   const parts = path.split('/').filter(Boolean)
-  return { path, parts }
+  // "?demo" deep-links straight to the module's interactive widget
+  const demo = qIdx !== -1 && new URLSearchParams(raw.slice(qIdx + 1)).has('demo')
+  return { path, parts, demo: demo || undefined }
 }
 
 export function useRoute(): Route {
@@ -51,9 +54,32 @@ export function useNavigate() {
   return useCallback((to: string) => navigate(to), [])
 }
 
-/** Scroll to top on route path change */
-export function useScrollTopOnRoute(path: string) {
+/**
+ * Scroll to top on route path change. With the "?demo" deep link, scroll
+ * directly to the module's widget instead (the module component is a lazy
+ * import, so retry frame by frame until the first widget frame exists).
+ */
+export function useScrollTopOnRoute(path: string, demo?: boolean) {
   useEffect(() => {
-    scrollToTopInstantly()
-  }, [path])
+    if (!demo) {
+      scrollToTopInstantly()
+      return
+    }
+    let raf = 0
+    let tries = 0
+    const jump = () => {
+      const target = document.querySelector('section[data-demo]')
+      if (target) {
+        const html = document.documentElement
+        const prev = html.style.scrollBehavior
+        html.style.scrollBehavior = 'auto'
+        target.scrollIntoView({ block: 'start' })
+        html.style.scrollBehavior = prev
+      } else if (tries++ < 120) {
+        raf = requestAnimationFrame(jump)
+      }
+    }
+    jump()
+    return () => cancelAnimationFrame(raf)
+  }, [path, demo])
 }

@@ -108,30 +108,39 @@ export function PerplexityLab() {
             {label}
           </button>
         ))}
-        <code className="rounded bg-surface px-2 py-1 font-mono text-[11px] text-ink/85">"{sentence}"</code>
+        <code className="max-w-full break-all rounded bg-surface px-2 py-1 font-mono text-[11px] text-ink/85">"{sentence}"</code>
       </div>
 
       <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_230px]">
         {/* Per-bigram table */}
         <div className="overflow-x-auto rounded-lg border border-border">
-          <table className="w-full border-collapse text-left text-[11px]">
+          <table className="w-full border-collapse text-left text-[10px] sm:text-[11px]">
             <thead>
               <tr className="bg-surface-raised/60 text-ink-muted">
-                <th className="px-2.5 py-1.5 font-medium">bigram</th>
-                <th className="px-2.5 py-1.5 font-medium">count(w1 w2)</th>
-                <th className="px-2.5 py-1.5 font-medium">count(w1)</th>
-                <th className="px-2.5 py-1.5 font-medium">P(w2|w1)</th>
-                <th className="px-2.5 py-1.5 font-medium">surprise (bits)</th>
+                <th className="px-1.5 py-1 font-medium sm:px-2.5 sm:py-1.5">bigram</th>
+                <th className="px-1.5 py-1 font-medium sm:px-2.5 sm:py-1.5">
+                  <span className="hidden sm:inline">count(w1 w2)</span>
+                  <span className="sm:hidden">c(w1·w2)</span>
+                </th>
+                <th className="px-1.5 py-1 font-medium sm:px-2.5 sm:py-1.5">
+                  <span className="hidden sm:inline">count(w1)</span>
+                  <span className="sm:hidden">c(w1)</span>
+                </th>
+                <th className="px-1.5 py-1 font-medium sm:px-2.5 sm:py-1.5">P(w2|w1)</th>
+                <th className="px-1.5 py-1 font-medium sm:px-2.5 sm:py-1.5">
+                  <span className="hidden sm:inline">surprise (bits)</span>
+                  <span className="sm:hidden">bits</span>
+                </th>
               </tr>
             </thead>
             <tbody className="font-mono">
               {analysis.rows.map((r) => (
                 <tr key={`${r.w1}-${r.w2}`} className="border-t border-border">
-                  <td className="px-2.5 py-1.5 text-ink/85">{r.w1} → {r.w2}</td>
-                  <td className="px-2.5 py-1.5 text-ink/85">{r.cBigram}</td>
-                  <td className="px-2.5 py-1.5 text-ink/85">{r.cUnigram}</td>
-                  <td className="px-2.5 py-1.5 text-ink/85">{r.p.toFixed(4)}</td>
-                  <td className={`px-2.5 py-1.5 ${surpriseTone(r.bits)}`}>{r.bits.toFixed(2)}</td>
+                  <td className="px-1.5 py-1 text-ink/85 sm:px-2.5 sm:py-1.5">{r.w1} → {r.w2}</td>
+                  <td className="px-1.5 py-1 text-ink/85 sm:px-2.5 sm:py-1.5">{r.cBigram}</td>
+                  <td className="px-1.5 py-1 text-ink/85 sm:px-2.5 sm:py-1.5">{r.cUnigram}</td>
+                  <td className="px-1.5 py-1 text-ink/85 sm:px-2.5 sm:py-1.5">{r.p.toFixed(4)}</td>
+                  <td className={`px-1.5 py-1 sm:px-2.5 sm:py-1.5 ${surpriseTone(r.bits)}`}>{r.bits.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

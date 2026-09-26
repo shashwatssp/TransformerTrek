@@ -179,7 +179,7 @@ function Playground() {
               {mods.length === 1 ? (
                 // Single module: the entire card is one large tap/click target
                 <a
-                  href={`#/modules/${mods[0].id}`}
+                  href={`#/modules/${mods[0].id}?demo`}
                   aria-label={`Open ${label} (${mods[0].title})`}
                   className="flex h-full flex-col rounded-xl border border-border bg-surface p-4 transition hover:border-accent/50 hover:bg-surface-raised/40"
                 >
@@ -200,7 +200,7 @@ function Playground() {
                     {mods.map((m) => (
                       <li key={m.id}>
                         <a
-                          href={`#/modules/${m.id}`}
+                          href={`#/modules/${m.id}?demo`}
                           className="flex min-h-11 items-center justify-between gap-2 rounded-lg px-2 text-sm text-ink-muted transition hover:bg-surface-raised hover:text-accent"
                         >
                           <span>
@@ -245,7 +245,7 @@ function PageFade({ pageKey, children }: { pageKey: string; children: ReactNode 
 
 export default function App() {
   const route = useRoute()
-  useScrollTopOnRoute(route.path)
+  useScrollTopOnRoute(route.path, route.demo)
 
   let page
   if (route.parts[0] === 'modules' && route.parts[1]) page = <ModulePage id={route.parts[1]} />

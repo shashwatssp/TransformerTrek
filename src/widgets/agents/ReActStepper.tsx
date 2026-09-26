@@ -136,7 +136,7 @@ export function ReActStepper() {
                 <>
                   <div className="rounded-lg border border-accent/30 bg-accent/5 px-3 py-2">
                     <span className="mr-2 rounded bg-accent/20 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-accent">ACTION</span>
-                    <pre className="mt-1.5 overflow-x-auto font-mono text-xs text-ink/90">
+                    <pre className="mt-1.5 whitespace-pre-wrap break-words font-mono text-xs text-ink/90 sm:whitespace-pre">
 {`{ "tool": "${s.action.tool}", "args": ${JSON.stringify(s.action.args)} }`}
                     </pre>
                   </div>
@@ -190,7 +190,7 @@ export function ReActStepper() {
         <div className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
           Tool registry <span className="normal-case text-[10px]">(what the model sees)</span>
         </div>
-        <pre className="mt-2 overflow-x-auto font-mono text-[11px] leading-5 text-ink/85">
+        <pre className="mt-2 whitespace-pre-wrap break-words font-mono text-[11px] leading-5 text-ink/85 sm:whitespace-pre">
 {JSON.stringify(TOOL_REGISTRY, null, 2)}
         </pre>
         <p className="mt-2 text-[11px] leading-5 text-ink-muted">

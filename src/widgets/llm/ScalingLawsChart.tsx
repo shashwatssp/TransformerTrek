@@ -203,32 +203,32 @@ export default function ScalingLawsChart() {
           Published configs table (9 models, scored through the law)
         </summary>
         <div className="overflow-x-auto pt-2">
-        <table className="w-full min-w-[560px] text-sm">
+        <table className="w-full text-[11px] sm:text-sm">
           <caption className="sr-only">Published training configs and their predicted loss under the Chinchilla fitted law</caption>
           <thead>
-            <tr className="bg-surface-raised/60 text-left text-xs text-ink-muted">
-              <th className="px-3 py-2 font-medium">Model</th>
-              <th className="px-3 py-2 font-medium">Params (published)</th>
-              <th className="px-3 py-2 font-medium">Tokens (published)</th>
-              <th className="px-3 py-2 font-medium">Tokens/param</th>
-              <th className="px-3 py-2 font-medium">Compute ≈ 6ND</th>
-              <th className="px-3 py-2 font-medium">Predicted loss</th>
+            <tr className="bg-surface-raised/60 text-left text-[10px] text-ink-muted sm:text-xs">
+              <th className="px-1.5 py-1.5 font-medium sm:px-3 sm:py-2">Model</th>
+              <th className="px-1.5 py-1.5 font-medium sm:px-3 sm:py-2">Params</th>
+              <th className="px-1.5 py-1.5 font-medium sm:px-3 sm:py-2">Tokens</th>
+              <th className="px-1.5 py-1.5 font-medium sm:px-3 sm:py-2">Tok/param</th>
+              <th className="px-1.5 py-1.5 font-medium sm:px-3 sm:py-2">Compute ≈ 6ND</th>
+              <th className="px-1.5 py-1.5 font-medium sm:px-3 sm:py-2">Pred. loss</th>
             </tr>
           </thead>
           <tbody>
             {MODELS.map((m) => (
               <tr key={m.name} className="border-t border-border">
-                <td className="px-3 py-2 font-medium text-ink/90">
+                <td className="break-words px-1.5 py-1.5 font-medium text-ink/90 sm:px-3 sm:py-2">
                   {m.name}
                   {m.params >= 2e11 && ['DeepSeek-V3', 'Llama 4 Scout', 'Llama 4 Maverick', 'Qwen3-235B', 'Kimi K2'].includes(m.name) && (
                     <span className="ml-1.5 rounded bg-surface-raised px-1 py-0.5 font-mono text-[10px] text-ink-muted">MoE, total</span>
                   )}
                 </td>
-                <td className="px-3 py-2 font-mono text-ink/80">{fmtBig(m.params)}</td>
-                <td className="px-3 py-2 font-mono text-ink/80">{fmtBig(m.tokens)}</td>
-                <td className="px-3 py-2 font-mono text-ink/80">{(m.tokens / m.params).toFixed(1)}</td>
-                <td className="px-3 py-2 font-mono text-ink/80">{fmtFlops(6 * m.params * m.tokens)}</td>
-                <td className="px-3 py-2 font-mono text-accent">{law(m.params, m.tokens).toFixed(3)}</td>
+                <td className="px-1.5 py-1.5 font-mono text-ink/80 sm:px-3 sm:py-2">{fmtBig(m.params)}</td>
+                <td className="px-1.5 py-1.5 font-mono text-ink/80 sm:px-3 sm:py-2">{fmtBig(m.tokens)}</td>
+                <td className="px-1.5 py-1.5 font-mono text-ink/80 sm:px-3 sm:py-2">{(m.tokens / m.params).toFixed(1)}</td>
+                <td className="px-1.5 py-1.5 font-mono text-ink/80 sm:px-3 sm:py-2">{fmtFlops(6 * m.params * m.tokens)}</td>
+                <td className="px-1.5 py-1.5 font-mono text-accent sm:px-3 sm:py-2">{law(m.params, m.tokens).toFixed(3)}</td>
               </tr>
             ))}
           </tbody>

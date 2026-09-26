@@ -351,7 +351,7 @@ export default function RAGPipelineFlow() {
         {stage === 5 && (
           <div className="mt-3 space-y-2">
             <p className="text-ink/85">The winning chunks are stitched into the prompt. This string, not the model’s memory, is what the answer will be grounded in.</p>
-            <pre className="overflow-x-auto rounded-md border border-border bg-void/60 p-3 font-mono text-[11px] leading-5 text-ink/85">
+            <pre className="whitespace-pre-wrap break-words rounded-md border border-border bg-void/60 p-3 font-mono text-[11px] leading-5 text-ink/85 sm:whitespace-pre">
               {promptText}
             </pre>
           </div>

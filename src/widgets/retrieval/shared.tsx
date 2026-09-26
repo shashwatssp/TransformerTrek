@@ -8,7 +8,7 @@ import { gaussian, seededRandom } from '../../lib/math'
 
 /** Styling for inline external links, matches SourceList. */
 export const extClass =
-  'font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent'
+  '[overflow-wrap:anywhere] font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent'
 
 /** FNV-1a string hash, same scheme as src/lib/attention.ts. */
 export function hashString(s: string): number {
@@ -68,7 +68,7 @@ export function ScoreBar({
   const pct = Math.max(0, Math.min(100, (value / max) * 100))
   return (
     <div className="flex items-center gap-2 text-xs">
-      <span className="w-44 shrink-0 truncate text-ink-muted" title={label}>
+      <span className="w-28 shrink-0 truncate text-ink-muted sm:w-44" title={label}>
         {label}
       </span>
       <div
