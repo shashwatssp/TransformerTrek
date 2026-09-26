@@ -219,10 +219,13 @@ export function WidgetFrame({
     <motion.section
       ref={frameRef}
       data-demo=""
-      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.985 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      // Opacity-only, same rationale as Reveal/PageFade: a transform here
+      // would linger as a containing block for this frame's own
+      // position: fixed expand mode if the user expands mid-entrance.
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ type: 'spring', stiffness: 110, damping: 22 }}
+      transition={reduced ? { duration: 0 } : { duration: 0.3, ease: 'easeOut' }}
       className={shell}
       aria-label={title}
     >
@@ -308,7 +311,9 @@ export function Tabs({
   onChange: (t: string) => void
 }) {
   return (
-    <div role="tablist" className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 text-xs">
+    // flex-wrap, never horizontal scroll: tab rows grow to a second
+    // line on narrow phones instead of overflowing the viewport
+    <div role="tablist" className="flex flex-wrap gap-1 rounded-lg border border-border bg-surface p-1 text-xs">
       {tabs.map((t) => (
         <button
           key={t}
@@ -399,13 +404,15 @@ export function ComparisonTable< ColId extends string >({
   rows: { label: string; values: Record<ColId, string> }[]
 }) {
   return (
-    <div className="my-6 overflow-x-auto rounded-xl border border-border">
-      <table className="w-full border-collapse text-xs sm:text-sm">
+    // table-fixed + wrapping cells: columns squeeze to the viewport and
+    // text wraps, so the table can never force horizontal scroll on phones
+    <div className="my-6 rounded-xl border border-border">
+      <table className="w-full table-fixed border-collapse text-xs sm:text-sm">
         <thead>
           <tr className="bg-surface-raised/60">
-            <th className="px-2.5 py-2 text-left font-medium text-ink-muted sm:px-4 sm:py-2.5">Dimension</th>
+            <th className="px-2.5 py-2 text-left font-medium text-ink-muted [overflow-wrap:anywhere] sm:px-4 sm:py-2.5">Dimension</th>
             {columns.map((c) => (
-              <th key={c.id} className="px-2.5 py-2 text-left font-semibold text-accent sm:px-4 sm:py-2.5">
+              <th key={c.id} className="px-2.5 py-2 text-left font-semibold text-accent [overflow-wrap:anywhere] sm:px-4 sm:py-2.5">
                 {c.label}
               </th>
             ))}
@@ -414,9 +421,9 @@ export function ComparisonTable< ColId extends string >({
         <tbody>
           {rows.map((r, i) => (
             <tr key={i} className="border-t border-border align-top">
-              <td className="px-2.5 py-2 font-medium text-ink/85 sm:px-4 sm:py-3">{r.label}</td>
+              <td className="px-2.5 py-2 font-medium text-ink/85 [overflow-wrap:anywhere] sm:px-4 sm:py-3">{r.label}</td>
               {columns.map((c) => (
-                <td key={c.id} className="px-2.5 py-2 text-ink/80 sm:px-4 sm:py-3">{r.values[c.id]}</td>
+                <td key={c.id} className="px-2.5 py-2 text-ink/80 [overflow-wrap:anywhere] sm:px-4 sm:py-3">{r.values[c.id]}</td>
               ))}
             </tr>
           ))}
