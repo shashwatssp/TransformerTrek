@@ -1,10 +1,10 @@
 /**
- * AgentGraphBuilder — a LangGraph-style state graph (nodes, conditional
+ * AgentGraphBuilder, a LangGraph-style state graph (nodes, conditional
  * edges, reducers, cycles) rendered with @xyflow/react. A step-through
  * execution trace highlights the active node, the edges taken (including
  * the retry cycle), and a live state panel shows reducers at work.
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Background,
   Controls,
@@ -18,46 +18,55 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { Button } from '../../components/ui'
+import { useChartTheme, type ChartPalette } from '../../lib/chartTheme'
 
-// ── Static graph definition ────────────────────────────────────────────────
+// ── Static graph definition (styles follow the theme) ─────────────────────────────
 
-const NODE_STYLE = {
-  background: '#1a2332',
-  border: '1px solid #253048',
-  borderRadius: 8,
-  color: '#e6ebf4',
-  fontSize: 11,
-  padding: 8,
-  width: 132,
+function nodeStyle(pal: ChartPalette) {
+  return {
+    background: pal.nodeBg,
+    border: `1px solid ${pal.nodeBorder}`,
+    borderRadius: 8,
+    color: pal.nodeText,
+    fontSize: 11,
+    padding: 8,
+    width: 132,
+  }
 }
 
-const PILL_STYLE = {
-  ...NODE_STYLE,
-  borderRadius: 999,
-  background: '#111827',
-  width: 84,
-  fontSize: 10,
-  color: '#8b95a8',
+function pillStyle(pal: ChartPalette) {
+  return {
+    ...nodeStyle(pal),
+    borderRadius: 999,
+    background: pal.labelBg,
+    width: 84,
+    fontSize: 10,
+    color: pal.muted,
+  }
 }
 
-const BASE_NODES: Node[] = [
-  { id: 'start', data: { label: 'START' }, position: { x: 0, y: 76 }, style: PILL_STYLE },
-  { id: 'retrieve', data: { label: 'retrieve' }, position: { x: 104, y: 66 }, style: NODE_STYLE },
-  { id: 'grade', data: { label: 'grade_documents' }, position: { x: 256, y: 66 }, style: NODE_STYLE },
-  { id: 'generate', data: { label: 'generate' }, position: { x: 408, y: 66 }, style: NODE_STYLE },
-  { id: 'end', data: { label: 'END' }, position: { x: 560, y: 76 }, style: PILL_STYLE },
-  { id: 'rewrite', data: { label: 'rewrite_query' }, position: { x: 256, y: 196 }, style: NODE_STYLE },
-]
+function buildBaseNodes(pal: ChartPalette): Node[] {
+  return [
+    { id: 'start', data: { label: 'START' }, position: { x: 0, y: 76 }, style: pillStyle(pal) },
+    { id: 'retrieve', data: { label: 'retrieve' }, position: { x: 104, y: 66 }, style: nodeStyle(pal) },
+    { id: 'grade', data: { label: 'grade_documents' }, position: { x: 256, y: 66 }, style: nodeStyle(pal) },
+    { id: 'generate', data: { label: 'generate' }, position: { x: 408, y: 66 }, style: nodeStyle(pal) },
+    { id: 'end', data: { label: 'END' }, position: { x: 560, y: 76 }, style: pillStyle(pal) },
+    { id: 'rewrite', data: { label: 'rewrite_query' }, position: { x: 256, y: 196 }, style: nodeStyle(pal) },
+  ]
+}
 
-const BASE_EDGES: Edge[] = [
-  { id: 'e1', source: 'start', target: 'retrieve', style: { stroke: '#3f5478' } },
-  { id: 'e2', source: 'retrieve', target: 'grade', style: { stroke: '#3f5478' } },
-  { id: 'e3', source: 'grade', target: 'generate', label: 'relevant', labelStyle: { fill: '#8b95a8', fontSize: 10 }, labelBgStyle: { fill: '#111827' }, style: { stroke: '#3f5478' } },
-  { id: 'e4', source: 'grade', target: 'rewrite', label: 'not relevant', labelStyle: { fill: '#8b95a8', fontSize: 10 }, labelBgStyle: { fill: '#111827' }, style: { stroke: '#3f5478' } },
-  { id: 'e5', source: 'rewrite', target: 'retrieve', label: 'retry — cycle', labelStyle: { fill: '#f59e0b', fontSize: 10 }, labelBgStyle: { fill: '#111827' }, style: { stroke: '#3f5478', strokeDasharray: '4 3' } },
-  { id: 'e6', source: 'generate', target: 'end', label: 'grounded', labelStyle: { fill: '#8b95a8', fontSize: 10 }, labelBgStyle: { fill: '#111827' }, style: { stroke: '#3f5478' } },
-  { id: 'e7', source: 'generate', target: 'rewrite', label: 'not grounded — cycle', labelStyle: { fill: '#f59e0b', fontSize: 10 }, labelBgStyle: { fill: '#111827' }, style: { stroke: '#3f5478', strokeDasharray: '4 3' } },
-]
+function buildBaseEdges(pal: ChartPalette): Edge[] {
+  return [
+    { id: 'e1', source: 'start', target: 'retrieve', style: { stroke: pal.axis } },
+    { id: 'e2', source: 'retrieve', target: 'grade', style: { stroke: pal.axis } },
+    { id: 'e3', source: 'grade', target: 'generate', label: 'relevant', labelStyle: { fill: pal.muted, fontSize: 10 }, labelBgStyle: { fill: pal.labelBg }, style: { stroke: pal.axis } },
+    { id: 'e4', source: 'grade', target: 'rewrite', label: 'not relevant', labelStyle: { fill: pal.muted, fontSize: 10 }, labelBgStyle: { fill: pal.labelBg }, style: { stroke: pal.axis } },
+    { id: 'e5', source: 'rewrite', target: 'retrieve', label: 'retry, cycle', labelStyle: { fill: pal.highlight, fontSize: 10 }, labelBgStyle: { fill: pal.labelBg }, style: { stroke: pal.axis, strokeDasharray: '4 3' } },
+    { id: 'e6', source: 'generate', target: 'end', label: 'grounded', labelStyle: { fill: pal.muted, fontSize: 10 }, labelBgStyle: { fill: pal.labelBg }, style: { stroke: pal.axis } },
+    { id: 'e7', source: 'generate', target: 'rewrite', label: 'not grounded, cycle', labelStyle: { fill: pal.highlight, fontSize: 10 }, labelBgStyle: { fill: pal.labelBg }, style: { stroke: pal.axis, strokeDasharray: '4 3' } },
+  ]
+}
 
 const CYCLE_EDGES = new Set(['e5', 'e7'])
 
@@ -111,7 +120,7 @@ const STEPS: ExecStep[] = [
   {
     node: 'rewrite',
     edgeTaken: 'e5',
-    log: 'rewrite_query: sharpened the question — CYCLE edge back to retrieve',
+    log: 'rewrite_query: sharpened the question, CYCLE edge back to retrieve',
     state: { question: Q2, documents: D1, generation: '', web_searches: 0 },
   },
   {
@@ -139,9 +148,16 @@ const STEPS: ExecStep[] = [
 // ── Component ───────────────────────────────────────────────────────────────
 
 export function AgentGraphBuilder() {
+  const pal = useChartTheme()
   const [step, setStep] = useState(0) // steps executed
-  const [nodes, setNodes] = useState<Node[]>(BASE_NODES)
-  const [edges, setEdges] = useState<Edge[]>(BASE_EDGES)
+  const [nodes, setNodes] = useState<Node[]>(() => buildBaseNodes(pal))
+  const [edges, setEdges] = useState<Edge[]>(() => buildBaseEdges(pal))
+
+  // Rebuild base styling when the theme flips (positions reset, acceptable)
+  useEffect(() => {
+    setNodes(buildBaseNodes(pal))
+    setEdges(buildBaseEdges(pal))
+  }, [pal])
 
   const onNodesChange = (changes: NodeChange[]) =>
     setNodes((nds) => applyNodeChanges(changes, nds))
@@ -164,14 +180,14 @@ export function AgentGraphBuilder() {
 
   const styledNodes: Node[] = nodes.map((n) => {
     let style = { ...n.style }
-    if (visited.has(n.id)) style = { ...style, borderColor: '#34d399' }
-    if (active === n.id) style = { ...style, borderColor: '#22d3ee', color: '#22d3ee' }
+    if (visited.has(n.id)) style = { ...style, borderColor: pal.success }
+    if (active === n.id) style = { ...style, borderColor: pal.accent, color: pal.accent }
     return { ...n, style }
   })
 
   const styledEdges: Edge[] = edges.map((e) => {
-    if (e.id === current?.edgeTaken) return { ...e, animated: true, style: { ...e.style, stroke: '#22d3ee' } }
-    if (takenEdges.has(e.id)) return { ...e, style: { ...e.style, stroke: '#34d399' } }
+    if (e.id === current?.edgeTaken) return { ...e, animated: true, style: { ...e.style, stroke: pal.accent } }
+    if (takenEdges.has(e.id)) return { ...e, style: { ...e.style, stroke: pal.success } }
     return e
   })
 
@@ -193,7 +209,7 @@ export function AgentGraphBuilder() {
             edges={styledEdges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
-            colorMode="dark"
+            colorMode={pal.colorMode}
             fitView
             proOptions={{ hideAttribution: false }}
           >

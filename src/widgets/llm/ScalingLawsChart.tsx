@@ -1,5 +1,5 @@
 /**
- * ScalingLawsChart — Chinchilla compute-optimal frontier, computed live.
+ * ScalingLawsChart, Chinchilla compute-optimal frontier, computed live.
  *
  * Uses the fitted law from Hoffmann et al. (2022), Table 3:
  *   L(N, D) = E + A/N^α + B/D^β,  E=1.69, A=406.4, B=410.7, α=0.34, β=0.28
@@ -22,8 +22,9 @@ import {
   YAxis,
 } from 'recharts'
 import { Slider } from '../../components/ui'
+import { useChartTheme } from '../../lib/chartTheme'
 
-// Fitted constants — Hoffmann et al., "Training Compute-Optimal Large Language Models" (2022)
+// Fitted constants, Hoffmann et al., "Training Compute-Optimal Large Language Models" (2022)
 const E = 1.69
 const A = 406.4
 const B = 410.7
@@ -58,6 +59,7 @@ const MODELS = [
 ] as const
 
 export default function ScalingLawsChart() {
+  const pal = useChartTheme()
   // Compute budget on a log slider: C = 10^logC
   const [logC, setLogC] = useState(23)
   // Tokens per parameter (Chinchilla rule ≈ 20)
@@ -115,7 +117,7 @@ export default function ScalingLawsChart() {
       <div className="h-[320px] w-full" role="img" aria-label={`Log-log chart of predicted loss versus training compute. At ${fmtFlops(C)} with ${ratio} tokens per parameter: ${fmtBig(N)} parameters, ${fmtBig(D)} tokens, predicted loss ${L.toFixed(3)}.`}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={frontier} margin={{ top: 24, right: 24, bottom: 30, left: 8 }}>
-            <CartesianGrid stroke="#253048" strokeDasharray="3 3" />
+            <CartesianGrid stroke={pal.grid} strokeDasharray="3 3" />
             <XAxis
               dataKey="x"
               type="number"
@@ -123,9 +125,9 @@ export default function ScalingLawsChart() {
               domain={[C_MIN, C_MAX]}
               ticks={xTicks}
               tickFormatter={(v) => `1e${Math.log10(Number(v))}`}
-              tick={{ fill: '#8b95a8', fontSize: 11 }}
-              stroke="#253048"
-              label={{ value: 'training compute (FLOPs, log)', position: 'insideBottom', offset: -18, fill: '#8b95a8', fontSize: 11 }}
+              tick={{ fill: pal.tick, fontSize: 11 }}
+              stroke={pal.grid}
+              label={{ value: 'training compute (FLOPs, log)', position: 'insideBottom', offset: -18, fill: pal.tick, fontSize: 11 }}
               allowDataOverflow
             />
             <YAxis
@@ -135,19 +137,19 @@ export default function ScalingLawsChart() {
               domain={[1.7, 3.8]}
               ticks={yTicks}
               tickFormatter={(v) => Number(v).toFixed(1)}
-              tick={{ fill: '#8b95a8', fontSize: 11 }}
-              stroke="#253048"
-              label={{ value: 'predicted loss (log)', angle: -90, position: 'insideLeft', offset: 18, fill: '#8b95a8', fontSize: 11 }}
+              tick={{ fill: pal.tick, fontSize: 11 }}
+              stroke={pal.grid}
+              label={{ value: 'predicted loss (log)', angle: -90, position: 'insideLeft', offset: 18, fill: pal.tick, fontSize: 11 }}
               allowDataOverflow
             />
             <Tooltip
-              contentStyle={{ background: '#111827', border: '1px solid #253048', borderRadius: 8, fontSize: 12 }}
-              labelStyle={{ color: '#e6ebf4' }}
-              itemStyle={{ color: '#e6ebf4' }}
+              contentStyle={{ background: pal.tooltipBg, border: `1px solid ${pal.tooltipBorder}`, borderRadius: 8, fontSize: 12, color: pal.tooltipText }}
+              labelStyle={{ color: pal.tooltipText }}
+              itemStyle={{ color: pal.tooltipText }}
               labelFormatter={(v) => `C = ${fmtFlops(Number(v))}`}
               formatter={(v) => Number(v).toFixed(3)}
             />
-            <Line name="compute-optimal frontier" type="monotone" dataKey="y" stroke="#22d3ee" strokeWidth={2} dot={false} isAnimationActive={false} />
+            <Line name="compute-optimal frontier" type="monotone" dataKey="y" stroke={pal.accent} strokeWidth={2} dot={false} isAnimationActive={false} />
             {MODELS.map((m) => {
               const c = 6 * m.params * m.tokens
               return (
@@ -157,12 +159,12 @@ export default function ScalingLawsChart() {
                   y={law(m.params, m.tokens)}
                   r={5}
                   fill={m.color}
-                  stroke="#0a0e1a"
-                  label={{ value: m.name, position: 'top', fill: '#e6ebf4', fontSize: 10 }}
+                  stroke={pal.tooltipBg}
+                  label={{ value: m.name, position: 'top', fill: pal.ink, fontSize: 10 }}
                 />
               )
             })}
-            <ReferenceDot x={C} y={L} r={7} fill="#22d3ee" stroke="#0a0e1a" strokeWidth={2} />
+            <ReferenceDot x={C} y={L} r={7} fill={pal.accent} stroke={pal.tooltipBg} strokeWidth={2} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
@@ -215,10 +217,10 @@ export default function ScalingLawsChart() {
         All numbers are computed in your browser from the fitted constants E=1.69, A=406.4, B=410.7, α=0.34, β=0.28 of{' '}
         <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener noreferrer" className="text-accent underline underline-offset-2">
           Hoffmann et al., 2022
-        </a>{' '}
-        — predictions from a 2022-era fit, not measured losses (modern models like Llama 3 beat this prediction thanks to
+        </a>;
+        predictions from a 2022-era fit, not measured losses (modern models like Llama 3 beat this prediction thanks to
         better data and stability tricks). Slide tokens/param away from ≈20 at fixed compute and watch the point rise off
-        the frontier: with total-parameter counting, the law's exact optimum sits a bit above 20 — parameter-counting
+        the frontier: with total-parameter counting, the law's exact optimum sits a bit above 20, parameter-counting
         details matter.
       </p>
     </div>

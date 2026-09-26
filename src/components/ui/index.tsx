@@ -3,7 +3,7 @@
  * Design tokens come from Tailwind v4 @theme in global.css.
  */
 import { useState, type ReactNode } from 'react'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { getModule, moduleNumber, type SourceRef } from '../../modules/registry'
 
 /** Docs-grade reading typography */
@@ -87,6 +87,59 @@ export function CodeBlock({
   )
 }
 
+/**
+ * Scroll-triggered reveal with a soft spring. Wrap sections/lists to give
+ * the page a gentle entrance. No-ops under prefers-reduced-motion.
+ */
+export function Reveal({
+  children,
+  delay = 0,
+  className,
+}: {
+  children: ReactNode
+  delay?: number
+  className?: string
+}) {
+  const reduced = useReducedMotion()
+  return (
+    <motion.div
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ type: 'spring', stiffness: 120, damping: 20, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+/**
+ * Cross-fades keyed content (stage/tab panels) instead of snapping.
+ */
+export function FadeSwitch({
+  activeKey,
+  children,
+}: {
+  activeKey: string | number
+  children: ReactNode
+}) {
+  const reduced = useReducedMotion()
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={activeKey}
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={reduced ? { opacity: 0 } : { opacity: 0, y: -6 }}
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
 /** Frames an interactive widget with a consistent header */
 export function WidgetFrame({
   title,
@@ -97,20 +150,24 @@ export function WidgetFrame({
   subtitle?: string
   children: ReactNode
 }) {
+  const reduced = useReducedMotion()
   return (
     <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.985 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ type: 'spring', stiffness: 110, damping: 22 }}
       className="my-8 overflow-hidden rounded-xl border border-border bg-surface"
     >
-      <header className="border-b border-border bg-surface-raised/50 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-accent" />
+      <header className="flex items-center gap-3 border-b border-border bg-surface-raised/50 px-4 py-3">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+        </span>
+        <div className="min-w-0">
           <h3 className="text-sm font-semibold tracking-tight text-ink">{title}</h3>
+          {subtitle && <p className="mt-0.5 text-xs text-ink-muted">{subtitle}</p>}
         </div>
-        {subtitle && <p className="mt-0.5 text-xs text-ink-muted">{subtitle}</p>}
       </header>
       <div className="p-4">{children}</div>
     </motion.section>
@@ -147,7 +204,7 @@ export function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-border accent-accent"
+        className="w-full cursor-pointer accent-accent"
       />
     </label>
   )
@@ -163,12 +220,14 @@ export function Tabs({
   onChange: (t: string) => void
 }) {
   return (
-    <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-surface p-1 text-xs">
+    <div role="tablist" className="flex gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 text-xs">
       {tabs.map((t) => (
         <button
           key={t}
+          role="tab"
+          aria-selected={active === t}
           onClick={() => onChange(t)}
-          className={`rounded-md px-3 py-1.5 font-medium transition ${
+          className={`shrink-0 rounded-md px-3 py-1.5 font-medium transition ${
             active === t
               ? 'bg-primary/20 text-primary-bright'
               : 'text-ink-muted hover:bg-surface-raised hover:text-ink'
@@ -205,14 +264,14 @@ export function ModuleLink({ id, children }: { id: string; children?: ReactNode 
     <a
       href={`#/modules/${id}`}
       className="rounded font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent"
-      title={meta ? `Module ${moduleNumber(meta)} — ${meta.title}` : id}
+      title={meta ? `Module ${moduleNumber(meta)}, ${meta.title}` : id}
     >
       {label}
     </a>
   )
 }
 
-/** Numbered step list — the "first thing first" outline */
+/** Numbered step list, the "first thing first" outline */
 export function StepList({
   steps,
   numbered = true,
@@ -239,7 +298,7 @@ export function StepList({
 }
 
 /**
- * Side-by-side comparison table — for "X vs Y: when to use which".
+ * Side-by-side comparison table, for "X vs Y: when to use which".
  * Rows are dimension labels; columns are the compared options.
  */
 export function ComparisonTable< ColId extends string >({
@@ -279,7 +338,7 @@ export function ComparisonTable< ColId extends string >({
   )
 }
 
-/** "Sources & further reading" — real external links with notes */
+/** "Sources & further reading", real external links with notes */
 export function SourceList({ sources }: { sources: SourceRef[] }) {
   return (
     <ol className="mt-3 space-y-2">
@@ -295,7 +354,7 @@ export function SourceList({ sources }: { sources: SourceRef[] }) {
             >
               {s.title}
             </a>
-            {s.note && <span className="text-ink-muted"> — {s.note}</span>}
+            {s.note && <span className="text-ink-muted">, {s.note}</span>}
           </span>
         </li>
       ))}
@@ -303,7 +362,7 @@ export function SourceList({ sources }: { sources: SourceRef[] }) {
   )
 }
 
-/** Simple styled button for widget controls */
+/** Simple styled button for widget controls, comfortable touch target */
 export function Button({
   children,
   onClick,
@@ -315,12 +374,12 @@ export function Button({
 }) {
   const styles =
     variant === 'primary'
-      ? 'bg-primary text-white hover:bg-primary/85'
-      : 'border border-border text-ink hover:bg-surface-raised'
+      ? 'bg-primary text-white hover:bg-primary/85 active:bg-primary/75'
+      : 'border border-border text-ink hover:bg-surface-raised active:bg-surface'
   return (
     <button
       onClick={onClick}
-      className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition ${styles}`}
+      className={`min-h-9 rounded-lg px-3.5 py-2 text-sm font-medium transition-all active:scale-[0.97] sm:py-1.5 ${styles}`}
     >
       {children}
     </button>

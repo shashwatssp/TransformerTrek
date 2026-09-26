@@ -1,5 +1,5 @@
 /**
- * ReActStepper — steps through a real ReAct trace for a multi-hop question.
+ * ReActStepper, steps through a real ReAct trace for a multi-hop question.
  * The two "mock" tools are genuinely executed in the browser: `search` looks
  * up a pinned mini-corpus, `calculator` parses and evaluates arithmetic via a
  * shunting-yard evaluator (no eval()). Observations are therefore real outputs.
@@ -89,16 +89,16 @@ const QUESTION = 'What is 12% of the population of France?'
 const TRACE: TraceStep[] = [
   {
     thought:
-      'This question has two parts: France\'s population and a percentage of it. I don\'t have current population data in my context — I should search first.',
+      'This question has two parts: France\'s population and a percentage of it. I don\'t have current population data in my context, I should search first.',
     action: { tool: 'search', args: { query: 'population of France' } },
   },
   {
     thought:
-      'The search says 68,000,000 people. Now I need 12% of that: 68,000,000 × 0.12. I must not do this in my head — the calculator tool exists precisely for this.',
+      'The search says 68,000,000 people. Now I need 12% of that: 68,000,000 × 0.12. I must not do this in my head, the calculator tool exists precisely for this.',
     action: { tool: 'calculator', args: { expression: '68000000 * 0.12' } },
   },
   {
-    thought: 'The calculator returned 8,160,000. Both parts are resolved — I can answer now.',
+    thought: 'The calculator returned 8,160,000. Both parts are resolved, I can answer now.',
     finalAnswer: '12% of France\'s population (≈68,000,000) is 8,160,000 people.',
   },
 ]
@@ -158,7 +158,7 @@ export function ReActStepper() {
 
         {done && (
           <p className="rounded border border-border px-3 py-2 text-xs text-ink-muted">
-            Trace complete — 2 tool calls, 3 model turns. Note how each observation became the
+            Trace complete, 2 tool calls, 3 model turns. Note how each observation became the
             input of the next thought.
           </p>
         )}
@@ -180,7 +180,7 @@ export function ReActStepper() {
             ↺ Reset
           </button>
           <span className="text-xs text-ink-muted">
-            step {Math.min(shown, TRACE.length)}/{TRACE.length}{done ? ` — ${finalStep.length} chars, computed live` : ''}
+            step {Math.min(shown, TRACE.length)}/{TRACE.length}{done ? `, ${finalStep.length} chars, computed live` : ''}
           </span>
         </div>
       </div>
@@ -194,7 +194,7 @@ export function ReActStepper() {
 {JSON.stringify(TOOL_REGISTRY, null, 2)}
         </pre>
         <p className="mt-2 text-[11px] leading-5 text-ink-muted">
-          The model never sees tool <em>code</em> — only these schemas. It selects a tool by name
+          The model never sees tool <em>code</em>, only these schemas. It selects a tool by name
           and fills the arguments; the host executes it and returns the observation.
         </p>
       </aside>

@@ -1,11 +1,11 @@
 /**
- * LlmJudgeExplainer — you judge two answers, then see how an LLM judge
+ * LlmJudgeExplainer, you judge two answers, then see how an LLM judge
  * scores them under a rubric. Toggle between a naive (verbosity-biased)
  * judge and a balanced one: the weighted scores are recomputed live and the
- * winner can flip — that's the bias lesson.
+ * winner can flip, that's the bias lesson.
  */
 import { useState } from 'react'
-import { Tabs } from '../../components/ui'
+import { FadeSwitch, Tabs } from '../../components/ui'
 
 const PROMPT = 'Why is the sky blue? Answer in one sentence.'
 
@@ -49,11 +49,13 @@ export function LlmJudgeExplainer() {
   return (
     <div className="space-y-4">
       <Tabs tabs={['You judge', 'How the judge thinks']} active={tab} onChange={setTab} />
-      {tab === 'You judge' ? (
-        <YouJudgeTab humanPick={humanPick} setHumanPick={setHumanPick} />
-      ) : (
-        <JudgeMechanicsTab humanPick={humanPick} />
-      )}
+      <FadeSwitch activeKey={tab}>
+        {tab === 'You judge' ? (
+          <YouJudgeTab humanPick={humanPick} setHumanPick={setHumanPick} />
+        ) : (
+          <JudgeMechanicsTab humanPick={humanPick} />
+        )}
+      </FadeSwitch>
     </div>
   )
 }
@@ -100,7 +102,7 @@ function YouJudgeTab({
       </div>
       {humanPick && (
         <p className="rounded border border-success/30 bg-success/5 px-3 py-2 text-xs text-ink/85">
-          You picked {CANDIDATES[humanPick].label}. Now open "How the judge thinks" — will the
+          You picked {CANDIDATES[humanPick].label}. Now open "How the judge thinks", will the
           rubric agree with you, and under which weights?
         </p>
       )}
@@ -182,9 +184,9 @@ function JudgeMechanicsTab({ humanPick }: { humanPick: 'A' | 'B' | null }) {
         {mode === 'naive' ? 'naive' : 'balanced'} rubric
         {humanPick ? (
           agreesWithHuman ? (
-            <> — matching your pick. ✓</>
+            <>, matching your pick. ✓</>
           ) : (
-            <> — <strong>overruling your pick</strong>. Notice what did it: {mode === 'naive' ? 'B lost on accuracy but won on "thoroughness" — verbosity bias.' : 'the accuracy-heavy rubric punished B\'s factual error.'}</>
+            <>, <strong>overruling your pick</strong>. Notice what did it: {mode === 'naive' ? 'B lost on accuracy but won on "thoroughness", verbosity bias.' : 'the accuracy-heavy rubric punished B\'s factual error.'}</>
           )
         ) : (
           '. Pick an answer in the first tab to compare against your own judgment.'
@@ -192,14 +194,14 @@ function JudgeMechanicsTab({ humanPick }: { humanPick: 'A' | 'B' | null }) {
       </p>
 
       <ul className="list-disc space-y-1 pl-6 text-[11px] leading-5 text-ink-muted">
-        <li><strong className="text-ink">Verbosity bias</strong> — judges systematically favor longer answers (the naive rubric above). Seen in MT-Bench-style evaluations.</li>
-        <li><strong className="text-ink">Position bias</strong> — swap A and B in the prompt and scores drift; strong judges randomize order and average.</li>
-        <li><strong className="text-ink">Self-preference</strong> — a judge from the same model family rates its own outputs higher.</li>
+        <li><strong className="text-ink">Verbosity bias</strong>, judges systematically favor longer answers (the naive rubric above). Seen in MT-Bench-style evaluations.</li>
+        <li><strong className="text-ink">Position bias</strong>, swap A and B in the prompt and scores drift; strong judges randomize order and average.</li>
+        <li><strong className="text-ink">Self-preference</strong>, a judge from the same model family rates its own outputs higher.</li>
       </ul>
       <p className="text-[11px] leading-5 text-ink-muted">
         Bias catalog from{' '}
         <a href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener noreferrer" className="text-accent underline">
-          Zheng et al. — Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena
+          Zheng et al., Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena
         </a>
         .
       </p>

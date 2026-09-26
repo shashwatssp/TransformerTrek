@@ -6,11 +6,11 @@
 import type { ReactNode } from 'react'
 import { gaussian, seededRandom } from '../../lib/math'
 
-/** Styling for inline external links — matches SourceList. */
+/** Styling for inline external links, matches SourceList. */
 export const extClass =
   'font-medium text-accent underline decoration-accent/40 underline-offset-2 transition hover:decoration-accent'
 
-/** FNV-1a string hash — same scheme as src/lib/attention.ts. */
+/** FNV-1a string hash, same scheme as src/lib/attention.ts. */
 export function hashString(s: string): number {
   let h = 2166136261
   for (let i = 0; i < s.length; i++) {
@@ -23,7 +23,7 @@ export function hashString(s: string): number {
 /**
  * Toy bag-of-words embedding in D dims. Each word contributes a fixed
  * pseudo-random vector (seeded by the word hash); the result is L2-normalized.
- * Word overlap dominates — it is NOT a semantic model. Widgets using it must
+ * Word overlap dominates, it is NOT a semantic model. Widgets using it must
  * say so in the UI.
  */
 export function toyEmbed(text: string, dims = 384): number[] {

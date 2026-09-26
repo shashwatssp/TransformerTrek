@@ -18,7 +18,7 @@ function init(): Theme {
     const saved = localStorage.getItem(KEY)
     if (saved === 'dark' || saved === 'light') return saved
   } catch {
-    /* storage unavailable — fall through to system preference */
+    /* storage unavailable, fall through to system preference */
   }
   try {
     return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
@@ -50,7 +50,7 @@ export function setTheme(t: Theme) {
   try {
     localStorage.setItem(KEY, t)
   } catch {
-    /* private mode — theme just won't persist */
+    /* private mode, theme just won't persist */
   }
   apply(t)
   for (const l of listeners) l()

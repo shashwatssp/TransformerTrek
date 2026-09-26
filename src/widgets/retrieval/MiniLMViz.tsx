@@ -1,5 +1,5 @@
 /**
- * MiniLMViz — three linked views of the all-MiniLM-L6-v2 recipe:
+ * MiniLMViz, three linked views of the all-MiniLM-L6-v2 recipe:
  * 1. teacher (12L) → student (6L) distillation diagram with per-layer notes
  * 2. animated mean pooling over token embeddings (live arithmetic)
  * 3. a 384-dim vector heatmap + a toy sentence-pair similarity meter
@@ -8,7 +8,8 @@
  */
 import { useEffect, useMemo, useState } from 'react'
 import { cosineSimilarity, gaussian, seededRandom } from '../../lib/math'
-import { Callout, Tabs } from '../../components/ui'
+import { useChartTheme } from '../../lib/chartTheme'
+import { Callout, FadeSwitch, Tabs } from '../../components/ui'
 import { Pill, ScoreBar, hashString, toyEmbed } from './shared'
 
 const POOL_TOKENS = ['The', 'cat', 'sat', 'on', 'the', 'mat']
@@ -24,9 +25,9 @@ const SENTENCES = [
 ]
 
 const LAYER_NOTES = [
-  'Layers 1–2 reproduce the teacher’s attention maps on fine, local patterns — which token is looking at which.',
+  'Layers 1–2 reproduce the teacher’s attention maps on fine, local patterns, which token is looking at which.',
   'Layers 3–4 keep matching the teacher’s attention distributions while the hidden states narrow to 384 dims.',
-  'Layers 5–6 must reproduce the teacher’s final-layer attention and value vectors — the highest-fidelity constraint.',
+  'Layers 5–6 must reproduce the teacher’s final-layer attention and value vectors, the highest-fidelity constraint.',
 ]
 
 /** Per-token embedding rows (8 dims shown of 384), seeded for reproducibility. */
@@ -49,6 +50,7 @@ function heatColor(v: number, max: number): string {
 }
 
 export default function MiniLMViz() {
+  const pal = useChartTheme()
   const [tab, setTab] = useState('The 6 layers')
   const [selectedLayer, setSelectedLayer] = useState(1)
   const [poolStep, setPoolStep] = useState(0)
@@ -88,14 +90,15 @@ export default function MiniLMViz() {
     <div className="space-y-4 text-sm">
       <Tabs tabs={['The 6 layers', 'Mean pooling', '384 dims & similarity']} active={tab} onChange={setTab} />
 
+      <FadeSwitch activeKey={tab}>
       {/* ── Tab 1: distillation diagram ─────────────────────────── */}
       {tab === 'The 6 layers' && (
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-4">
             {(
               [
-                { title: 'Teacher — 12 layers × 768', count: 12, tone: 'border-highlight/50 text-highlight', params: '~109M params' },
-                { title: 'Student — 6 layers × 384', count: 6, tone: 'border-accent/50 text-accent', params: '~22M params' },
+                { title: 'Teacher, 12 layers × 768', count: 12, tone: 'border-highlight/50 text-highlight', params: '~109M params' },
+                { title: 'Student, 6 layers × 384', count: 6, tone: 'border-accent/50 text-accent', params: '~22M params' },
               ] as const
             ).map((col) => (
               <div key={col.title}>
@@ -126,7 +129,7 @@ export default function MiniLMViz() {
           <p className="text-xs text-ink/85" aria-live="polite">
             <strong className="text-accent">Student layer {selectedLayer}:</strong>{' '}
             {LAYER_NOTES[Math.min(2, Math.floor((selectedLayer - 1) / 2))]} Half the layers, half the width
-            — the student learns to <em>imitate the teacher’s attention</em>, not just its final output.
+, the student learns to <em>imitate the teacher’s attention</em>, not just its final output.
           </p>
           <p className="text-xs text-ink-muted">
             Click any student layer (keyboard: Tab + Enter). Distillation recipe per Wang et al. (2020);
@@ -140,7 +143,7 @@ export default function MiniLMViz() {
         <div className="space-y-3">
           <p className="text-ink/85">
             A transformer emits one vector <em>per token</em>. Sentence embeddings need one vector for the
-            whole sentence — so MiniLM <strong>averages</strong> all token vectors (mean pooling). Watch it
+            whole sentence, so MiniLM <strong>averages</strong> all token vectors (mean pooling). Watch it
             happen, one token at a time, on 8 of the 384 dims:
           </p>
           <div className="flex flex-wrap gap-2">
@@ -198,7 +201,7 @@ export default function MiniLMViz() {
                       <td
                         key={d}
                         className="py-1 pr-2"
-                        style={{ color: v >= 0 ? '#22d3ee' : '#f59e0b' }}
+                        style={{ color: v >= 0 ? pal.accent : pal.highlight }}
                       >
                         {v.toFixed(1)}
                       </td>
@@ -257,7 +260,7 @@ export default function MiniLMViz() {
               >
                 all-MiniLM-L6-v2
               </a>{' '}
-              outputs exactly this shape — search then reduces to 384 multiply-adds per candidate.
+              outputs exactly this shape, search then reduces to 384 multiply-adds per candidate.
             </p>
           </div>
 
@@ -292,15 +295,16 @@ export default function MiniLMViz() {
               </label>
             </div>
             <ScoreBar label="cosine(A, B)" value={sim} tone={sim > 0.7 ? 'success' : 'accent'} />
-            <Callout kind="warn" title="Honesty note — this is a toy, and that’s the lesson">
+            <Callout kind="warn" title="Honesty note, this is a toy, and that’s the lesson">
               This meter uses a word-overlap stand-in, not the real network. Try “How do I reset my
               password?” vs “I forgot my login credentials”: the toy scores ≈ 0 (no shared words), while
-              real MiniLM gives ≈ 0.5 — it was trained contrastively to score <em>meaning</em>. The toy
+              real MiniLM gives ≈ 0.5, it was trained contrastively to score <em>meaning</em>. The toy
               fails exactly where the real model earns its keep.
             </Callout>
           </div>
         </div>
       )}
+      </FadeSwitch>
     </div>
   )
 }

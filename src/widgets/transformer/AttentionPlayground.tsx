@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Button, Tabs, WidgetFrame } from '../../components/ui'
+import { motion, useReducedMotion } from 'motion/react'
+import { Button, FadeSwitch, Tabs, WidgetFrame } from '../../components/ui'
 import { makeHeads, makeProjections, scaledDotProductAttention } from '../../lib/attention'
 
 const SENTENCES = ['The cat chased the mouse', 'The bank of the river'] as const
@@ -15,13 +16,15 @@ function fmt(v: number): string {
   return Number.isFinite(v) ? v.toFixed(2) : '−∞'
 }
 
-/** Cyan for positive, warm red for negative; intensity scales with |v|/maxAbs. */
+/** Cyan for positive, warm red for negative; intensity scales with |v|/maxAbs.
+ *  Text color follows the theme (var(--color-ink)) so cells stay readable in
+ *  light mode, where pale cyan tints would wash out near-white digits. */
 function heatStyle(v: number, maxAbs: number): { backgroundColor: string; color: string } {
-  if (!Number.isFinite(v)) return { backgroundColor: 'rgba(139, 149, 168, 0.08)', color: '#8b95a8' }
+  if (!Number.isFinite(v)) return { backgroundColor: 'color-mix(in srgb, var(--color-ink-muted) 8%, transparent)', color: 'var(--color-ink-muted)' }
   const a = maxAbs > 0 ? Math.min(1, Math.abs(v) / maxAbs) : 0
   const alpha = 0.1 + a * 0.72
   const rgb = v >= 0 ? '34, 211, 238' : '248, 113, 113'
-  return { backgroundColor: `rgba(${rgb}, ${alpha.toFixed(3)})`, color: a > 0.62 ? '#0a0e1a' : '#e6ebf4' }
+  return { backgroundColor: `rgba(${rgb}, ${alpha.toFixed(3)})`, color: a > 0.62 ? '#0a0e1a' : 'var(--color-ink)' }
 }
 
 /** Accessible heatmap table: every cell shows its number (never color alone). */
@@ -93,6 +96,7 @@ function RowBars({
   selRow: number
   label: string
 }) {
+  const reduced = useReducedMotion()
   const sum = weights.reduce((a, b) => a + b, 0)
   return (
     <div className="mt-3" role="group" aria-label={label}>
@@ -103,10 +107,12 @@ function RowBars({
             <span className={`w-16 shrink-0 truncate text-right font-mono ${j === selRow ? 'text-accent' : 'text-ink'}`}>
               {tokens[j]}
             </span>
-            <span className="relative h-3.5 flex-1 rounded bg-surface-raised">
-              <span
+            <span className="relative h-3.5 flex-1 overflow-hidden rounded bg-surface-raised">
+              <motion.span
                 className={`absolute inset-y-0 left-0 rounded ${j === selRow ? 'bg-primary-bright' : 'bg-accent'}`}
-                style={{ width: `${w * 100}%` }}
+                initial={false}
+                animate={{ width: `${w * 100}%` }}
+                transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 180, damping: 26 }}
               />
             </span>
             <span className="w-12 shrink-0 font-mono text-ink-muted">{w.toFixed(2)}</span>
@@ -158,7 +164,7 @@ export function AttentionPlayground() {
   return (
     <WidgetFrame
       title="Attention playground"
-      subtitle="Real scaled dot-product attention on toy 4-dim embeddings — every matrix computed live in your browser."
+      subtitle="Real scaled dot-product attention on toy 4-dim embeddings, every matrix computed live in your browser."
     >
       {/* Sentence picker */}
       <div className="flex flex-wrap gap-2" role="group" aria-label="Choose a sentence">
@@ -201,6 +207,7 @@ export function AttentionPlayground() {
         ))}
       </div>
 
+      <FadeSwitch activeKey={tab}>
       {tab === 'Single head' ? (
         <>
           {/* Stage stepper */}
@@ -228,7 +235,8 @@ export function AttentionPlayground() {
             </span>
           </div>
 
-          <div className="mt-4 rounded-lg border border-border bg-surface-raised/30 p-4">
+          <div className="mt-4 rounded-lg border border-border bg-surface-raised/30 p-4" aria-live="polite">
+            <FadeSwitch activeKey={stage}>
             {stage === 0 && (
               <div>
                 <p className="text-sm text-ink/85">
@@ -298,7 +306,7 @@ export function AttentionPlayground() {
                 <p className="text-sm text-ink/85">
                   A decoder may not look at the future: position j &gt; i gets{' '}
                   <span className="font-mono text-danger">−∞</span> before softmax, so its weight
-                  becomes exactly 0. In real code the mask is applied <em>before</em> softmax — we
+                  becomes exactly 0. In real code the mask is applied <em>before</em> softmax, we
                   show it separately to build intuition.
                 </p>
                 <div className="mt-3">
@@ -322,11 +330,12 @@ export function AttentionPlayground() {
                   <Matrix values={masked.outputs} tokens={seqs} selRow={selRow} caption="Attention output vectors (weighted sums of values)" />
                 </div>
                 <p className="mt-3 text-[11px] text-ink-muted">
-                  Each row is now a context-aware vector — "{seqs[selRow]}" has absorbed information
+                  Each row is now a context-aware vector, "{seqs[selRow]}" has absorbed information
                   from the tokens it attends to.
                 </p>
               </div>
             )}
+            </FadeSwitch>
           </div>
         </>
       ) : (
@@ -334,7 +343,7 @@ export function AttentionPlayground() {
           <p className="text-sm text-ink/85">
             Real transformers run <span className="font-medium text-ink">h</span> attention heads in
             parallel, each with its own W_Q, W_K, W_V. Below: {N_HEADS} heads over the same sentence
-            (same seed per head) — each learns a different notion of "what to attend to".
+            (same seed per head), each learns a different notion of "what to attend to".
           </p>
           <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Select a head to inspect">
             {heads.map((_, h) => (
@@ -371,6 +380,7 @@ export function AttentionPlayground() {
           />
         </div>
       )}
+      </FadeSwitch>
 
       <p className="mt-4 text-[11px] leading-5 text-ink-muted">
         Toy setup: {D_MODEL}-dim embeddings, {D_HEAD}-dim heads, deterministic seeded projections from{' '}

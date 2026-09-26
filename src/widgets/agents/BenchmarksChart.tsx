@@ -1,5 +1,5 @@
 /**
- * BenchmarksChart — grouped bar chart of real, published benchmark scores
+ * BenchmarksChart, grouped bar chart of real, published benchmark scores
  * (GPT-4 Technical Report, arXiv:2303.08774): GPT-3.5 vs GPT-4 on MMLU,
  * GSM8K, and HumanEval. Includes a plain <table> fallback for accessibility.
  */
@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { useChartTheme } from '../../lib/chartTheme'
 
 const DATA = [
   { benchmark: 'MMLU (knowledge)', 'GPT-3.5': 70.0, 'GPT-4': 86.4 },
@@ -21,27 +22,28 @@ const DATA = [
 ]
 
 export function BenchmarksChart() {
+  const pal = useChartTheme()
   return (
     <div className="space-y-3">
       <div role="img" aria-label="Bar chart of published benchmark scores: GPT-3.5 vs GPT-4 on MMLU (70.0 vs 86.4), GSM8K (57.1 vs 92.0), and HumanEval (48.1 vs 67.0). Higher is better.">
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={DATA} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#253048" />
-            <XAxis dataKey="benchmark" tick={{ fill: '#8b95a8', fontSize: 11 }} stroke="#3f5478" />
-            <YAxis domain={[0, 100]} tick={{ fill: '#8b95a8', fontSize: 11 }} stroke="#3f5478" unit="%" />
+            <CartesianGrid strokeDasharray="3 3" stroke={pal.grid} />
+            <XAxis dataKey="benchmark" tick={{ fill: pal.tick, fontSize: 11 }} stroke={pal.axis} />
+            <YAxis domain={[0, 100]} tick={{ fill: pal.tick, fontSize: 11 }} stroke={pal.axis} unit="%" />
             <Tooltip
               cursor={{ fill: 'rgba(99, 102, 241, 0.08)' }}
               contentStyle={{
-                background: '#111827',
-                border: '1px solid #253048',
+                background: pal.tooltipBg,
+                border: `1px solid ${pal.tooltipBorder}`,
                 borderRadius: 8,
-                color: '#e6ebf4',
+                color: pal.tooltipText,
                 fontSize: 12,
               }}
             />
-            <Legend wrapperStyle={{ color: '#8b95a8', fontSize: 12 }} />
-            <Bar dataKey="GPT-3.5" fill="#6366f1" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="GPT-4" fill="#22d3ee" radius={[4, 4, 0, 0]} />
+            <Legend wrapperStyle={{ color: pal.tick, fontSize: 12 }} />
+            <Bar dataKey="GPT-3.5" fill={pal.primary} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="GPT-4" fill={pal.accent} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -76,7 +78,7 @@ export function BenchmarksChart() {
           GPT-4 Technical Report
         </a>{' '}
         (MMLU 5-shot; GSM8K 5-shot CoT; HumanEval zero-shot). Same evaluation protocol, one
-        generation apart — this is what "benchmark jump" looked like in 2023.
+        generation apart, this is what "benchmark jump" looked like in 2023.
       </p>
     </div>
   )

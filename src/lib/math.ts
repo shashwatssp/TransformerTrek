@@ -31,7 +31,7 @@ export function matVec(m: number[][], v: number[]): number[] {
   return m.map((row) => dot(row, v))
 }
 
-/** Deterministic seeded RNG (mulberry32) — reproducible widget demos */
+/** Deterministic seeded RNG (mulberry32), reproducible widget demos */
 export function seededRandom(seed: number): () => number {
   let a = seed >>> 0
   return () => {

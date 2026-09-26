@@ -1,9 +1,9 @@
 /**
- * TrainingLoopViz — an animated, fully client-side simulated training run.
+ * TrainingLoopViz, an animated, fully client-side simulated training run.
  *
  * Left panel:  loss vs step, following a stylized power-law descent
  *              (the shape real pretraining runs show) + seeded noise.
- * Right panel: the learning-rate schedule — genuinely computed warmup +
+ * Right panel: the learning-rate schedule, genuinely computed warmup +
  *              cosine decay from the slider inputs.
  *
  * Every displayed number is computed in the browser. The RNG is seeded
@@ -12,6 +12,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Slider } from '../../components/ui'
 import { gaussian, seededRandom } from '../../lib/math'
+import { useChartTheme } from '../../lib/chartTheme'
 
 const TOTAL = 1200 // simulated optimizer steps
 const TOK_PER_STEP = 1_000_000 // 1M tokens per step
@@ -31,11 +32,6 @@ const MIN_LR_RATIO = 0.05
 const W = 340
 const H = 170
 const PAD = 34
-
-const C_ACCENT = '#22d3ee'
-const C_HIGHLIGHT = '#f59e0b'
-const C_GHOST = '#253048'
-const C_MUTED = '#8b95a8'
 
 function lrSchedule(t: number, peak: number, warmup: number): number {
   if (t <= warmup) return peak * (t / warmup)
@@ -62,12 +58,13 @@ function ChartCard({
   ariaLabel: string
   children: React.ReactNode
 }) {
+  const pal = useChartTheme()
   return (
     <div className="rounded-lg border border-border bg-surface-raised/40 p-3">
       <div className="mb-1 text-xs font-medium text-ink-muted">{title}</div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={ariaLabel}>
         {/* plot frame */}
-        <rect x={PAD} y={PAD} width={W - 2 * PAD} height={H - 2 * PAD} fill="none" stroke={C_GHOST} strokeWidth={1} />
+        <rect x={PAD} y={PAD} width={W - 2 * PAD} height={H - 2 * PAD} fill="none" stroke={pal.ghost} strokeWidth={1} />
         {children}
       </svg>
     </div>
@@ -75,6 +72,7 @@ function ChartCard({
 }
 
 export default function TrainingLoopViz() {
+  const pal = useChartTheme()
   const [warmupFrac, setWarmupFrac] = useState(0.06)
   const [logPeak, setLogPeak] = useState(-3.5) // peak LR = 10^logPeak
   const [cur, setCur] = useState(0)
@@ -131,16 +129,16 @@ export default function TrainingLoopViz() {
           title="Loss vs step (simulated)"
           ariaLabel={`Simulated training loss over ${TOTAL} steps. Current step ${cur}, loss ${curLoss.toFixed(3)}.`}
         >
-          <path d={pathOf(fullLoss, TOTAL, yMin, yMax)} fill="none" stroke={C_GHOST} strokeWidth={1.5} />
-          <path d={pathOf(seenLoss, TOTAL, yMin, yMax)} fill="none" stroke={C_ACCENT} strokeWidth={2} />
-          <circle cx={lossX(cur)} cy={lossY(curLoss)} r={4} fill={C_ACCENT} />
-          <text x={PAD + 4} y={PAD + 12} fontSize={10} fill={C_MUTED} fontFamily="monospace">
+          <path d={pathOf(fullLoss, TOTAL, yMin, yMax)} fill="none" stroke={pal.ghost} strokeWidth={1.5} />
+          <path d={pathOf(seenLoss, TOTAL, yMin, yMax)} fill="none" stroke={pal.accent} strokeWidth={2} />
+          <circle cx={lossX(cur)} cy={lossY(curLoss)} r={4} fill={pal.accent} />
+          <text x={PAD + 4} y={PAD + 12} fontSize={10} fill={pal.muted} fontFamily="monospace">
             {yMax.toFixed(1)}
           </text>
-          <text x={PAD + 4} y={H - PAD - 4} fontSize={10} fill={C_MUTED} fontFamily="monospace">
+          <text x={PAD + 4} y={H - PAD - 4} fontSize={10} fill={pal.muted} fontFamily="monospace">
             {yMin.toFixed(1)}
           </text>
-          <text x={W - PAD - 4} y={H - 8} fontSize={10} fill={C_MUTED} textAnchor="end">
+          <text x={W - PAD - 4} y={H - 8} fontSize={10} fill={pal.muted} textAnchor="end">
             step {TOTAL} →
           </text>
         </ChartCard>
@@ -149,22 +147,22 @@ export default function TrainingLoopViz() {
           title="Learning rate vs step (computed)"
           ariaLabel={`Learning-rate schedule over ${TOTAL} steps: linear warmup for ${warmup} steps, then cosine decay. Current LR ${curLr.toExponential(2)}.`}
         >
-          <path d={pathOf(fullLr, TOTAL, 0, yTop)} fill="none" stroke={C_GHOST} strokeWidth={1.5} />
-          <path d={pathOf(seenLr, TOTAL, 0, yTop)} fill="none" stroke={C_HIGHLIGHT} strokeWidth={2} />
-          <circle cx={lossX(cur)} cy={lrY(curLr)} r={4} fill={C_HIGHLIGHT} />
-          <text x={PAD + 4} y={PAD + 12} fontSize={10} fill={C_MUTED} fontFamily="monospace">
+          <path d={pathOf(fullLr, TOTAL, 0, yTop)} fill="none" stroke={pal.ghost} strokeWidth={1.5} />
+          <path d={pathOf(seenLr, TOTAL, 0, yTop)} fill="none" stroke={pal.highlight} strokeWidth={2} />
+          <circle cx={lossX(cur)} cy={lrY(curLr)} r={4} fill={pal.highlight} />
+          <text x={PAD + 4} y={PAD + 12} fontSize={10} fill={pal.muted} fontFamily="monospace">
             peak {peak.toExponential(1)}
           </text>
-          <text x={PAD + 4} y={H - PAD - 4} fontSize={10} fill={C_MUTED} fontFamily="monospace">
+          <text x={PAD + 4} y={H - PAD - 4} fontSize={10} fill={pal.muted} fontFamily="monospace">
             0
           </text>
-          <text x={W - PAD - 4} y={H - 8} fontSize={10} fill={C_MUTED} textAnchor="end">
+          <text x={W - PAD - 4} y={H - 8} fontSize={10} fill={pal.muted} textAnchor="end">
             step {TOTAL} →
           </text>
         </ChartCard>
       </div>
 
-      {/* Live readouts — also the accessible summary of the animated state */}
+      {/* Live readouts, also the accessible summary of the animated state */}
       <p aria-live="polite" className="text-sm text-ink/85">
         Step <span className="font-mono text-accent">{cur}</span> · LR{' '}
         <span className="font-mono text-highlight">{curLr.toExponential(2)}</span> · loss{' '}
@@ -231,9 +229,9 @@ export default function TrainingLoopViz() {
 
       <p className="text-xs text-ink-muted">
         Simulated run: loss follows L(t) = L∞ + (L₀−L∞)·(1+t/τ)<sup>−α</sup> + ε with L∞=2.55, L₀=8.8, τ=90, α=0.62 and
-        seeded Gaussian noise ε — the power-law shape real runs show. The LR panel is the exact schedule computed from
+        seeded Gaussian noise ε, the power-law shape real runs show. The LR panel is the exact schedule computed from
         your sliders: linear warmup, then cosine decay to {Math.round(MIN_LR_RATIO * 100)}% of peak. At {TOTAL} steps ×
-        1M tokens/step this run sees {(TOTAL * TOK_PER_STEP) / 1e9}B tokens on a {PARAMS / 1e6}M-parameter model — a
+        1M tokens/step this run sees {(TOTAL * TOK_PER_STEP) / 1e9}B tokens on a {PARAMS / 1e6}M-parameter model, a
         tokens-per-parameter ratio of {((TOTAL * TOK_PER_STEP) / PARAMS).toFixed(1)}.
       </p>
     </div>

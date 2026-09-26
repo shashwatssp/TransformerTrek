@@ -1,7 +1,7 @@
 /**
- * HybridFusion — two live rankers over one tiny corpus:
- *  · BM25 (real, from src/lib/bm25.ts) — loves exact keyword repetition
- *  · a toy concept-embedder (honest stand-in for dense retrieval) — loves
+ * HybridFusion, two live rankers over one tiny corpus:
+ *  · BM25 (real, from src/lib/bm25.ts), loves exact keyword repetition
+ *  · a toy concept-embedder (honest stand-in for dense retrieval), loves
  *    meaning-level overlap via a visible concept table
  * Their ranks disagree; reciprocal rank fusion merges them live, with the
  * 1/(k + rank) arithmetic shown per document as the animation reveals it.
@@ -49,7 +49,7 @@ const DOCS: Doc[] = [
   },
 ]
 
-/** The toy model's whole "semantic knowledge" — a visible concept table. */
+/** The toy model's whole "semantic knowledge", a visible concept table. */
 const CONCEPTS: Record<string, string> = {
   forgot: 'auth', forgotten: 'auth', login: 'auth', logins: 'auth', password: 'auth',
   passwords: 'auth', sign: 'auth', cannot: 'auth', authentication: 'auth',
@@ -74,7 +74,7 @@ function wordVec(word: string): number[] {
 
 /**
  * Toy dense embedding: each token contributes its concept vector plus half its
- * own word vector — same-concept tokens point the same way, word noise keeps
+ * own word vector, same-concept tokens point the same way, word noise keeps
  * documents distinguishable. NOT a real semantic model; labeled as such in UI.
  */
 function conceptEmbed(text: string): number[] {
@@ -107,20 +107,20 @@ export default function HybridFusion() {
   const [reveal, setReveal] = useState(0)
   const [playing, setPlaying] = useState(false)
 
-  // BM25 ranks — real scoring
+  // BM25 ranks, real scoring
   const index = useMemo(() => buildIndex(DOCS), [])
   const bm25 = useMemo(() => scoreAll(index, QUERY, 1.2, 0.75), [index])
   const bm25Score = useMemo(() => new Map(bm25.map((r) => [r.doc.id, r.score])), [bm25])
   const bm25Rank = useMemo(() => ranksOf(DOCS.map((d) => d.id), (id) => bm25Score.get(id) ?? 0), [bm25Score])
 
-  // Dense ranks — toy concept model
+  // Dense ranks, toy concept model
   const denseScore = useMemo(() => {
     const q = conceptEmbed(QUERY)
     return new Map(DOCS.map((d) => [d.id, cosineSimilarity(q, conceptEmbed(`${d.title} ${d.text}`))]))
   }, [])
   const denseRank = useMemo(() => ranksOf(DOCS.map((d) => d.id), (id) => denseScore.get(id) ?? 0), [denseScore])
 
-  // Reciprocal rank fusion — live from the two rank lists
+  // Reciprocal rank fusion, live from the two rank lists
   const fused = useMemo(
     () =>
       DOCS.map((d) => ({
@@ -148,7 +148,7 @@ export default function HybridFusion() {
   return (
     <div className="space-y-4 text-sm">
       <p className="text-xs text-ink-muted">
-        Query: <span className="font-mono text-ink">“{QUERY}”</span> — BM25 ranks keyword hits; the toy
+        Query: <span className="font-mono text-ink">“{QUERY}”</span>, BM25 ranks keyword hits; the toy
         dense model ranks concept overlap. Hover any doc to see why.
       </p>
 
@@ -165,7 +165,7 @@ export default function HybridFusion() {
           ))}
           <p className="mt-2 text-[11px] text-ink-muted">
             “Password policy” wins on raw keyword count; the actual fix doc “Sign-in troubleshooting”
-            barely places — BM25 can’t see that <em>login</em> ≈ <em>sign in</em> ≈ <em>authentication</em>.
+            barely places, BM25 can’t see that <em>login</em> ≈ <em>sign in</em> ≈ <em>authentication</em>.
           </p>
         </div>
         <div className="rounded-lg border border-border bg-surface p-3">
@@ -223,7 +223,7 @@ export default function HybridFusion() {
           </button>
         </div>
         <div className="min-w-[220px] flex-1">
-          <Slider label="k — rank dampener (paper default 60)" value={k} min={0} max={100} step={1} onChange={setK} format={(v) => String(v)} />
+          <Slider label="k, rank dampener (paper default 60)" value={k} min={0} max={100} step={1} onChange={setK} format={(v) => String(v)} />
         </div>
       </div>
 
@@ -232,7 +232,7 @@ export default function HybridFusion() {
         <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">
           RRF score = 1/(k + rank<sub>bm25</sub>) + 1/(k + rank<sub>dense</sub>)
         </div>
-        {reveal === 0 && <p className="text-xs text-ink-muted">Press Fuse — documents appear in fused order, best first.</p>}
+        {reveal === 0 && <p className="text-xs text-ink-muted">Press Fuse, documents appear in fused order, best first.</p>}
         <div className="space-y-1.5">
           {shown.map((f) => (
             <div key={f.doc.id} className="rounded-md border border-border bg-surface p-2">
@@ -257,7 +257,7 @@ export default function HybridFusion() {
           <p className="mt-2 text-xs text-ink/85">
             Fusion lifted <span className="font-mono text-accent">d1</span> (Sign-in troubleshooting) above{' '}
             <span className="font-mono text-accent">d5</span> (Password policy): BM25 over-trusted keyword
-            frequency, dense caught the intent — RRF lets both be partially right. Try k → 0: top ranks
+            frequency, dense caught the intent, RRF lets both be partially right. Try k → 0: top ranks
             dominate; k → 100: the lists blur together.
           </p>
         )}

@@ -1,5 +1,5 @@
 /**
- * PostTrainingPipeline — interactive stage diagram of post-training:
+ * PostTrainingPipeline, interactive stage diagram of post-training:
  * Base model → SFT → Reward model → RL optimization → RLVR (reasoning).
  *
  * Stages are selectable buttons (keyboard-operable, aria-pressed); selecting a
@@ -26,7 +26,7 @@ export const DEFAULT_STAGES: PipelineStage[] = [
     title: 'Base model',
     tag: 'pretrained',
     data: 'Trillions of web tokens (next-token pretraining).',
-    trained: 'Nothing — this is the frozen starting point.',
+    trained: 'Nothing, this is the frozen starting point.',
     output: 'A model that completes text brilliantly but ignores instructions.',
   },
   {
@@ -51,7 +51,7 @@ export const DEFAULT_STAGES: PipelineStage[] = [
     tag: 'PPO / DPO / GRPO',
     data: "Prompts; the policy's own sampled responses, scored by the RM (or the preference pairs directly, for DPO).",
     trained: 'The policy (all weights or LoRA adapters), usually with a KL leash to the SFT model.',
-    output: 'An aligned assistant tuned to what humans preferred — the InstructGPT recipe.',
+    output: 'An aligned assistant tuned to what humans preferred, the InstructGPT recipe.',
   },
   {
     id: 'rlvr',
@@ -108,7 +108,7 @@ export default function PostTrainingPipeline({
 
       <div className="rounded-lg border border-border bg-surface-raised/40 p-4" aria-live="polite">
         <h4 className="text-sm font-semibold text-accent">
-          Stage {active + 1} — {stage.title}
+          Stage {active + 1}, {stage.title}
         </h4>
         <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
           <div>

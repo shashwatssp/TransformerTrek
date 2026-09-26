@@ -18,47 +18,47 @@ const BLOCK_SNIPPET = `def block(x):                          # x: (seq_len, d_m
 # stack N of these, then a final layer_norm → unembedding`
 
 /**
- * Module 2.5 — Transformer Architecture
+ * Module 2.5: Transformer Architecture
  */
 export default function Architecture() {
   return (
     <>
-      {/* Step 1 — The big picture: blocks in a stack */}
+      {/* Step 1: The big picture: blocks in a stack */}
       <Prose>
-        <H2>Step 1 — The big picture: blocks in a stack</H2>
+        <H2>Step 1: The big picture: blocks in a stack</H2>
         <p>
           <ModuleLink id="attention">Module 2.4</ModuleLink> built attention as a mechanism. This
           module shows where it <em>lives</em>: inside a repeating block, stacked N times, between
           an embedding table and an output head. The full pipeline of a GPT-class model:
         </p>
         <ul className="list-disc space-y-1 pl-6">
-          <li><strong>Embed</strong> — token IDs become vectors (<ModuleLink id="tokenization-embeddings">Module 2.3</ModuleLink>).</li>
-          <li><strong>N identical blocks</strong> — each block is attention + an MLP, wrapped in residual connections.</li>
-          <li><strong>Unembed</strong> — the last position's vector is projected to vocab size and softmaxed into next-token probabilities.</li>
+          <li><strong>Embed</strong>, token IDs become vectors (<ModuleLink id="tokenization-embeddings">Module 2.3</ModuleLink>).</li>
+          <li><strong>N identical blocks</strong>, each block is attention + an MLP, wrapped in residual connections.</li>
+          <li><strong>Unembed</strong>, the last position's vector is projected to vocab size and softmaxed into next-token probabilities.</li>
         </ul>
         <p>
-          That's the entire model — no recursion, no loops, no explicit rules. Watch the same six
+          That's the entire model, no recursion, no loops, no explicit rules. Watch the same six
           tokens travel through a two-block mini version below (press Play, or step manually; the
           final stage computes real softmax probabilities).
         </p>
       </Prose>
       <ArchitectureFlow />
 
-      {/* Step 2 — Inside a block: attention + MLP */}
+      {/* Step 2: Inside a block: attention + MLP */}
       <Prose>
-        <H2>Step 2 — Inside a block: attention + MLP</H2>
+        <H2>Step 2: Inside a block: attention + MLP</H2>
         <p>
           Expand any block in the flow above and you'll see its two halves. They do different
           jobs:
         </p>
         <ul className="list-disc space-y-1 pl-6">
           <li>
-            <strong>Multi-head self-attention</strong> — the <em>communication</em> step: tokens
+            <strong>Multi-head self-attention</strong>, the <em>communication</em> step: tokens
             look at each other and mix information across positions. Without it, each position is
             an isolated island.
           </li>
           <li>
-            <strong>MLP (feed-forward)</strong> — the <em>computation</em> step: each position's
+            <strong>MLP (feed-forward)</strong>, the <em>computation</em> step: each position's
             vector is processed independently, expanded to ~4× its size, passed through a
             non-linearity (GELU), and projected back. Roughly two-thirds of a transformer's
             parameters live in these MLPs, and much of a model's factual "memory" is believed to
@@ -67,36 +67,36 @@ export default function Architecture() {
         </ul>
         <p>
           A useful mental model: attention decides <em>what</em> information each position pulls
-          in; the MLP decides <em>what to do with it</em>. Communicate, then compute — repeat N
+          in; the MLP decides <em>what to do with it</em>. Communicate, then compute, repeat N
           times. The <a href="https://nlp.seas.harvard.edu/annotated-transformer/" target="_blank" rel="noopener noreferrer">Annotated Transformer</a>{' '}
           implements exactly this in executable PyTorch, line by line.
         </p>
 
-        {/* Step 3 — Residual connections and LayerNorm */}
-        <H2>Step 3 — Residual connections and LayerNorm</H2>
+        {/* Step 3: Residual connections and LayerNorm */}
+        <H2>Step 3: Residual connections and LayerNorm</H2>
         <p>
           Two unglamorous details make deep stacks trainable at all. <strong>Residual
           connections</strong> add each sub-layer's output to its input instead of replacing it:
         </p>
         <CodeBlock language="python" filename="transformer_block.py" code={BLOCK_SNIPPET} />
         <p>
-          The addition creates an unobstructed path from the output back to the input — gradients
+          The addition creates an unobstructed path from the output back to the input, gradients
           can flow through hundreds of blocks without vanishing, and any block that isn't yet
           useful can learn to output ~0 and stay out of the way. <strong>LayerNorm</strong>
           rescales each token's vector to a standard range before each sub-layer, keeping the
           numbers well-conditioned (this "pre-norm" arrangement is what modern models use; the
-          2017 paper put it after the sub-layer, which trains less stably — one of several quiet
+          2017 paper put it after the sub-layer, which trains less stably, one of several quiet
           changes between <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">the original transformer</a> and GPT-2-style models).
         </p>
         <Callout kind="math" title="Read the code like a novel">
-          <span className="font-mono">x = x + attention(norm(x))</span> — "compute attention on a
+          <span className="font-mono">x = x + attention(norm(x))</span>, "compute attention on a
           normalized copy, then stir it into the running stream." Every sub-layer in every
           transformer follows this shape; the residual stream is the model's version of working
           memory.
         </Callout>
 
-        {/* Step 4 — Encoder vs decoder vs decoder-only */}
-        <H2>Step 4 — Encoder vs decoder vs decoder-only</H2>
+        {/* Step 4: Encoder vs decoder vs decoder-only */}
+        <H2>Step 4: Encoder vs decoder vs decoder-only</H2>
         <p>
           The 2017 paper had two towers: an encoder that reads the input (bidirectional
           attention) and a decoder that writes the output (masked attention, peeking back at the
@@ -113,8 +113,8 @@ export default function Architecture() {
             {
               label: 'Attention mask',
               values: {
-                enc: 'Bidirectional — every token sees the whole input',
-                dec: 'Causal — token i sees only positions ≤ i',
+                enc: 'Bidirectional, every token sees the whole input',
+                dec: 'Causal, token i sees only positions ≤ i',
                 encdec: 'Bidirectional in the encoder; causal (plus cross-attention) in the decoder',
               },
             },
@@ -130,7 +130,7 @@ export default function Architecture() {
               label: 'Best at',
               values: {
                 enc: 'Understanding: classification, embeddings, search',
-                dec: 'Generation — the LLM shape',
+                dec: 'Generation, the LLM shape',
                 encdec: 'Transduction: translation, summarizing long inputs',
               },
             },

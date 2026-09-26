@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Button, Slider, WidgetFrame } from '../../components/ui'
 import { sampleFrom, seededRandom, softmax, topK, topP } from '../../lib/math'
 
@@ -69,6 +70,7 @@ export function NextTokenSampler({
   const [p, setP] = useState(0.9)
   const [seed, setSeed] = useState(1)
   const [sampledIdx, setSampledIdx] = useState<number | null>(null)
+  const reduced = useReducedMotion()
 
   const preset = presets[presetIdx]
   const n = preset.candidates.length
@@ -179,9 +181,19 @@ export function NextTokenSampler({
               const cutByP = !nucleus.has(i)
               const cut = cutByK || cutByP
               return (
-                <tr key={c.token} className="border-t border-border/60">
+                <tr key={c.token} className={`border-t border-border/60 transition-colors ${sampledIdx === i ? 'bg-highlight/10' : ''}`}>
                   <td className="py-1.5 pr-2 font-mono text-ink">
-                    {sampledIdx === i && <span aria-hidden className="mr-1 text-highlight">▶</span>}
+                    {sampledIdx === i && (
+                      <motion.span
+                        aria-hidden
+                        initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+                        className="mr-1 inline-block text-highlight"
+                      >
+                        ▶
+                      </motion.span>
+                    )}
                     {argmaxIdx === i && <span aria-hidden className="mr-1 text-success" title="greedy pick (argmax)">★</span>}
                     {c.token}
                   </td>
@@ -189,10 +201,12 @@ export function NextTokenSampler({
                   <td className="py-1.5 pr-2 font-mono text-ink-muted">{pct(probs[i])}</td>
                   <td className={`py-1.5 pr-2 font-mono ${cut ? 'text-ink-muted line-through' : 'text-accent'}`}>{pct(final[i])}</td>
                   <td className="py-1.5">
-                    <div className="relative h-4 w-full max-w-[240px] rounded bg-surface-raised">
-                      <div
+                    <div className="relative h-4 w-full max-w-[240px] overflow-hidden rounded bg-surface-raised">
+                      <motion.div
                         className={`h-full rounded ${cut ? 'bg-border' : 'bg-accent'}`}
-                        style={{ width: `${Math.max(final[i] * 100, final[i] > 0 ? 2 : 0)}%` }}
+                        initial={false}
+                        animate={{ width: `${Math.max(final[i] * 100, final[i] > 0 ? 2 : 0)}%` }}
+                        transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 170, damping: 26 }}
                       />
                     </div>
                     {cut && (
@@ -216,7 +230,18 @@ export function NextTokenSampler({
             {sampledIdx === null ? (
               <>Draw one token from the final distribution (seeded, reproducible per click).</>
             ) : (
-              <>Sampled:<span className="ml-1 rounded bg-highlight/15 px-2 py-0.5 font-mono text-highlight">{preset.candidates[sampledIdx].token}</span></>
+              <>
+                Sampled:
+                <motion.span
+                  key={sampledIdx}
+                  initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+                  className="ml-1 inline-block rounded bg-highlight/15 px-2 py-0.5 font-mono text-highlight"
+                >
+                  {preset.candidates[sampledIdx].token}
+                </motion.span>
+              </>
             )}
           </p>
         </div>

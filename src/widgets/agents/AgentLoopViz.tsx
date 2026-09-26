@@ -1,5 +1,5 @@
 /**
- * AgentLoopViz — animates the agent loop (perceive → reason → act → observe)
+ * AgentLoopViz, animates the agent loop (perceive → reason → act → observe)
  * over a scripted two-iteration scenario. Every trace line is real content,
  * controls are keyboard-operable, and state changes are announced politely.
  */
@@ -14,15 +14,15 @@ type Iteration = Record<Phase, string>
 const ITERATIONS: Iteration[] = [
   {
     Perceive: 'Read the user request: "What is the weather in Tokyo right now?"',
-    Reason: 'No weather data in my context — I cannot know this unaided. A tool exists: get_weather. Plan: call it with city="Tokyo".',
+    Reason: 'No weather data in my context, I cannot know this unaided. A tool exists: get_weather. Plan: call it with city="Tokyo".',
     Act: 'Call get_weather(city="Tokyo")',
-    Observe: 'Tool returned: { "temp_c": 22, "condition": "sunny" } — now in context.',
+    Observe: 'Tool returned: { "temp_c": 22, "condition": "sunny" }, now in context.',
   },
   {
     Perceive: 'The tool result is now in my context window.',
     Reason: 'I have everything needed to answer. No further tool calls required.',
     Act: 'Compose and send the final reply: "Tokyo is 22°C and sunny."',
-    Observe: 'User received the answer — goal met, loop terminates.',
+    Observe: 'User received the answer, goal met, loop terminates.',
   },
 ]
 
@@ -42,9 +42,10 @@ const PHASE_HINTS: Record<Phase, string> = {
 export function AgentLoopViz() {
   const [tick, setTick] = useState(0)
   const [running, setRunning] = useState(false)
-  const [speed, setSpeed] = useState(2) // 1..5
+  const [speed, setSpeed] = useState(2) // 0.5..5, 0.5 steps
 
-  const intervalMs = useMemo(() => 1800 - speed * 300, [speed]) // 1500..300ms
+  // 0.5× = 4.8s per phase (easy to follow) … 5× = 0.48s (quick skim)
+  const intervalMs = useMemo(() => 2400 / speed, [speed])
 
   const atEnd = tick >= FLAT.length - 1
 
@@ -119,7 +120,7 @@ export function AgentLoopViz() {
           })}
         </div>
         <p aria-hidden className="mt-2 text-center text-[11px] text-ink-muted">
-          ⟲ observe feeds back into perceive — the loop repeats until the goal is met
+          ⟲ observe feeds back into perceive, the loop repeats until the goal is met
         </p>
       </div>
 
@@ -147,7 +148,7 @@ export function AgentLoopViz() {
               className={`rounded border px-2.5 py-1.5 text-xs ${i === 0 ? 'border-accent/40 bg-accent/5 text-ink' : 'border-border text-ink-muted'}`}
             >
               <span className="mr-2 font-mono text-[10px]">t{s.iter}.{s.phase[0]}</span>
-              <span className="font-medium">{s.phase}</span> — {s.text}
+              <span className="font-medium">{s.phase}</span>, {s.text}
             </li>
           ))}
         </ol>
@@ -182,9 +183,9 @@ export function AgentLoopViz() {
           <Slider
             label="Speed"
             value={speed}
-            min={1}
+            min={0.5}
             max={5}
-            step={1}
+            step={0.5}
             onChange={setSpeed}
             format={(v) => `${v}×`}
           />

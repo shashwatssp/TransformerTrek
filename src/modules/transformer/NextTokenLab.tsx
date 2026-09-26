@@ -24,36 +24,36 @@ def generate(prompt, n):
     return detokenize(tokens)`
 
 /**
- * Module 2.6 — Next-Token Prediction Lab
+ * Module 2.6: Next-Token Prediction Lab
  */
 export default function NextTokenLab() {
   return (
     <>
-      {/* Step 1 — Logits → probabilities review */}
+      {/* Step 1: Logits → probabilities review */}
       <Prose>
-        <H2>Step 1 — Logits → probabilities review</H2>
+        <H2>Step 1: Logits → probabilities review</H2>
         <p>
           Everything in this module operates on the last two steps of{' '}
           <ModuleLink id="what-is-an-llm">Module 1.1</ModuleLink>'s pipeline. The model emits{' '}
-          <strong>logits</strong> — one raw score per vocabulary entry, unbounded in range. The{' '}
+          <strong>logits</strong>, one raw score per vocabulary entry, unbounded in range. The{' '}
           <strong>softmax</strong> with temperature T turns them into probabilities:
           exponentiate each score divided by T, then normalize so the row sums to exactly 1.
         </p>
         <Callout kind="math" title="Why exponentiate?">
           exp() is always positive (probabilities can't be negative) and it's monotonic (bigger
-          logit → bigger probability). The division by the sum only <em>rescales</em> — the shape
+          logit → bigger probability). The division by the sum only <em>rescales</em>, the shape
           of the distribution comes from the relative gaps between logits. That's why a +1 nudge
           on one logit can reshuffle everything: softmax cares about ratios, not absolutes.
         </Callout>
         <p>
-          <ModuleLink id="how-llms-work">Module 1.2</ModuleLink> introduced the two knobs —
-          temperature and truncation — conceptually. This lab isolates each one so you can see
+          <ModuleLink id="how-llms-work">Module 1.2</ModuleLink> introduced the two knobs, 
+          temperature and truncation, conceptually. This lab isolates each one so you can see
           exactly what it does to the same underlying distribution, then assembles the full
           decode step.
         </p>
 
-        {/* Step 2 — Temperature in practice */}
-        <H2>Step 2 — Temperature in practice</H2>
+        {/* Step 2: Temperature in practice */}
+        <H2>Step 2: Temperature in practice</H2>
         <p>
           Temperature rescales logits <em>before</em> softmax: divide by T &lt; 1 and the gaps
           between logits grow (sharp); divide by T &gt; 1 and the gaps shrink (flat). Watch the
@@ -69,18 +69,18 @@ export default function NextTokenLab() {
       />
       <Prose>
         <Callout kind="warn" title="The T → 0 trap">
-          As T → 0, sampling approaches greedy argmax — deterministic, but prone to repetition
+          As T → 0, sampling approaches greedy argmax, deterministic, but prone to repetition
           loops. Production settings rarely go below ~0.2; "temperature 0" in APIs usually means
           "greedy" implemented with special-casing, not literally T = 0 (which would divide by
           zero).
         </Callout>
 
-        {/* Step 3 — Top-k: cut the tail */}
-        <H2>Step 3 — Top-k: cut the tail</H2>
+        {/* Step 3: Top-k: cut the tail */}
+        <H2>Step 3: Top-k: cut the tail</H2>
         <p>
           Truncation answers a different question than temperature. Temperature reshapes
           <em> all</em> candidates; truncation <em>deletes</em> the unlikely ones outright, then
-          renormalizes what survives. Top-k keeps a fixed number of candidates — drag the k
+          renormalizes what survives. Top-k keeps a fixed number of candidates, drag the k
           slider below and watch tokens get crossed out: a cut token's probability is
           redistributed proportionally, and it can never be sampled.
         </p>
@@ -97,8 +97,8 @@ export default function NextTokenLab() {
         showTopP={false}
       />
       <Prose>
-        {/* Step 4 — Top-p: the nucleus rule */}
-        <H2>Step 4 — Top-p: the nucleus rule</H2>
+        {/* Step 4: Top-p: the nucleus rule */}
+        <H2>Step 4: Top-p: the nucleus rule</H2>
         <p>
           Top-p (nucleus sampling, <a href="https://arxiv.org/abs/1904.09751" target="_blank" rel="noopener noreferrer">Holtzman et al., 2019</a>)
           replaces "keep k tokens" with "keep the smallest set whose probabilities sum to at
@@ -109,21 +109,21 @@ export default function NextTokenLab() {
           <li><strong>Torn distribution</strong> (five tokens near 15% each): p = 0.95 keeps all five.</li>
         </ul>
         <p>
-          Switch between the two prompts above the widget and watch the cut set change size —
+          Switch between the two prompts above the widget and watch the cut set change size, 
           that adaptivity, not any single magic number, is the idea. Try p = 0.05 (nearly
           greedy) versus p = 1 (no cut at all).
         </p>
       </Prose>
       <NextTokenSampler
         title="Full pipeline lab"
-        subtitle="Temperature + top-k + top-p — the complete pre-sampling pipeline."
+        subtitle="Temperature + top-k + top-p, the complete pre-sampling pipeline."
       />
 
-      {/* Step 5 — Putting it together: the decode loop */}
+      {/* Step 5: Putting it together: the decode loop */}
       <Prose>
-        <H2>Step 5 — Putting it together: the decode loop</H2>
+        <H2>Step 5: Putting it together: the decode loop</H2>
         <p>
-          The widget above is literally the function below — same order of operations, same
+          The widget above is literally the function below, same order of operations, same
           renormalization. This is the complete decode step of most LLM APIs you've used
           (compare <a href="https://huggingface.co/docs/transformers/generation_strategies" target="_blank" rel="noopener noreferrer">Hugging Face's generation strategies page</a>):
         </p>
@@ -131,7 +131,7 @@ export default function NextTokenLab() {
         <p>
           One full turn of an LLM = this decode step, repeated: forward pass → temperature →
           top-k → top-p → renormalize → sample → append. Nothing in the loop changes the model;
-          it only decides how the model's distribution gets <em>read</em> — which is why the
+          it only decides how the model's distribution gets <em>read</em>, which is why the
           same model can be a precise assistant at low temperature and a creative collaborator
           at high temperature. Where those weights come from is the story of the Training
           track; how they're used by systems that act is the story of the Agents track.
@@ -147,10 +147,10 @@ export default function NextTokenLab() {
 
       <KeyTakeaways
         points={[
-          'Softmax with temperature turns logits into probabilities; temperature only reshapes — it never re-ranks.',
-          'Top-k keeps a fixed candidate count; top-p keeps an adaptive set whose mass ≥ p — usually the better default.',
+          'Softmax with temperature turns logits into probabilities; temperature only reshapes, it never re-ranks.',
+          'Top-k keeps a fixed candidate count; top-p keeps an adaptive set whose mass ≥ p, usually the better default.',
           'Truncation deletes and renormalizes: cut tokens get zero probability and can never be sampled.',
-          'The full pipeline — T → top-k → top-p → renormalize → sample → append — is the entire decode loop of most LLM APIs.',
+          'The full pipeline, T → top-k → top-p → renormalize → sample → append, is the entire decode loop of most LLM APIs.',
           "Sampling knobs change how the model's distribution is read, not what the model believes.",
         ]}
       />

@@ -1,5 +1,5 @@
 /**
- * BM25Lab — a live BM25 workbench over a six-document astronomy corpus.
+ * BM25Lab, a live BM25 workbench over a six-document astronomy corpus.
  * Rankings, per-term breakdowns, and the TF-saturation curve all recompute
  * from the k1/b sliders using src/lib/bm25.ts (Lucene-style IDF).
  */
@@ -16,6 +16,7 @@ import {
 } from 'recharts'
 import { Slider } from '../../components/ui'
 import { buildIndex, idf, scoreAll, saturationCurve } from '../../lib/bm25'
+import { useChartTheme } from '../../lib/chartTheme'
 import { Pill } from './shared'
 
 type Doc = { id: string; title: string; text: string }
@@ -58,6 +59,7 @@ const PRESETS = ['neutron star', 'dense star core', 'black hole light', 'spinnin
 const CURVE_F_SAMPLES = [1, 3, 6, 12]
 
 export default function BM25Lab() {
+  const pal = useChartTheme()
   const [query, setQuery] = useState('neutron star')
   const [k1, setK1] = useState(1.2)
   const [b, setB] = useState(0.75)
@@ -104,8 +106,8 @@ export default function BM25Lab() {
 
       {/* Sliders */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <Slider label="k1 — term-frequency saturation" value={k1} min={0} max={2.5} step={0.05} onChange={setK1} />
-        <Slider label="b — length normalization" value={b} min={0} max={1} step={0.05} onChange={setB} />
+        <Slider label="k1, term-frequency saturation" value={k1} min={0} max={2.5} step={0.05} onChange={setK1} />
+        <Slider label="b, length normalization" value={b} min={0} max={1} step={0.05} onChange={setB} />
       </div>
 
       {/* Rankings */}
@@ -135,9 +137,10 @@ export default function BM25Lab() {
       {top && top.score > 0 && (
         <div className="rounded-lg border border-border bg-surface-raised/40 p-3">
           <div className="mb-2 text-xs font-semibold text-ink">
-            Why “{top.doc.title}” wins — per-term contributions
+            Why “{top.doc.title}” wins, per-term contributions
           </div>
-          <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
             <caption className="sr-only">BM25 term contributions for the top-ranked document</caption>
             <thead>
               <tr className="text-ink-muted">
@@ -159,28 +162,29 @@ export default function BM25Lab() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Saturation curve */}
       <div>
         <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">
-          Term-frequency saturation — the k1 knob, live
+          Term-frequency saturation, the k1 knob, live
         </div>
         <div role="img" aria-label={`Line chart of the BM25 term-frequency component for term frequency 0 to 12. Short documents (length 0.6 times average) start higher; long documents (1.8 times average) start lower. Both saturate toward k1 plus one, which is ${(k1 + 1).toFixed(2)} at the current k1.`}>
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={curve} margin={{ top: 8, right: 16, bottom: 4, left: -12 }}>
-              <CartesianGrid stroke="#253048" strokeDasharray="3 3" />
-              <XAxis dataKey="f" type="number" domain={[0, 12]} tick={{ fill: '#8b95a8', fontSize: 11 }} stroke="#253048" />
-              <YAxis domain={[0, k1 + 1]} tick={{ fill: '#8b95a8', fontSize: 11 }} stroke="#253048" />
+              <CartesianGrid stroke={pal.grid} strokeDasharray="3 3" />
+              <XAxis dataKey="f" type="number" domain={[0, 12]} tick={{ fill: pal.tick, fontSize: 11 }} stroke={pal.grid} />
+              <YAxis domain={[0, k1 + 1]} tick={{ fill: pal.tick, fontSize: 11 }} stroke={pal.grid} />
               <Tooltip
-                contentStyle={{ background: '#111827', border: '1px solid #253048', borderRadius: 8, fontSize: 12 }}
-                labelStyle={{ color: '#8b95a8' }}
+                contentStyle={{ background: pal.tooltipBg, border: `1px solid ${pal.tooltipBorder}`, borderRadius: 8, fontSize: 12, color: pal.tooltipText }}
+                labelStyle={{ color: pal.tick }}
               />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Line type="monotone" dataKey="short" name="short doc (0.6× avgdl)" stroke="#22d3ee" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="long" name="long doc (1.8× avgdl)" stroke="#f59e0b" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="short" name="short doc (0.6× avgdl)" stroke={pal.accent} strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="long" name="long doc (1.8× avgdl)" stroke={pal.highlight} strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>

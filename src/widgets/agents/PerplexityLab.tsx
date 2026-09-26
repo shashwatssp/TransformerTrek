@@ -1,5 +1,5 @@
 /**
- * PerplexityLab — a real bigram language model trained (counted) in the
+ * PerplexityLab, a real bigram language model trained (counted) in the
  * browser over a small pinned corpus. Per-token probabilities, bits of
  * surprise, and PPL are computed live with add-k smoothing; a slider shows
  * how smoothing reshapes them. No canned numbers.
@@ -146,7 +146,7 @@ export function PerplexityLab() {
               {analysis.ppl.toFixed(1)}
             </div>
             <div className="mt-1 text-[10px] leading-4 text-ink-muted">
-              effective branch factor — the model acts as if unsure among ~{Math.round(analysis.ppl)} words per token
+              effective branch factor, the model acts as if unsure among ~{Math.round(analysis.ppl)} words per token
             </div>
           </div>
           <ul className="space-y-1 font-mono text-[10px] text-ink-muted">
@@ -171,7 +171,7 @@ export function PerplexityLab() {
       </div>
       <p className="text-[11px] leading-5 text-ink-muted">
         P(w2|w1) = (count(w1 w2) + k) / (count(w1) + k·V). Slide k toward 0 and watch off-domain
-        words explode to huge surprise — smoothing is what keeps unseen bigrams merely improbable
+        words explode to huge surprise, smoothing is what keeps unseen bigrams merely improbable
         instead of impossible. Real LLMs compute the same quantity, just with a neural network
         instead of a count table.
       </p>

@@ -1,5 +1,5 @@
 /**
- * Tiny demo tokenizer — NOT a real BPE implementation, but demonstrates the
+ * Tiny demo tokenizer, NOT a real BPE implementation, but demonstrates the
  * concept faithfully: a fixed vocab of common words/subwords + greedy
  * longest-match splitting, with an <unk> fallback and character fallback.
  * Educational purposes: shows why "uncommon" words split into pieces.
@@ -99,7 +99,7 @@ export function tokenize(text: string): TokenizeResult {
       const pieces = splitWord(lower, start)
       tokens.push(...pieces)
     } else {
-      // punctuation / symbols — check vocab (single chars), else unk
+      // punctuation / symbols, check vocab (single chars), else unk
       if (VOCAB_SET.has(chunk)) {
         tokens.push({ token: chunk, id: VOCAB_IDS.get(chunk) ?? 1, start, end: start + chunk.length })
       } else {

@@ -1,12 +1,13 @@
 /**
- * VectorSearchDemo — a miniature HNSW-style index over 40 seeded points.
+ * VectorSearchDemo, a miniature HNSW-style index over 40 seeded points.
  * A greedy walk descends the layers; every similarity evaluation is counted
  * and compared against brute force (all 40 points). Cosine similarity comes
  * from src/lib/math.ts.
  */
 import { useEffect, useMemo, useState } from 'react'
 import { cosineSimilarity, seededRandom } from '../../lib/math'
-import { Tabs } from '../../components/ui'
+import { useChartTheme } from '../../lib/chartTheme'
+import { FadeSwitch, Tabs } from '../../components/ui'
 import { Pill } from './shared'
 
 const N = 40
@@ -104,6 +105,7 @@ function greedyWalk(
 }
 
 export default function VectorSearchDemo() {
+  const pal = useChartTheme()
   const graph = useMemo(() => buildGraph(), [])
   const { nodes, layers, entry, topLevel } = graph
   const [target, setTarget] = useState(11)
@@ -143,17 +145,18 @@ export default function VectorSearchDemo() {
   const done = reveal >= walk.attempts.length && reveal > 0
   const bruteEvals = N
 
-  const hit = (i: number) => (i === target ? '#f59e0b' : i === currentNode && reveal > 0 ? '#34d399' : '#3b4a63')
+  const hit = (i: number) => (i === target ? pal.highlight : i === currentNode && reveal > 0 ? pal.success : pal.node)
   const pathEdges = revealed.filter((s) => s.to >= 0)
 
   return (
     <div className="space-y-4 text-sm">
       <Tabs tabs={['HNSW walk', 'Brute force']} active={view} onChange={setView} />
 
+      <FadeSwitch activeKey={view}>
       <div className="grid gap-5 lg:grid-cols-[auto_1fr]">
         <svg
           viewBox="0 0 100 100"
-          className="h-72 w-72 rounded-lg border border-border bg-void/60 sm:h-96 sm:w-96"
+          className="h-72 w-72 max-w-full rounded-lg border border-border bg-void/60 sm:h-96 sm:w-96"
           role="img"
           aria-label={
             view === 'HNSW walk'
@@ -175,7 +178,7 @@ export default function VectorSearchDemo() {
                         y1={100 - nodes[i].y * 100}
                         x2={nodes[j].x * 100}
                         y2={100 - nodes[j].y * 100}
-                        stroke="#253048"
+                        stroke={pal.grid}
                         strokeWidth={0.35}
                       />
                     )),
@@ -193,7 +196,7 @@ export default function VectorSearchDemo() {
                   y1={100 - nodes[target].y * 100}
                   x2={n.x * 100}
                   y2={100 - n.y * 100}
-                  stroke="#22d3ee"
+                  stroke={pal.accent}
                   strokeWidth={0.3}
                   opacity={0.35}
                 />
@@ -209,7 +212,7 @@ export default function VectorSearchDemo() {
                 y1={100 - nodes[s.from].y * 100}
                 x2={nodes[s.to].x * 100}
                 y2={100 - nodes[s.to].y * 100}
-                stroke="#22d3ee"
+                stroke={pal.accent}
                 strokeWidth={0.9}
                 opacity={0.9}
               />
@@ -222,7 +225,7 @@ export default function VectorSearchDemo() {
 
           {/* entry marker + target ring */}
           {view === 'HNSW walk' && (
-            <text x={nodes[entry].x * 100 + 3} y={100 - nodes[entry].y * 100 - 2} fontSize={3.2} fill="#8b95a8">
+            <text x={nodes[entry].x * 100 + 3} y={100 - nodes[entry].y * 100 - 2} fontSize={3.2} fill={pal.muted}>
               entry
             </text>
           )}
@@ -231,7 +234,7 @@ export default function VectorSearchDemo() {
             cy={100 - nodes[target].y * 100}
             r={4}
             fill="none"
-            stroke="#f59e0b"
+            stroke={pal.highlight}
             strokeWidth={0.8}
           />
         </svg>
@@ -290,23 +293,23 @@ export default function VectorSearchDemo() {
                 </div>
                 <p className="mt-2 text-xs text-ink/85">
                   {reveal === 0
-                    ? `Greedy walk starts at node #${entry} (the top-layer entry point) and always moves to the neighbor most similar to the target — or stops and descends.`
+                    ? `Greedy walk starts at node #${entry} (the top-layer entry point) and always moves to the neighbor most similar to the target, or stops and descends.`
                     : lastStep?.to === -1
-                      ? `No neighbor of #${lastStep.from} beats its similarity (${lastStep.sim.toFixed(3)}) on layer ${lastStep.layer} — local optimum, descend.`
+                      ? `No neighbor of #${lastStep.from} beats its similarity (${lastStep.sim.toFixed(3)}) on layer ${lastStep.layer}, local optimum, descend.`
                       : `Hopped to #${lastStep?.to} (cosine ${lastStep?.sim.toFixed(3)}).`}
                 </p>
                 {done && (
                   <p className="mt-2 text-xs">
                     {walk.found === trueNN ? (
                       <span className="text-success">
-                        ✓ Found #{walk.found} — the true nearest neighbor — using {walk.evals} checks vs {bruteEvals} for brute force.
+                        ✓ Found #{walk.found}, the true nearest neighbor, using {walk.evals} checks vs {bruteEvals} for brute force.
                       </span>
                     ) : (
                       <span className="text-highlight">
                         ⚠ Stopped at #{walk.found} (cosine {cosineSimilarity(vec(nodes[walk.found]), vec(nodes[target])).toFixed(3)}),
                         but the true NN is #{trueNN} (
                         {cosineSimilarity(vec(nodes[trueNN]), vec(nodes[target])).toFixed(3)}). That’s the
-                        <em> approximate</em> in ANN — recall traded for speed.
+                        <em> approximate</em> in ANN, recall traded for speed.
                       </span>
                     )}
                   </p>
@@ -317,7 +320,7 @@ export default function VectorSearchDemo() {
             <div className="rounded-lg border border-border bg-surface-raised/40 p-3" aria-live="polite">
               <p className="text-xs text-ink/85">
                 Brute force computes cosine similarity between the query and <strong>every one</strong> of the{' '}
-                {N} points — exact, but O(N) per query. At 40 points that’s nothing; at 100 million vectors
+                {N} points, exact, but O(N) per query. At 40 points that’s nothing; at 100 million vectors
                 it’s why vector databases need ANN indexes like HNSW.
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
@@ -329,11 +332,12 @@ export default function VectorSearchDemo() {
 
           <p className="text-xs text-ink-muted">
             {done && walk.found !== trueNN
-              ? 'Try the same target with brute force, then run HNSW again — the walk is deterministic, so it misses the same way every time. Larger M (more edges) would fix it at a memory cost.'
-              : 'Every similarity value is computed live from the seeded 2D vectors — nothing is precomputed.'}
+              ? 'Try the same target with brute force, then run HNSW again, the walk is deterministic, so it misses the same way every time. Larger M (more edges) would fix it at a memory cost.'
+              : 'Every similarity value is computed live from the seeded 2D vectors, nothing is precomputed.'}
           </p>
         </div>
       </div>
+      </FadeSwitch>
     </div>
   )
 }

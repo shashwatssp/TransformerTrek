@@ -6,11 +6,11 @@ An interactive, animation-rich educational website that explains how transformer
 
 TransformerTrek walks learners through:
 
-- **AI fundamentals** — the concepts underneath everything
-- **LLM internals** — tokenization, embeddings, attention, and generation, visualized step by step
-- **Agents & protocols** — MCP (Model Context Protocol), A2A (Agent-to-Agent), LangGraph, and ADK
-- **Evaluations** — how model quality is measured
-- **Vector search** — embeddings in retrieval systems
+- **AI fundamentals**, the concepts underneath everything
+- **LLM internals**, tokenization, embeddings, attention, and generation, visualized step by step
+- **Agents & protocols**, MCP (Model Context Protocol), A2A (Agent-to-Agent), LangGraph, and ADK
+- **Evaluations**, how model quality is measured
+- **Vector search**, embeddings in retrieval systems
 
 ## Tech stack
 

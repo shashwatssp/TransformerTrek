@@ -9,7 +9,7 @@ import { SourceList, StepList } from '../ui'
  * outline, sources, see-also cross-references, and progress tracking.
  */
 export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: ReactNode }) {
-  // Live from the reactive localStorage store — sidebar + badge update instantly
+  // Live from the reactive localStorage store, sidebar + badge update instantly
   const done = useIsCompleted(meta.id)
   const section = SECTIONS.find((s) => s.id === meta.section)
   const { prev, next } = neighbors(meta.id)
@@ -31,7 +31,7 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
       <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">{meta.title}</h1>
       <p className="mt-2 max-w-2xl text-base text-ink-muted">{meta.blurb}</p>
 
-      {/* Prerequisite banner — for readers who jumped straight here */}
+      {/* Prerequisite banner, for readers who jumped straight here */}
       {prereqs.length > 0 && (
         <div className="mt-6 rounded-xl border border-highlight/30 bg-highlight/5 p-4">
           <div className="text-xs font-semibold uppercase tracking-wider text-highlight">
@@ -54,12 +54,12 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
             ))}
           </ul>
           <p className="mt-2 text-xs text-ink-muted">
-            Jumped straight here? No problem — skim the links above, then continue.
+            Jumped straight here? No problem, skim the links above, then continue.
           </p>
         </div>
       )}
 
-      {/* Step outline — first thing first */}
+      {/* Step outline, first thing first */}
       <div className="mt-6 rounded-xl border border-border bg-surface p-4">
         <div className="text-xs font-semibold uppercase tracking-wider text-accent">
           This module, step by step
@@ -77,13 +77,13 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
             Sources &amp; further reading
           </h2>
           <p className="mt-1 text-xs text-ink-muted">
-            Every module is built from real documentation and papers — verify and go deeper.
+            Every module is built from real documentation and papers, verify and go deeper.
           </p>
           <SourceList sources={meta.sources} />
         </section>
       )}
 
-      {/* See also — cross-reference graph */}
+      {/* See also, cross-reference graph */}
       {related.length > 0 && (
         <section className="mt-6">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-ink-muted">See also</h2>
@@ -109,8 +109,8 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
         <button
           onClick={() => toggleCompleted(meta.id)}
           aria-pressed={done}
-          aria-label={done ? `"${meta.title}" marked as read — click to unmark` : `Mark "${meta.title}" as read (saved on this device)`}
-          className={`inline-flex w-fit items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
+          aria-label={done ? `"${meta.title}" marked as read, click to unmark` : `Mark "${meta.title}" as read (saved on this device)`}
+          className={`inline-flex w-fit items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition active:scale-[0.97] ${
             done
               ? 'border border-success/40 bg-success/10 text-success'
               : 'bg-primary text-white hover:bg-primary/85'
@@ -118,18 +118,26 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
         >
           {done ? '✓ Read' : 'Mark as read'}
         </button>
-        <div className="flex items-center gap-3 text-sm">
+        <nav aria-label="Previous / next module" className="grid gap-2 text-sm sm:flex sm:items-center sm:justify-end sm:gap-3">
           {prev ? (
-            <a href={`#/modules/${prev.id}`} className="rounded-lg border border-border px-3 py-2 text-ink-muted transition hover:text-ink">
-              ← {prev.title}
+            <a
+              href={`#/modules/${prev.id}`}
+              className="flex min-h-11 items-center gap-1 rounded-lg border border-border px-3 py-2 text-ink-muted transition hover:text-ink"
+            >
+              <span aria-hidden>←</span>
+              <span className="truncate">{prev.title}</span>
             </a>
           ) : <span />}
           {next ? (
-            <a href={`#/modules/${next.id}`} className="rounded-lg border border-border px-3 py-2 text-ink-muted transition hover:text-ink">
-              {next.title} →
+            <a
+              href={`#/modules/${next.id}`}
+              className="flex min-h-11 items-center gap-1 rounded-lg border border-border px-3 py-2 text-ink-muted transition hover:text-ink sm:max-w-[16rem]"
+            >
+              <span className="truncate">{next.title}</span>
+              <span aria-hidden>→</span>
             </a>
           ) : <span />}
-        </div>
+        </nav>
       </div>
     </article>
   )

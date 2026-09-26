@@ -1,5 +1,5 @@
 /**
- * Minimal hash-based router — zero dependencies, Vercel-friendly.
+ * Minimal hash-based router, zero dependencies, Vercel-friendly.
  * Routes look like: #/modules/attention, #/playground, #/glossary
  */
 import { useCallback, useEffect, useState } from 'react'

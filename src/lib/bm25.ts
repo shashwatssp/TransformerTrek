@@ -1,4 +1,4 @@
-/** Okapi BM25 — production-faithful scoring for the BM25Lab widget. */
+/** Okapi BM25, production-faithful scoring for the BM25Lab widget. */
 
 export type BM25Doc = {
   id: string

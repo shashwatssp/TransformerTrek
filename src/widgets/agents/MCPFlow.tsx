@@ -1,5 +1,5 @@
 /**
- * MCPFlow — Model Context Protocol walkthrough in three tabs:
+ * MCPFlow, Model Context Protocol walkthrough in three tabs:
  *  1. Sequence: animated host ↔ client ↔ server message exchange (initialize,
  *     discovery, tools/call, observation).
  *  2. Primitives: tools (model-controlled), resources (app-controlled),
@@ -7,20 +7,20 @@
  *  3. 2026 spec: stateless core + Tasks.
  */
 import { useEffect, useState } from 'react'
-import { Slider, Tabs } from '../../components/ui'
+import { FadeSwitch, Slider, Tabs } from '../../components/ui'
 
 type Lane = 'host' | 'client' | 'server'
 type Msg = { from: Lane; to: Lane; label: string; note: string }
 
 const SEQ: Msg[] = [
-  { from: 'host', to: 'client', label: 'start client — one per server', note: 'The host app opens one client connection per MCP server it wants to use.' },
+  { from: 'host', to: 'client', label: 'start client, one per server', note: 'The host app opens one client connection per MCP server it wants to use.' },
   { from: 'client', to: 'server', label: 'initialize → version + capabilities', note: 'Handshake: both sides declare protocol version and what they support.' },
   { from: 'server', to: 'client', label: 'result → its capabilities', note: 'The server advertises the tools, resources, and prompts it offers.' },
-  { from: 'client', to: 'server', label: 'tools/list', note: 'Discovery — the host learns every tool and its JSON Schema.' },
+  { from: 'client', to: 'server', label: 'tools/list', note: 'Discovery, the host learns every tool and its JSON Schema.' },
   { from: 'server', to: 'client', label: 'result → tool schemas', note: 'Schemas go straight into the model\'s tool registry (Module 5.2).' },
   { from: 'client', to: 'server', label: 'tools/call { get_forecast }', note: 'The LLM emitted a tool call; the host validated it and the client forwarded it.' },
   { from: 'server', to: 'client', label: 'result → forecast data', note: 'The server executes and returns the observation.' },
-  { from: 'client', to: 'host', label: 'observation → into context', note: 'Back into the agent loop of Module 5.1 — MCP standardized only the plumbing.' },
+  { from: 'client', to: 'host', label: 'observation → into context', note: 'Back into the agent loop of Module 5.1: MCP standardized only the plumbing.' },
 ]
 
 const LANES: { id: Lane; title: string; sub: string }[] = [
@@ -34,7 +34,7 @@ const LANE_LABEL: Record<Lane, string> = { host: 'host', client: 'client', serve
 const PRIMITIVES = [
   {
     name: 'Tools',
-    control: 'Model-controlled — the LLM decides when to call',
+    control: 'Model-controlled, the LLM decides when to call',
     code: `// client → server
 { "method": "tools/call",
   "params": { "name": "get_forecast",
@@ -43,7 +43,7 @@ const PRIMITIVES = [
   },
   {
     name: 'Resources',
-    control: 'App-controlled — the host attaches them for context',
+    control: 'App-controlled, the host attaches them for context',
     code: `// client → server
 { "method": "resources/read",
   "params": { "uri": "file:///reports/q3.csv" } }`,
@@ -51,7 +51,7 @@ const PRIMITIVES = [
   },
   {
     name: 'Prompts',
-    control: 'User-controlled — the human picks them',
+    control: 'User-controlled, the human picks them',
     code: `// client → server
 { "method": "prompts/get",
   "params": { "name": "code-review",
@@ -65,9 +65,11 @@ export function MCPFlow() {
   return (
     <div className="space-y-4">
       <Tabs tabs={['Sequence', 'Primitives', '2026 spec']} active={tab} onChange={setTab} />
-      {tab === 'Sequence' && <SequenceTab />}
-      {tab === 'Primitives' && <PrimitivesTab />}
-      {tab === '2026 spec' && <SpecTab />}
+      <FadeSwitch activeKey={tab}>
+        {tab === 'Sequence' && <SequenceTab />}
+        {tab === 'Primitives' && <PrimitivesTab />}
+        {tab === '2026 spec' && <SpecTab />}
+      </FadeSwitch>
     </div>
   )
 }
@@ -183,7 +185,7 @@ function PrimitivesTab() {
   return (
     <div className="space-y-3">
       <p className="text-xs text-ink-muted">
-        Everything a server can offer falls into three primitives — the difference is{' '}
+        Everything a server can offer falls into three primitives, the difference is{' '}
         <strong className="text-ink">who controls when it's used</strong>:
       </p>
       {PRIMITIVES.map((p) => (
@@ -201,7 +203,7 @@ function PrimitivesTab() {
       <p className="text-[11px] text-ink-muted">
         Source:{' '}
         <a href="https://modelcontextprotocol.io/docs/concepts/tools" target="_blank" rel="noopener noreferrer" className="text-accent underline">
-          MCP docs — tools
+          MCP docs, tools
         </a>
         ,{' '}
         <a href="https://modelcontextprotocol.io/docs/concepts/resources" target="_blank" rel="noopener noreferrer" className="text-accent underline">
@@ -224,33 +226,33 @@ function SpecTab() {
         The protocol is evolving on a fixed release train, and the{' '}
         <a href="https://modelcontextprotocol.io/specification/latest" target="_blank" rel="noopener noreferrer" className="text-accent underline">
           latest specification
-        </a>{' '}
-        — developed in the open in the{' '}
+        </a>
+        , developed in the open in the{' '}
         <a href="https://github.com/modelcontextprotocol/modelcontextprotocol" target="_blank" rel="noopener noreferrer" className="text-accent underline">
           spec repo
-        </a>{' '}
-        — pulls MCP toward a lighter, more deployable core:
+        </a>
+        , pulls MCP toward a lighter, more deployable core:
       </p>
       <ul className="list-disc space-y-2 pl-6 text-[13px]">
         <li>
           <strong>Stateless core.</strong> After the initialize handshake, servers shouldn't need
-          to hold per-session state between calls — each request carries what it needs. Servers
+          to hold per-session state between calls, each request carries what it needs. Servers
           become horizontally scalable and can restart freely behind a load balancer.
         </li>
         <li>
           <strong>Tasks.</strong> Long-running operations become first-class: a client starts a
           <em> task</em>, then polls or receives status updates and collects the result when it's
-          ready — instead of holding one HTTP request open for minutes. Work becomes resumable
+          ready, instead of holding one HTTP request open for minutes. Work becomes resumable
           and cancellable.
         </li>
         <li>
           <strong>Discovery everywhere.</strong> Servers declare capabilities at initialize and
-          expose lists (tools/list, resources/list, prompts/list) — the host never hard-codes what
+          expose lists (tools/list, resources/list, prompts/list), the host never hard-codes what
           a server can do.
         </li>
         <li>
           <strong>Richer surfaces.</strong> Work on MCP Apps extends the protocol so servers can
-          deliver structured, interactive UI — not just text — back to the host.
+          deliver structured, interactive UI, not just text, back to the host.
         </li>
       </ul>
       <p className="rounded border border-highlight/40 bg-highlight/5 px-3 py-2 text-[12px] text-ink/85">

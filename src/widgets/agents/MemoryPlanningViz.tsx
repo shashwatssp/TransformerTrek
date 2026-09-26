@@ -1,5 +1,5 @@
 /**
- * MemoryPlanningViz — two labs in one widget:
+ * MemoryPlanningViz, two labs in one widget:
  *  1. Memory: working memory (a token-budgeted context window) vs long-term
  *     memory (a small vector store). Recall scores every entry with real
  *     cosine similarity (src/lib/math) against a fixed task query.
@@ -7,7 +7,7 @@
  *     failure triggers reflection and a replan you can watch happen.
  */
 import { useState } from 'react'
-import { Tabs } from '../../components/ui'
+import { FadeSwitch, Tabs } from '../../components/ui'
 import { cosineSimilarity } from '../../lib/math'
 
 const estTokens = (s: string) => Math.ceil(s.length / 4)
@@ -23,7 +23,7 @@ const LTS_SEED: MemEntry[] = [
   { id: 4, title: 'Booking workflow', text: 'Restaurant booking requires confirmation email to client.', vec: [0.7, 0.2, 0.9, 0.0] },
 ]
 
-const QUERY = { label: 'Book a client dinner in Tokyo — quiet, Thursday', vec: [0.9, 0.15, 0.85, 0.1] }
+const QUERY = { label: 'Book a client dinner in Tokyo, quiet, Thursday', vec: [0.9, 0.15, 0.85, 0.1] }
 const RECALL_THRESHOLD = 0.6
 const BUDGET = 80
 
@@ -71,7 +71,7 @@ function MemoryLab() {
   return (
     <div className="space-y-3">
       <p className="text-xs text-ink-muted">
-        Task query: <span className="font-medium text-ink">"{QUERY.label}"</span> — recall scores
+        Task query: <span className="font-medium text-ink">"{QUERY.label}"</span>, recall scores
         every long-term entry with live cosine similarity (threshold {RECALL_THRESHOLD}).
       </p>
       <div className="grid gap-3 md:grid-cols-2">
@@ -102,7 +102,7 @@ function MemoryLab() {
             aria-valuemin={0}
             aria-valuemax={BUDGET}
             aria-valuenow={used}
-            aria-label={`Context window usage: ${used} of ${BUDGET} tokens${over ? ' — over budget' : ''}`}
+            aria-label={`Context window usage: ${used} of ${BUDGET} tokens${over ? ', over budget' : ''}`}
           >
             <div className="flex justify-between font-mono text-[10px] text-ink-muted">
               <span>context usage</span>
@@ -117,7 +117,7 @@ function MemoryLab() {
           </div>
           {over && (
             <p className="mt-2 rounded border border-danger/40 bg-danger/10 px-2 py-1.5 text-[11px] text-ink">
-              Over budget — the host must drop or summarize something before the next call. This
+              Over budget, the host must drop or summarize something before the next call. This
               is the <strong>working-memory wall</strong>.
             </p>
           )}
@@ -182,7 +182,7 @@ function MemoryLab() {
         </span>
       </div>
       <p className="text-[11px] leading-5 text-ink-muted">
-        Try it in order: recall (three entries fit — barely), then write + recall again — the
+        Try it in order: recall (three entries fit, barely), then write + recall again, the
         written memory comes back too, and the budget breaks. That tension is why agents summarize
         and compact instead of appending forever.
       </p>
@@ -204,7 +204,7 @@ const PLAN_SEED: Sub[] = [
 
 const EXEC_LOGS: string[] = [
   '✓ Calendar: Thursday 19:00 is free.',
-  '✗ "Pick a restaurant" failed — booking tool returned 403: venue requires dietary constraints the planner never had.',
+  '✗ "Pick a restaurant" failed, booking tool returned 403: venue requires dietary constraints the planner never had.',
   '⟳ Reflection → replan: inserted "Ask the client for dietary constraints" before retrying.',
   '✓ Client: one vegetarian, no shellfish.',
   '✓ Retry succeeded: quiet restaurant near the hotel with vegetarian options.',
@@ -317,7 +317,7 @@ function PlanningLab() {
       </div>
       <p className="text-[11px] leading-5 text-ink-muted">
         Watch step 2: it fails the first time on purpose. Without a replan the run would either
-        die or retry the identical call forever — the reflection step is what turns a dead end
+        die or retry the identical call forever, the reflection step is what turns a dead end
         into a detour.
       </p>
     </div>
@@ -331,7 +331,7 @@ export function MemoryPlanningViz() {
   return (
     <div className="space-y-4">
       <Tabs tabs={['Memory', 'Planning']} active={tab} onChange={setTab} />
-      {tab === 'Memory' ? <MemoryLab /> : <PlanningLab />}
+      <FadeSwitch activeKey={tab}>{tab === 'Memory' ? <MemoryLab /> : <PlanningLab />}</FadeSwitch>
     </div>
   )
 }

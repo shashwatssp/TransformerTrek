@@ -21,17 +21,17 @@ const LOOP_SNIPPET = `def generate(prompt, max_new_tokens=100, temperature=0.8):
     return detokenize(tokens)`
 
 /**
- * Module 1.2 — How does an LLM work?
+ * Module 1.2: How does an LLM work?
  */
 export default function HowLLMsWork() {
   return (
     <>
-      {/* Step 1 — The inference loop, end to end */}
+      {/* Step 1: The inference loop, end to end */}
       <Prose>
-        <H2>Step 1 — The inference loop, end to end</H2>
+        <H2>Step 1: The inference loop, end to end</H2>
         <p>
           <ModuleLink id="what-is-an-llm">Module 1.1</ModuleLink> established that an LLM predicts
-          the next token. This module is about the machinery around that prediction — the{' '}
+          the next token. This module is about the machinery around that prediction, the{' '}
           <strong>inference loop</strong> that turns "one guess" into "a whole answer". In
           pseudocode, the entire system fits in a dozen lines:
         </p>
@@ -39,37 +39,37 @@ export default function HowLLMsWork() {
         <p>
           Every line hides an industry. Line 2 is the transformer itself (the{' '}
           <ModuleLink id="architecture">Architecture</ModuleLink> module opens it up). Line 4 is
-          where randomness enters — the rest of this module. The loop is also why LLM latency is
+          where randomness enters, the rest of this module. The loop is also why LLM latency is
           per-token: each generated token requires a full forward pass over the context.
         </p>
         <Callout kind="info" title="Pretraining vs inference">
-          The loop above is <em>inference</em> — using the frozen model. Training computes the same
+          The loop above is <em>inference</em>, using the frozen model. Training computes the same
           forward pass, but instead of sampling, it measures how surprised the model was and nudges
           billions of weights. Same machine, different job.
         </Callout>
 
-        {/* Step 2 — Context windows and their limits */}
-        <H2>Step 2 — Context windows and their limits</H2>
+        {/* Step 2: Context windows and their limits */}
+        <H2>Step 2: Context windows and their limits</H2>
         <p>
-          The model can only attend to a fixed number of tokens at once — the{' '}
+          The model can only attend to a fixed number of tokens at once, the{' '}
           <strong>context window</strong>. GPT-2 worked with 1,024 tokens (
           <a href="https://openai.com/index/better-language-models/" target="_blank" rel="noopener noreferrer">OpenAI, 2019</a>),
-          and modern models stretch to hundreds of thousands — but the principle is unchanged:
+          and modern models stretch to hundreds of thousands, but the principle is unchanged:
           everything outside the window simply does not exist for the next prediction.
         </p>
         <p>
-          This explains everyday LLM behavior. "Why did it forget the beginning of our chat?" — the
+          This explains everyday LLM behavior. "Why did it forget the beginning of our chat?", the
           beginning fell out of the window, or the app truncated it. "Why does it hallucinate my
-          API's docs?" — the docs were never in the context, and the model filled the void with
+          API's docs?", the docs were never in the context, and the model filled the void with
           plausible tokens. Retrieval systems like <ModuleLink id="rag" /> exist precisely to stuff
           the right things <em>into</em> the window before generation starts.
         </p>
 
-        {/* Step 3 — Temperature: controlling randomness */}
-        <H2>Step 3 — Temperature: controlling randomness</H2>
+        {/* Step 3: Temperature: controlling randomness */}
+        <H2>Step 3: Temperature: controlling randomness</H2>
         <p>
           Before sampling, logits are divided by a constant <strong>T</strong> (temperature), then
-          softmaxed. T doesn't change <em>which</em> token is most likely — it changes how{' '}
+          softmaxed. T doesn't change <em>which</em> token is most likely, it changes how{' '}
           <em>peaky</em> the distribution is:
         </p>
         <Callout kind="math" title="The temperature rule">
@@ -85,15 +85,15 @@ export default function HowLLMsWork() {
       </Prose>
       <NextTokenSampler
         title="Temperature lab"
-        subtitle="Only the temperature knob is active here — top-k / top-p come next."
+        subtitle="Only the temperature knob is active here, top-k / top-p come next."
         showTopK={false}
         showTopP={false}
       />
       <Prose>
-        {/* Step 4 — Sampling strategies: top-k and top-p */}
-        <H2>Step 4 — Sampling strategies: top-k and top-p</H2>
+        {/* Step 4: Sampling strategies: top-k and top-p */}
+        <H2>Step 4: Sampling strategies: top-k and top-p</H2>
         <p>
-          Temperature reshapes probabilities but still samples from the <em>whole</em> vocabulary —
+          Temperature reshapes probabilities but still samples from the <em>whole</em> vocabulary, 
           including tokens that are plausible-but-weird. Truncation strategies fix that by removing
           the tail before the die is cast:
         </p>
@@ -105,7 +105,7 @@ export default function HowLLMsWork() {
         <p>
           <strong>Top-p</strong> (nucleus sampling, introduced by{' '}
           <a href="https://arxiv.org/abs/1904.09751" target="_blank" rel="noopener noreferrer">Holtzman et al., 2019</a>)
-          keeps the smallest set of tokens whose probabilities sum to at least p — an <em>adaptive</em>
+          keeps the smallest set of tokens whose probabilities sum to at least p, an <em>adaptive</em>
           cut. Confident distribution: nucleus might be 2 tokens. Torn distribution: nucleus grows to
           include every reasonable option. That adaptivity is why top-p displaced top-k as the
           default.
@@ -135,8 +135,8 @@ export default function HowLLMsWork() {
               label: 'Cut size',
               values: {
                 greedy: 'Everything but the winner',
-                topk: 'Fixed k — ignores the shape of the distribution',
-                topp: 'Adaptive — widens only when the model is uncertain',
+                topk: 'Fixed k, ignores the shape of the distribution',
+                topp: 'Adaptive, widens only when the model is uncertain',
               },
             },
             {
@@ -158,7 +158,7 @@ export default function HowLLMsWork() {
           ]}
         />
         <p>
-          These are the three dials of decoder behavior — everything else (beam search, min-p,
+          These are the three dials of decoder behavior, everything else (beam search, min-p,
           repetition penalties) is refinement. For the rest of this trek, remember: the model
           produces a distribution; these knobs decide how you <em>read</em> it.{' '}
           <a href="https://jalammar.github.io/illustrated-gpt2/" target="_blank" rel="noopener noreferrer">The Illustrated GPT-2</a>{' '}
@@ -171,9 +171,9 @@ export default function HowLLMsWork() {
       <KeyTakeaways
         points={[
           'Inference is a loop: window the context → forward pass → logits → temperature → sample → append.',
-          'The context window is a hard boundary — tokens outside it cannot influence the output at all.',
+          'The context window is a hard boundary, tokens outside it cannot influence the output at all.',
           'Temperature divides logits before softmax: low T sharpens (deterministic), high T flattens (random).',
-          'Top-k cuts to a fixed number of candidates; top-p cuts to an adaptive probability mass — usually the better default.',
+          'Top-k cuts to a fixed number of candidates; top-p cuts to an adaptive probability mass, usually the better default.',
           'Sampling knobs change how the distribution is read, never the model itself.',
         ]}
       />

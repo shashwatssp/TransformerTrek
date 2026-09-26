@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { Button, WidgetFrame } from '../../components/ui'
 import { gaussian, seededRandom, softmax } from '../../lib/math'
 
@@ -22,7 +22,7 @@ const STAGES: Stage[] = [
     id: 'embed',
     label: 'Embedding lookup',
     detail:
-      'Each token ID selects a learned vector (d_model dims). A positional signal is added so "the cat" and "cat the" embed differently — attention itself is order-blind.',
+      'Each token ID selects a learned vector (d_model dims). A positional signal is added so "the cat" and "cat the" embed differently, attention itself is order-blind.',
   },
   {
     id: 'b1-attn',
@@ -46,7 +46,7 @@ const STAGES: Stage[] = [
     id: 'b2-mlp',
     label: 'Block 2 · MLP, Add & Norm',
     detail:
-      'The second block\'s feed-forward pass. Real GPT-class models stack dozens of these blocks — GPT-3 used 96.',
+      'The second block\'s feed-forward pass. Real GPT-class models stack dozens of these blocks, GPT-3 used 96.',
   },
   {
     id: 'out',
@@ -93,6 +93,7 @@ export function ArchitectureFlow() {
   const [stage, setStage] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [open, setOpen] = useState<Set<number>>(new Set())
+  const reduced = useReducedMotion()
 
   useEffect(() => {
     if (!playing) return
@@ -155,7 +156,14 @@ export function ArchitectureFlow() {
           const expanded = open.has(i)
           return (
             <li key={st.id}>
-              <div
+              <motion.div
+                animate={{
+                  boxShadow:
+                    active && !reduced
+                      ? '0 0 0 1px color-mix(in srgb, var(--color-accent) 40%, transparent), 0 0 22px color-mix(in srgb, var(--color-accent) 22%, transparent)'
+                      : '0 0 0 0 color-mix(in srgb, var(--color-accent) 0%, transparent)',
+                }}
+                transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 150, damping: 24 }}
                 className={`rounded-lg border transition-colors ${
                   active ? 'border-accent/60 bg-accent/5' : past ? 'border-border bg-surface-raised/30' : 'border-border bg-surface'
                 }`}
@@ -163,7 +171,7 @@ export function ArchitectureFlow() {
                 <button
                   onClick={() => toggle(i)}
                   aria-expanded={expanded}
-                  aria-label={`${st.label} — ${expanded ? 'hide' : 'show'} internals`}
+                  aria-label={`${st.label}, ${expanded ? 'hide' : 'show'} internals`}
                   className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left"
                 >
                   <span className="flex items-center gap-2">
@@ -180,27 +188,50 @@ export function ArchitectureFlow() {
                   </span>
                 </button>
 
-                {expanded && (
-                  <div className="border-t border-border/60 px-3 py-2" role="region">
-                    <p className="text-xs leading-5 text-ink/80">{st.detail}</p>
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {expanded && (
+                    <motion.div
+                      key="detail"
+                      initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                      animate={reduced ? { opacity: 1 } : { height: 'auto', opacity: 1 }}
+                      exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                      className="overflow-hidden border-t border-border/60"
+                      role="region"
+                    >
+                      <div className="px-3 py-2">
+                        <p className="text-xs leading-5 text-ink/80">{st.detail}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
+                <AnimatePresence initial={false}>
                 {active && (
-                  <div className="border-t border-border/60 px-3 py-3">
+                  <motion.div
+                    key={`panel-${stage}`}
+                    initial={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                    animate={reduced ? { opacity: 1 } : { height: 'auto', opacity: 1 }}
+                    exit={reduced ? { opacity: 0 } : { height: 0, opacity: 0 }}
+                    transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden border-t border-border/60"
+                  >
+                    <div className="px-3 py-3">
                     {i === LAST ? (
                       <div>
                         <p className="mb-2 text-xs text-ink-muted">
-                          Next token after "The cat sat on the mat" — seeded logits, real softmax:
+                          Next token after "The cat sat on the mat", seeded logits, real softmax:
                         </p>
                         <ul className="space-y-1" aria-label="Next-token probabilities">
                           {OUT_CANDIDATES.map((c, ci) => (
                             <li key={c} className="flex items-center gap-2 text-xs">
                               <span className="w-14 shrink-0 text-right font-mono text-ink">{c}</span>
-                              <span className="relative h-3.5 flex-1 rounded bg-surface-raised">
-                                <span
+                              <span className="relative h-3.5 flex-1 overflow-hidden rounded bg-surface-raised">
+                                <motion.span
                                   className="absolute inset-y-0 left-0 rounded bg-accent"
-                                  style={{ width: `${outProbs[ci] * 100}%` }}
+                                  initial={false}
+                                  animate={{ width: `${outProbs[ci] * 100}%` }}
+                                  transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 180, damping: 26 }}
                                 />
                               </span>
                               <span className="w-12 shrink-0 font-mono text-ink-muted">
@@ -213,16 +244,18 @@ export function ArchitectureFlow() {
                     ) : (
                       <TokenChips tone={i === 0 ? 'raw' : 'vector'} />
                     )}
-                  </div>
+                    </div>
+                  </motion.div>
                 )}
-              </div>
+                </AnimatePresence>
+              </motion.div>
             </li>
           )
         })}
       </ol>
 
       <p className="mt-3 text-[11px] leading-5 text-ink-muted">
-        Two blocks shown for clarity — the real thing stacks N of them (GPT-3: 96) with the same
+        Two blocks shown for clarity, the real thing stacks N of them (GPT-3: 96) with the same
         residual stream running all the way through.
       </p>
     </WidgetFrame>

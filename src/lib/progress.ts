@@ -1,5 +1,5 @@
 /**
- * Reading progress persisted in the browser's localStorage — no accounts, no server.
+ * Reading progress persisted in the browser's localStorage, no accounts, no server.
  * Fully reactive: every consumer updates instantly via useSyncExternalStore,
  * and changes sync across open tabs via the `storage` event.
  */
@@ -27,7 +27,7 @@ function write(data: ProgressData) {
   try {
     localStorage.setItem(KEY, JSON.stringify(data))
   } catch {
-    /* private mode / storage full — progress simply won't persist */
+    /* private mode / storage full, progress simply won't persist */
   }
   notify()
 }

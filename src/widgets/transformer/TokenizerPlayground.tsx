@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Tabs, WidgetFrame } from '../../components/ui'
+import { FadeSwitch, Tabs, WidgetFrame } from '../../components/ui'
 import { DEMO_VOCAB, tokenize } from '../../lib/tokenizer'
 import type { TokenizedToken } from '../../lib/tokenizer'
 
@@ -65,7 +65,7 @@ export function TokenizerPlayground() {
   return (
     <WidgetFrame
       title="Tokenizer playground"
-      subtitle="Greedy longest-match over a toy vocab — a faithful teaching proxy for BPE. Runs entirely in your browser."
+      subtitle="Greedy longest-match over a toy vocab, a faithful teaching proxy for BPE. Runs entirely in your browser."
     >
       <Tabs
         tabs={['Sentence', 'Word splitter']}
@@ -73,6 +73,7 @@ export function TokenizerPlayground() {
         onChange={setMode}
       />
 
+      <FadeSwitch activeKey={mode}>
       {mode === 'Sentence' ? (
         <div className="mt-4">
           <label className="block text-xs text-ink-muted" htmlFor="tok-input">
@@ -111,7 +112,7 @@ export function TokenizerPlayground() {
           </dl>
           <p className="mt-3 text-[11px] leading-5 text-ink-muted" aria-live="polite">
             {result.unknownCount > 0
-              ? `${result.unknownCount} token${result.unknownCount > 1 ? 's' : ''} had no vocab entry (red, id 1 = <unk>). Real tokenizers never need <unk> — they fall back to subwords and bytes.`
+              ? `${result.unknownCount} token${result.unknownCount > 1 ? 's' : ''} had no vocab entry (red, id 1 = <unk>). Real tokenizers never need <unk>, they fall back to subwords and bytes.`
               : 'Every token found a vocab entry. Try adding an unusual word to see it split or fall back to <unk>.'}
           </p>
         </div>
@@ -152,10 +153,11 @@ export function TokenizerPlayground() {
           <p className="mt-3 text-[11px] leading-5 text-ink-muted">
             BPE learns these vocab pieces from a corpus (most frequent pairs first), instead of
             hardcoding them. The greedy walk shows the same idea: prefer the longest piece you know,
-            fall back to smaller pieces — in real BPE, down to single bytes.
+            fall back to smaller pieces, in real BPE, down to single bytes.
           </p>
         </div>
       )}
+      </FadeSwitch>
     </WidgetFrame>
   )
 }

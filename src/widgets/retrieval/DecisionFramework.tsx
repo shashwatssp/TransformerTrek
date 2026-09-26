@@ -1,5 +1,5 @@
 /**
- * DecisionFramework — the 4-question "RAG or fine-tune?" helper from AWS
+ * DecisionFramework, the 4-question "RAG or fine-tune?" helper from AWS
  * Prescriptive Guidance, made interactive. Answers nudge two live-scored
  * meters; the recommendation is computed in the browser from your answers.
  */
@@ -18,7 +18,7 @@ type Question = {
 const QUESTIONS: Question[] = [
   {
     id: 'q1',
-    text: '1. What’s missing — knowledge or behavior?',
+    text: '1. What’s missing, knowledge or behavior?',
     options: [
       { id: 'knowledge', label: 'Knowledge: facts it doesn’t have (or can’t see)' },
       { id: 'behavior', label: 'Behavior: wrong style, format, or process' },
@@ -30,9 +30,9 @@ const QUESTIONS: Question[] = [
     id: 'q2',
     text: '2. How often does the knowledge change?',
     options: [
-      { id: 'frequent', label: 'Constantly — daily or faster' },
-      { id: 'sometimes', label: 'Occasionally — weekly to quarterly' },
-      { id: 'rarely', label: 'Rarely — stable for years' },
+      { id: 'frequent', label: 'Constantly, daily or faster' },
+      { id: 'sometimes', label: 'Occasionally, weekly to quarterly' },
+      { id: 'rarely', label: 'Rarely, stable for years' },
     ],
     why: 'A re-index is cheap and instant; a re-train is expensive and slow. Frequent change favors retrieval.',
   },
@@ -40,17 +40,17 @@ const QUESTIONS: Question[] = [
     id: 'q3',
     text: '3. Do answers need citations / provenance?',
     options: [
-      { id: 'yes', label: 'Yes — users must verify sources' },
-      { id: 'no', label: 'No — style or reasoning matters, not sourcing' },
+      { id: 'yes', label: 'Yes, users must verify sources' },
+      { id: 'no', label: 'No, style or reasoning matters, not sourcing' },
     ],
     why: 'Weights can’t cite; retrieved chunks can.',
   },
   {
     id: 'q4',
-    text: '4. Can you afford the ML loop — labeled data plus training and eval runs?',
+    text: '4. Can you afford the ML loop, labeled data plus training and eval runs?',
     options: [
-      { id: 'yes', label: 'Yes — we have data and an ML budget' },
-      { id: 'no', label: 'No — we need results this quarter' },
+      { id: 'yes', label: 'Yes, we have data and an ML budget' },
+      { id: 'no', label: 'No, we need results this quarter' },
     ],
     why: 'Fine-tuning pays off only if you can fund the dataset and the re-training cycle each time behavior must change.',
   },
@@ -77,7 +77,7 @@ const RECOMMENDATIONS = {
   },
   ft: {
     title: '→ Fine-tuning earns its keep',
-    body: 'Your problem is behavior — style, format, process — and the knowledge it needs is stable. Prepare labeled examples and an eval set before you touch a checkpoint.',
+    body: 'Your problem is behavior, style, format, process, and the knowledge it needs is stable. Prepare labeled examples and an eval set before you touch a checkpoint.',
   },
   hybrid: {
     title: '→ Combine them',

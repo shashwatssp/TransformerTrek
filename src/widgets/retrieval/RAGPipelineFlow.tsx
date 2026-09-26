@@ -1,12 +1,12 @@
 /**
- * RAGPipelineFlow — step through the 7-stage RAG pipeline on a tiny corpus.
+ * RAGPipelineFlow, step through the 7-stage RAG pipeline on a tiny corpus.
  * Retrieval scores are computed live with src/lib/bm25.ts (Okapi BM25,
  * k1 = 1.2, b = 0.75). Generation text is scripted per scenario and clearly
- * labeled as illustrative — the retrieval numbers driving it are real.
+ * labeled as illustrative, the retrieval numbers driving it are real.
  */
 import { useMemo, useState } from 'react'
 import { buildIndex, scoreAll } from '../../lib/bm25'
-import { Tabs } from '../../components/ui'
+import { FadeSwitch, Tabs } from '../../components/ui'
 import { Pill, toyEmbed } from './shared'
 
 type Chunk = { id: string; title: string; text: string }
@@ -26,17 +26,17 @@ const SCENARIOS: Record<ScenarioId, { label: string; hint: string; files: string
     docs: [
       {
         id: 'c1',
-        title: 'SolarBrew 300 — Setup guide',
+        title: 'SolarBrew 300, Setup guide',
         text: 'Fill the reservoir with water, insert a paper filter, and press the brew button. Descale the machine every three months with citric acid.',
       },
       {
         id: 'c2',
-        title: 'SolarBrew 300 — Troubleshooting',
+        title: 'SolarBrew 300, Troubleshooting',
         text: 'If the brew light blinks red, the water tank is empty or not seated. Refill the tank, press it firmly into place, and restart the brew cycle.',
       },
       {
         id: 'c3',
-        title: 'SolarBrew 200 — Specs',
+        title: 'SolarBrew 200, Specs',
         text: 'The SolarBrew 200 has a 0.6 liter tank, one cup size, and no descaling reminder.',
       },
     ],
@@ -48,17 +48,17 @@ const SCENARIOS: Record<ScenarioId, { label: string; hint: string; files: string
     docs: [
       {
         id: 'c1',
-        title: 'SolarBrew 300 — Setup guide',
+        title: 'SolarBrew 300, Setup guide',
         text: 'Fill the reservoir with water, insert a paper filter, and press the brew button. Descale the machine every three months with citric acid.',
       },
       {
         id: 'c2',
-        title: 'Coffee makers — general notes',
+        title: 'Coffee makers, general notes',
         text: 'On many coffee makers a light shows brewing state. A solid green light usually means the machine finished brewing. See your model manual for light codes.',
       },
       {
         id: 'c3',
-        title: 'SolarBrew 200 — Specs',
+        title: 'SolarBrew 200, Specs',
         text: 'The SolarBrew 200 has a 0.6 liter tank, one cup size, and no descaling reminder.',
       },
     ],
@@ -70,34 +70,34 @@ const SCENARIOS: Record<ScenarioId, { label: string; hint: string; files: string
     docs: [
       {
         id: 'p1',
-        title: 'SolarBeam panel — warranty',
+        title: 'SolarBeam panel, warranty',
         text: 'The SolarBeam 100 W panel carries a 25-year performance warranty. Keep the purchase receipt for warranty claims.',
       },
       {
         id: 'p2',
-        title: 'SolarBeam inverter — manual',
+        title: 'SolarBeam inverter, manual',
         text: 'Mount the inverter vertically with airflow on both sides. The status LED shows grid connection state.',
       },
     ],
   },
   stale: {
     label: 'Stale index',
-    hint: 'The chunk was true in 2019 — the product has moved on.',
+    hint: 'The chunk was true in 2019, the product has moved on.',
     files: ['handbook/setup-guide.md', 'handbook/troubleshooting-2019.md', 'handbook/specs-200.md'],
     docs: [
       {
         id: 'c1',
-        title: 'SolarBrew 300 — Setup guide',
+        title: 'SolarBrew 300, Setup guide',
         text: 'Fill the reservoir with water, insert a paper filter, and press the brew button. Descale the machine every three months with citric acid.',
       },
       {
         id: 'c2',
-        title: 'SolarBrew 300 — Troubleshooting (2019)',
+        title: 'SolarBrew 300, Troubleshooting (2019)',
         text: 'If the brew light blinks red, the unit requires service. Contact support and quote error code E4. Do not open the tank lid while blinking.',
       },
       {
         id: 'c3',
-        title: 'SolarBrew 200 — Specs',
+        title: 'SolarBrew 200, Specs',
         text: 'The SolarBrew 200 has a 0.6 liter tank, one cup size, and no descaling reminder.',
       },
     ],
@@ -118,23 +118,23 @@ const STAGES = [
 const ANSWERS: Record<ScenarioId, { without: string; with: string }> = {
   clean: {
     without:
-      '“A blinking red light usually indicates a heating-element fault. Unplug the machine for 10 minutes and try again.” — a confident guess from generic training data. Plausible? Sure. True for this machine? No.',
-    with: '“The brew light blinks red when the water tank is empty or not seated. Refill the tank, press it firmly into place, and restart the brew cycle.” — grounded in chunk [c2], retrieved with the highest BM25 score.',
+      '“A blinking red light usually indicates a heating-element fault. Unplug the machine for 10 minutes and try again.”, a confident guess from generic training data. Plausible? Sure. True for this machine? No.',
+    with: '“The brew light blinks red when the water tank is empty or not seated. Refill the tank, press it firmly into place, and restart the brew cycle.”, grounded in chunk [c2], retrieved with the highest BM25 score.',
   },
   distractor: {
     without:
-      '“A blinking red light usually indicates a heating-element fault. Unplug the machine for 10 minutes and try again.” — same generic guess as always.',
-    with: '“On many coffee makers, a blinking light relates to brewing state — check your model manual for light codes.” — grounded in a general-notes blog chunk [c2], not your actual model manual. The reranker promoted plausible junk.',
+      '“A blinking red light usually indicates a heating-element fault. Unplug the machine for 10 minutes and try again.”, same generic guess as always.',
+    with: '“On many coffee makers, a blinking light relates to brewing state, check your model manual for light codes.”, grounded in a general-notes blog chunk [c2], not your actual model manual. The reranker promoted plausible junk.',
   },
   'no-match': {
     without:
-      '“A blinking red light usually indicates a heating-element fault. Unplug the machine for 10 minutes and try again.” — the model still answers something. Nothing anchors it to reality.',
-    with: '“I can’t find anything about blinking brew lights in the indexed solar-panel documents.” — an honest refusal. Better than a hallucination, but the user still leaves empty-handed: retrieval failed first.',
+      '“A blinking red light usually indicates a heating-element fault. Unplug the machine for 10 minutes and try again.”, the model still answers something. Nothing anchors it to reality.',
+    with: '“I can’t find anything about blinking brew lights in the indexed solar-panel documents.”, an honest refusal. Better than a hallucination, but the user still leaves empty-handed: retrieval failed first.',
   },
   stale: {
     without:
-      '“A blinking red light usually indicates a heating-element fault. Unplug the machine for 10 minutes and try again.” — generic guess.',
-    with: '“A blinking red light means the unit requires service — contact support and quote error code E4.” — grounded, cited… and outdated. The 2019 chunk says contact support; current firmware just needs a tank refill. Stale index, stale answer.',
+      '“A blinking red light usually indicates a heating-element fault. Unplug the machine for 10 minutes and try again.”, generic guess.',
+    with: '“A blinking red light means the unit requires service, contact support and quote error code E4.”, grounded, cited… and outdated. The 2019 chunk says contact support; current firmware just needs a tank refill. Stale index, stale answer.',
   },
 }
 
@@ -146,7 +146,7 @@ function tokenizeWords(text: string): string[] {
     .filter(Boolean)
 }
 
-/** Fraction of Q_TERMS present in a chunk — the toy reranker's signal. */
+/** Fraction of Q_TERMS present in a chunk, the toy reranker's signal. */
 function coverage(doc: Chunk): number {
   const tokens = new Set(tokenizeWords(`${doc.title} ${doc.text}`))
   const hits = Q_TERMS.filter((t) => tokens.has(t)).length
@@ -182,7 +182,7 @@ export default function RAGPipelineFlow() {
   const reorderChanged = topAfterRerank.some((r, i) => top[i] && r.doc.id !== top[i].doc.id)
 
   const contextBlock = topAfterRerank
-    .map((r, i) => `[${i + 1}] ${r.doc.id} — ${r.doc.title}: ${r.doc.text}`)
+    .map((r, i) => `[${i + 1}] ${r.doc.id}, ${r.doc.title}: ${r.doc.text}`)
     .join('\n\n')
   const promptText = `Answer using ONLY the context. Cite chunk ids like [1].\n\nContext:\n${contextBlock}\n\nQuestion: ${QUERY}`
 
@@ -247,11 +247,12 @@ export default function RAGPipelineFlow() {
 
       {/* Stage detail */}
       <div className="rounded-lg border border-border bg-surface-raised/40 p-4" aria-live="polite">
-        <h4 className="text-sm font-semibold text-ink">Stage {stage + 1} — {STAGES[stage].slice(4)}</h4>
+        <h4 className="text-sm font-semibold text-ink">Stage {stage + 1}, {STAGES[stage].slice(4)}</h4>
 
+        <FadeSwitch activeKey={stage}>
         {stage === 0 && (
           <div className="mt-3 space-y-2">
-            <p className="text-ink/85">Everything starts with getting files into the system — loaders parse them, cleaners strip noise.</p>
+            <p className="text-ink/85">Everything starts with getting files into the system, loaders parse them, cleaners strip noise.</p>
             <ul className="flex flex-wrap gap-2">
               {s.files.map((f) => (
                 <li key={f} className="rounded-md border border-border bg-surface px-2.5 py-1 font-mono text-xs text-ink/85">
@@ -264,7 +265,7 @@ export default function RAGPipelineFlow() {
 
         {stage === 1 && (
           <div className="mt-3 space-y-2">
-            <p className="text-ink/85">Documents are split into chunks; each chunk gets an embedding vector (first 6 of 384 dims shown — toy vectors for display).</p>
+            <p className="text-ink/85">Documents are split into chunks; each chunk gets an embedding vector (first 6 of 384 dims shown, toy vectors for display).</p>
             {s.docs.map((d, i) => (
               <div key={d.id} className="rounded-md border border-border bg-surface p-2.5">
                 <div className="flex flex-wrap items-center gap-2">
@@ -282,7 +283,7 @@ export default function RAGPipelineFlow() {
 
         {stage === 2 && (
           <div className="mt-3 space-y-2">
-            <p className="text-ink/85">The user’s question is embedded with the <em>same model</em> — only then can it be compared with chunk vectors.</p>
+            <p className="text-ink/85">The user’s question is embedded with the <em>same model</em>, only then can it be compared with chunk vectors.</p>
             <div className="rounded-md border border-border bg-surface p-2.5 font-mono text-xs text-ink">“{QUERY}”</div>
             <div className="font-mono text-[11px] text-ink-muted">
               query → [{queryPreview.map((x) => x.toFixed(2)).join(', ')}, …]
@@ -314,7 +315,7 @@ export default function RAGPipelineFlow() {
         {stage === 4 && (
           <div className="mt-3 space-y-3">
             <p className="text-ink/85">
-              A reranker re-scores the top candidates with a better (pricier) signal. Here: query-term coverage — of the terms{' '}
+              A reranker re-scores the top candidates with a better (pricier) signal. Here: query-term coverage, of the terms{' '}
               {Q_TERMS.map((t) => `“${t}”`).join(', ')}.
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -341,15 +342,15 @@ export default function RAGPipelineFlow() {
             </div>
             <p className="text-xs text-ink-muted">
               {reorderChanged
-                ? '⚠ The reranker promoted a chunk that matches more question words — useful, or a trap? Check the chunk content.'
-                : 'Rerank kept the order — both signals agree here.'}
+                ? '⚠ The reranker promoted a chunk that matches more question words, useful, or a trap? Check the chunk content.'
+                : 'Rerank kept the order, both signals agree here.'}
             </p>
           </div>
         )}
 
         {stage === 5 && (
           <div className="mt-3 space-y-2">
-            <p className="text-ink/85">The winning chunks are stitched into the prompt. This string — not the model’s memory — is what the answer will be grounded in.</p>
+            <p className="text-ink/85">The winning chunks are stitched into the prompt. This string, not the model’s memory, is what the answer will be grounded in.</p>
             <pre className="overflow-x-auto rounded-md border border-border bg-void/60 p-3 font-mono text-[11px] leading-5 text-ink/85">
               {promptText}
             </pre>
@@ -359,21 +360,24 @@ export default function RAGPipelineFlow() {
         {stage === 6 && (
           <div className="mt-3 space-y-3">
             <Tabs tabs={['With RAG', 'Without RAG']} active={tab} onChange={setTab} />
-            <div className="rounded-md border border-border bg-surface p-3 text-ink/85">{answer}</div>
-            {tab === 'With RAG' && (
-              <p className="text-xs text-ink-muted">
-                {grounded
-                  ? `Grounded in ${topAfterRerank.map((r) => `[${r.doc.id}]`).join(' ')} — live BM25 scores: ${topAfterRerank
-                      .map((r) => r.score.toFixed(2))
-                      .join(', ')}.`
-                  : 'No chunk scored above 0.000 — a well-behaved assistant refuses rather than guess.'}
-              </p>
-            )}
+            <FadeSwitch activeKey={tab}>
+              <div className="rounded-md border border-border bg-surface p-3 text-ink/85">{answer}</div>
+              {tab === 'With RAG' && (
+                <p className="text-xs text-ink-muted">
+                  {grounded
+                    ? `Grounded in ${topAfterRerank.map((r) => `[${r.doc.id}]`).join(' ')}, live BM25 scores: ${topAfterRerank
+                        .map((r) => r.score.toFixed(2))
+                        .join(', ')}.`
+                    : 'No chunk scored above 0.000, a well-behaved assistant refuses rather than guess.'}
+                </p>
+              )}
+            </FadeSwitch>
             <p className="text-xs text-ink-muted">
               Generation text is scripted per scenario (illustrative); every retrieval score above is computed live in your browser.
             </p>
           </div>
         )}
+        </FadeSwitch>
       </div>
 
       {/* Stage navigation */}

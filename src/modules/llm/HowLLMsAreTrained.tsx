@@ -1,5 +1,5 @@
 /**
- * Module 3.2 — How Different LLMs Are Trained
+ * Module 3.2: How Different LLMs Are Trained
  * Body content only; sections follow the registry `steps` order exactly.
  * Local components: MoERoutingLab (dense vs MoE) and RecipeCard (Llama 3 / DeepSeek).
  */
@@ -16,6 +16,7 @@ import {
   WidgetFrame,
 } from '../../components/ui'
 import { gaussian, seededRandom, softmax, topK } from '../../lib/math'
+import { useChartTheme } from '../../lib/chartTheme'
 import PostTrainingPipeline from '../../widgets/llm/PostTrainingPipeline'
 
 /* ─────────────────────────── MoE routing lab ─────────────────────────── */
@@ -27,6 +28,7 @@ const EXPERT_PARAMS = 3 * D_MODEL * D_FF // SwiGLU: gate + up + down projections
 const ATTN_PARAMS = 4 * D_MODEL * D_MODEL // q, k, v, o projections
 
 function MoERoutingLab() {
+  const pal = useChartTheme()
   const [numExperts, setNumExperts] = useState(8)
   const [k, setK] = useState(2)
 
@@ -67,30 +69,30 @@ function MoERoutingLab() {
         {/* tokens */}
         {TOKENS.map((t, i) => (
           <g key={t}>
-            <circle cx={36} cy={tokenY(i)} r={22} fill="#1a2332" stroke="#22d3ee" strokeWidth={1.5} />
-            <text x={36} y={tokenY(i) + 4} textAnchor="middle" fontSize={11} fill="#e6ebf4" fontFamily="monospace">
+            <circle cx={36} cy={tokenY(i)} r={22} fill={pal.nodeBg} stroke={pal.accent} strokeWidth={1.5} />
+            <text x={36} y={tokenY(i) + 4} textAnchor="middle" fontSize={11} fill={pal.ink} fontFamily="monospace">
               {t}
             </text>
           </g>
         ))}
         {/* router */}
-        <rect x={140} y={H / 2 - 34} width={104} height={68} rx={10} fill="#1a2332" stroke="#6366f1" strokeWidth={1.5} />
-        <text x={192} y={H / 2 + 4} textAnchor="middle" fontSize={13} fill="#e6ebf4">
+        <rect x={140} y={H / 2 - 34} width={104} height={68} rx={10} fill={pal.nodeBg} stroke={pal.primary} strokeWidth={1.5} />
+        <text x={192} y={H / 2 + 4} textAnchor="middle" fontSize={13} fill={pal.ink}>
           router
         </text>
-        <text x={192} y={H / 2 + 20} textAnchor="middle" fontSize={10} fill="#8b95a8" fontFamily="monospace">
+        <text x={192} y={H / 2 + 20} textAnchor="middle" fontSize={10} fill={pal.muted} fontFamily="monospace">
           softmax → top-{k}
         </text>
         {TOKENS.map((_, i) => (
-          <line key={`in-${i}`} x1={58} y1={tokenY(i)} x2={140} y2={H / 2} stroke="#253048" strokeWidth={1.5} />
+          <line key={`in-${i}`} x1={58} y1={tokenY(i)} x2={140} y2={H / 2} stroke={pal.grid} strokeWidth={1.5} />
         ))}
         {/* expert boxes */}
         {Array.from({ length: numExperts }, (_, e) => {
           const isUsed = load[e] > 0
           return (
             <g key={`exp-${e}`}>
-              <rect x={470} y={expertY(e)} width={140} height={Math.min(30, (H - 44) / numExperts)} rx={6} fill={isUsed ? 'rgba(34,211,238,0.12)' : '#111827'} stroke={isUsed ? '#22d3ee' : '#253048'} strokeWidth={isUsed ? 1.5 : 1} />
-              <text x={482} y={expertY(e) + 17} fontSize={11} fill={isUsed ? '#e6ebf4' : '#8b95a8'} fontFamily="monospace">
+              <rect x={470} y={expertY(e)} width={140} height={Math.min(30, (H - 44) / numExperts)} rx={6} fill={isUsed ? 'rgba(34,211,238,0.12)' : pal.tooltipBg} stroke={isUsed ? pal.accent : pal.grid} strokeWidth={isUsed ? 1.5 : 1} />
+              <text x={482} y={expertY(e) + 17} fontSize={11} fill={isUsed ? pal.ink : pal.muted} fontFamily="monospace">
                 E{e + 1} · {load[e]} tok
               </text>
             </g>
@@ -102,11 +104,11 @@ function MoERoutingLab() {
             const p = r.probs[e]
             const y2 = expertY(e) + 12
             return (
-              <line key={`t${i}-e${e}`} x1={96} y1={tokenY(i)} x2={470} y2={y2} stroke="#22d3ee" strokeOpacity={0.2 + 0.6 * p} strokeWidth={1 + 3 * p} />
+              <line key={`t${i}-e${e}`} x1={96} y1={tokenY(i)} x2={470} y2={y2} stroke={pal.accent} strokeOpacity={0.2 + 0.6 * p} strokeWidth={1 + 3 * p} />
             )
           }),
         )}
-        <text x={W - 4} y={H - 6} textAnchor="end" fontSize={10} fill="#8b95a8">
+        <text x={W - 4} y={H - 6} textAnchor="end" fontSize={10} fill={pal.muted}>
           edge width = router probability
         </text>
       </svg>
@@ -148,7 +150,7 @@ function MoERoutingLab() {
 
       <p className="text-xs text-ink-muted">
         Router scores are deterministic seeded random vectors, softmaxed per token (src/lib/math.ts). Parameter
-        model: attention 4·d² shared, each expert an SwiGLU FFN of 3·d·d_ff weights with d=2048, d_ff=8192 —
+        model: attention 4·d² shared, each expert an SwiGLU FFN of 3·d·d_ff weights with d=2048, d_ff=8192, 
         every readout above is computed from your slider values.
       </p>
     </div>
@@ -178,7 +180,7 @@ const RECIPES: Recipe[] = [
     specs: [
       ['Parameters', '671B total, 37B active per token (MoE)'],
       ['Data', '14.8T tokens'],
-      ['Attention', 'MLA — latent-compressed KV cache'],
+      ['Attention', 'MLA, latent-compressed KV cache'],
       ['Balancing', 'Aux-loss-free expert load balancing (per-expert bias)'],
       ['Objective', 'Next-token + multi-token prediction (MTP)'],
       ['Cost', '≈2.788M H800 GPU-hours (~$5.6M at $2/hr)'],
@@ -212,7 +214,7 @@ function RecipeCards() {
 /* ─────────────────────────── Page ─────────────────────────── */
 
 const objectivesSnippet = `# The same transformer, three training objectives
-# 1. CAUSAL (GPT): predict the next token — positions can't see the future
+# 1. CAUSAL (GPT): predict the next token, positions can't see the future
 loss_gpt   = ce(logits[:, :-1], tokens[:, 1:])            # mask: upper triangle
 
 # 2. MASKED (BERT): reconstruct ~15% randomly corrupted tokens
@@ -244,10 +246,10 @@ export default function HowLLMsAreTrained() {
     <>
       {/* Step 1 ─ Three objectives: causal, masked, span corruption */}
       <section id="step-1" className="scroll-mt-24">
-        <H2>Step 1 — Three objectives: causal, masked, span corruption</H2>
+        <H2>Step 1: Three objectives: causal, masked, span corruption</H2>
         <Prose>
           <p>
-            Pretraining always reduces to "hide part of the text, make the model reconstruct it" — the{' '}
+            Pretraining always reduces to "hide part of the text, make the model reconstruct it", the{' '}
             <ModuleLink id="pretraining" /> recipe. The design question is <em>which part you hide</em> and{' '}
             <em>what the model may look at</em> while guessing. Three answers dominated the field:
           </p>
@@ -255,12 +257,12 @@ export default function HowLLMsAreTrained() {
             <li>
               <strong>Causal language modeling (GPT).</strong> Hide the next token at every position, let the
               model see only the left context via the causal mask from <ModuleLink id="attention" />. Every
-              position yields a training signal, and the model can generate — this is the modern LLM paradigm.
+              position yields a training signal, and the model can generate, this is the modern LLM paradigm.
             </li>
             <li>
               <strong>Masked language modeling (BERT).</strong> Randomly blank ~15% of tokens (usually with a
               literal <code>[MASK]</code>), let the model see <em>both sides</em> and fill in the blanks. Rich
-              bidirectional signal per token — but no notion of "what comes next", so it can't generate.
+              bidirectional signal per token, but no notion of "what comes next", so it can't generate.
             </li>
             <li>
               <strong>Span corruption (T5).</strong> Blank <em>contiguous spans</em> and replace them with
@@ -271,7 +273,7 @@ export default function HowLLMsAreTrained() {
           <CodeBlock code={objectivesSnippet} language="python" filename="objectives.py" />
           <Callout kind="info" title="Same data, different games">
             These objectives train on identical self-supervised corpora. What differs is the supervision each
-            token receives — and that choice, more than architecture details, decides what the model is good
+            token receives, and that choice, more than architecture details, decides what the model is good
             at. See <ModuleLink id="architecture" /> for how encoder, decoder, and encoder-decoder stacks
             realize each game mechanically.
           </Callout>
@@ -280,24 +282,24 @@ export default function HowLLMsAreTrained() {
 
       {/* Step 2 ─ GPT vs BERT vs T5 */}
       <section id="step-2" className="scroll-mt-24">
-        <H2>Step 2 — GPT vs BERT vs T5</H2>
+        <H2>Step 2: GPT vs BERT vs T5</H2>
         <Prose>
           <p>
             Those three objectives produced three model families that shaped a decade. Side by side:
           </p>
           <ComparisonTable
             columns={[
-              { id: 'gpt', label: 'GPT — decoder-only' },
-              { id: 'bert', label: 'BERT — encoder-only' },
-              { id: 't5', label: 'T5 — encoder-decoder' },
+              { id: 'gpt', label: 'GPT, decoder-only' },
+              { id: 'bert', label: 'BERT, encoder-only' },
+              { id: 't5', label: 'T5, encoder-decoder' },
             ]}
             rows={[
               {
                 label: 'Objective',
                 values: {
-                  gpt: 'Causal LM — next-token, left to right',
-                  bert: 'Masked LM — reconstruct ~15% corrupted tokens',
-                  t5: 'Span corruption — generate masked spans from sentinels',
+                  gpt: 'Causal LM, next-token, left to right',
+                  bert: 'Masked LM, reconstruct ~15% corrupted tokens',
+                  t5: 'Span corruption, generate masked spans from sentinels',
                 },
               },
               {
@@ -311,8 +313,8 @@ export default function HowLLMsAreTrained() {
               {
                 label: 'Generation ability',
                 values: {
-                  gpt: 'Native — autoregressive sampling (see the sampler labs)',
-                  bert: 'None — fills masks, cannot continue text',
+                  gpt: 'Native, autoregressive sampling (see the sampler labs)',
+                  bert: 'None, fills masks, cannot continue text',
                   t5: 'Only within the task format (spans, short outputs)',
                 },
               },
@@ -320,7 +322,7 @@ export default function HowLLMsAreTrained() {
                 label: 'Typical scale (era)',
                 values: {
                   gpt: '117B → 175B → trillions of tokens (2020s frontier)',
-                  bert: '110M–340M — trained once, fine-tuned per task',
+                  bert: '110M–340M, trained once, fine-tuned per task',
                   t5: 'up to 11B, many-task training',
                 },
               },
@@ -328,7 +330,7 @@ export default function HowLLMsAreTrained() {
                 label: 'Legacy today',
                 values: {
                   gpt: 'Every chat model: Llama, DeepSeek, Qwen…',
-                  bert: 'Embedding/rerankers — the MiniLM lineage (Module 4.5)',
+                  bert: 'Embedding/rerankers, the MiniLM lineage (Module 4.5)',
                   t5: 'Instruction-tuning lineage: FLAN, Tülu…',
                 },
               },
@@ -348,25 +350,25 @@ export default function HowLLMsAreTrained() {
               Brown et al., 2020 (GPT-3)
             </a>
             . Causal won for a blunt reason: it's the only objective that's also an{' '}
-            <em>inference procedure</em> — the thing you run at deployment is the thing you trained.
+            <em>inference procedure</em>, the thing you run at deployment is the thing you trained.
           </p>
         </Prose>
       </section>
 
       {/* Step 3 ─ Dense vs Mixture-of-Experts */}
       <section id="step-3" className="scroll-mt-24">
-        <H2>Step 3 — Dense vs Mixture-of-Experts</H2>
+        <H2>Step 3: Dense vs Mixture-of-Experts</H2>
         <Prose>
           <p>
             In a <strong>dense</strong> transformer every parameter fires for every token. In a{' '}
             <strong>Mixture-of-Experts</strong> layer, the feed-forward block (which holds most of a model's
             parameters) is replicated into E expert copies, and a tiny learned <em>router</em> picks the top-k
             experts for each token individually. Capacity scales with E; per-token cost stays pinned to k
-            experts. The idea is old —{' '}
+            experts. The idea is old (
             <a href="https://arxiv.org/abs/1701.06538" target="_blank" rel="noopener noreferrer">
               Shazeer et al., 2017
-            </a>{' '}
-            — but it powers modern frontier models like DeepSeek-V3: 671B parameters total, only ≈37B active
+            </a>
+            ), but it powers modern frontier models like DeepSeek-V3: 671B parameters total, only ≈37B active
             per token (
             <a href="https://arxiv.org/abs/2412.19437" target="_blank" rel="noopener noreferrer">
               DeepSeek-AI, 2024
@@ -381,9 +383,9 @@ export default function HowLLMsAreTrained() {
           </WidgetFrame>
           <p>
             Why bother? Compute, not memory, is the binding constraint of training. A dense model spends full
-            compute on every token; an MoE spends <em>selective</em> compute — more total knowledge per unit of
+            compute on every token; an MoE spends <em>selective</em> compute, more total knowledge per unit of
             training FLOPs. The price is engineering pain: expert load balancing (train a bias to keep experts
-            evenly used — DeepSeek-V3 does it <em>aux-loss-free</em>), routing instability, and KV-cache-heavy
+            evenly used, DeepSeek-V3 does it <em>aux-loss-free</em>), routing instability, and KV-cache-heavy
             inference. <a href="https://arxiv.org/abs/2101.03961" target="_blank" rel="noopener noreferrer">Switch Transformer</a>{' '}
             is the classic reference for the training recipe.
           </p>
@@ -393,10 +395,10 @@ export default function HowLLMsAreTrained() {
 
       {/* Step 4 ─ Case studies: Llama 3 and DeepSeek recipes */}
       <section id="step-4" className="scroll-mt-24">
-        <H2>Step 4 — Case studies: Llama 3 and DeepSeek recipes</H2>
+        <H2>Step 4: Case studies: Llama 3 and DeepSeek recipes</H2>
         <Prose>
           <p>
-            Two published frontier recipes, two philosophies. Both papers are unusually detailed — read them as
+            Two published frontier recipes, two philosophies. Both papers are unusually detailed, read them as
             engineering post-mortems, not just results.
           </p>
           <RecipeCards />
@@ -410,18 +412,18 @@ export default function HowLLMsAreTrained() {
 
       {/* Step 5 ─ Reasoning models: RL with verifiable rewards */}
       <section id="step-5" className="scroll-mt-24">
-        <H2>Step 5 — Reasoning models: RL with verifiable rewards</H2>
+        <H2>Step 5: Reasoning models: RL with verifiable rewards</H2>
         <Prose>
           <p>
             The newest chapter abandons the reward model for problems with <em>checkable answers</em>. In
             RL with verifiable rewards (RLVR), the reward for a math problem is 1 if the final answer is right
-            and 0 otherwise; for code, whether unit tests pass. No human rankings, no learned proxy — the
+            and 0 otherwise; for code, whether unit tests pass. No human rankings, no learned proxy, the
             ground truth is a program. Trained this way with the GRPO algorithm (
             <a href="https://arxiv.org/abs/2402.03300" target="_blank" rel="noopener noreferrer">
               Shao et al., 2024
             </a>
             ), DeepSeek-R1-Zero discovered long chains-of-thought on its own, including self-checking and
-            backtracking — the "aha moment" (
+            backtracking, the "aha moment" (
             <a href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener noreferrer">
               DeepSeek-R1, 2025
             </a>
@@ -438,9 +440,9 @@ export default function HowLLMsAreTrained() {
             <PostTrainingPipeline />
           </WidgetFrame>
           <Callout kind="info" title="Why verifiable rewards matter">
-            A learned reward model is a proxy — and proxies get hacked (Module <ModuleLink id="fine-tuning" />).
+            A learned reward model is a proxy, and proxies get hacked (Module <ModuleLink id="fine-tuning" />).
             A unit test cannot be flattered. RLVR trades coverage (only checkable domains) for integrity (the
-            reward is exactly the objective) — which is why reasoning models eat math and code benchmarks
+            reward is exactly the objective), which is why reasoning models eat math and code benchmarks
             first, then distill the behavior into broader assistants.
           </Callout>
           <KeyTakeaways
@@ -449,7 +451,7 @@ export default function HowLLMsAreTrained() {
               'Causal next-token won because training objective and inference procedure are the same thing.',
               'MoE routes each token to top-k of E experts: 671B-param capacity at 37B-param cost (DeepSeek-V3); load balancing is the catch.',
               'Llama 3 = dense scale with relentless engineering; DeepSeek-V3 = efficiency-first sparsity. Read recipes via params, tokens, GPU-hours, post-training stages.',
-              'RLVR replaces learned reward models with programmatic checks (math answers, unit tests) — reasoning skill without a hackable proxy.',
+              'RLVR replaces learned reward models with programmatic checks (math answers, unit tests), reasoning skill without a hackable proxy.',
             ]}
           />
         </Prose>
