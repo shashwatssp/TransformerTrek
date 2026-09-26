@@ -50,12 +50,17 @@ function fmtFlops(x: number): string {
   return `${x.toExponential(1).replace('e+', 'e')} FLOPs`
 }
 
-/** Published training configs (papers cited in the module sources). */
+/** Published training configs (papers and model cards cited in the module sources). */
 const MODELS = [
-  { name: 'GPT-3', params: 175e9, tokens: 300e9, color: '#8b95a8' },
-  { name: 'Gopher', params: 280e9, tokens: 300e9, color: '#f87171' },
-  { name: 'Chinchilla', params: 70e9, tokens: 1.4e12, color: '#34d399' },
-  { name: 'Llama 3 405B', params: 405e9, tokens: 15.6e12, color: '#f59e0b' },
+  { name: 'GPT-3', year: 2020, params: 175e9, tokens: 300e9, color: '#8b95a8' },
+  { name: 'Gopher', year: 2021, params: 280e9, tokens: 300e9, color: '#f87171' },
+  { name: 'Chinchilla', year: 2022, params: 70e9, tokens: 1.4e12, color: '#34d399' },
+  { name: 'Llama 3 405B', year: 2024, params: 405e9, tokens: 15.6e12, color: '#f59e0b' },
+  { name: 'DeepSeek-V3', year: 2024, params: 671e9, tokens: 14.8e12, color: '#38bdf8' },
+  { name: 'Llama 4 Scout', year: 2025, params: 109e9, tokens: 40e12, color: '#a78bfa' },
+  { name: 'Llama 4 Maverick', year: 2025, params: 400e9, tokens: 22e12, color: '#e879f9' },
+  { name: 'Qwen3-235B', year: 2025, params: 235e9, tokens: 36e12, color: '#fb7185' },
+  { name: 'Kimi K2', year: 2025, params: 1e12, tokens: 15.5e12, color: '#facc15' },
 ] as const
 
 export default function ScalingLawsChart() {
@@ -114,7 +119,7 @@ export default function ScalingLawsChart() {
         />
       </div>
 
-      <div className="h-[320px] w-full" role="img" aria-label={`Log-log chart of predicted loss versus training compute. At ${fmtFlops(C)} with ${ratio} tokens per parameter: ${fmtBig(N)} parameters, ${fmtBig(D)} tokens, predicted loss ${L.toFixed(3)}.`}>
+      <div className="h-[280px] w-full sm:h-[320px]" role="img" aria-label={`Log-log chart of predicted loss versus training compute. At ${fmtFlops(C)} with ${ratio} tokens per parameter: ${fmtBig(N)} parameters, ${fmtBig(D)} tokens, predicted loss ${L.toFixed(3)}. Published model dots are identified by color in the legend below the chart.`}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={frontier} margin={{ top: 24, right: 24, bottom: 30, left: 8 }}>
             <CartesianGrid stroke={pal.grid} strokeDasharray="3 3" />
@@ -150,23 +155,30 @@ export default function ScalingLawsChart() {
               formatter={(v) => Number(v).toFixed(3)}
             />
             <Line name="compute-optimal frontier" type="monotone" dataKey="y" stroke={pal.accent} strokeWidth={2} dot={false} isAnimationActive={false} />
-            {MODELS.map((m) => {
-              const c = 6 * m.params * m.tokens
-              return (
-                <ReferenceDot
-                  key={m.name}
-                  x={c}
-                  y={law(m.params, m.tokens)}
-                  r={5}
-                  fill={m.color}
-                  stroke={pal.tooltipBg}
-                  label={{ value: m.name, position: 'top', fill: pal.ink, fontSize: 10 }}
-                />
-              )
-            })}
+            {MODELS.map((m) => (
+              <ReferenceDot
+                key={m.name}
+                x={6 * m.params * m.tokens}
+                y={law(m.params, m.tokens)}
+                r={5}
+                fill={m.color}
+                stroke={pal.tooltipBg}
+              />
+            ))}
             <ReferenceDot x={C} y={L} r={7} fill={pal.accent} stroke={pal.tooltipBg} strokeWidth={2} />
           </ComposedChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Color legend for the published-model dots (labels on the chart itself
+          overlap badly once several 2025-era runs cluster on the frontier). */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1.5" aria-label="Legend for published model dots">
+        {MODELS.map((m) => (
+          <span key={m.name} className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
+            <span aria-hidden className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: m.color }} />
+            {m.name} <span className="font-mono text-[10px]">'0{m.year - 2000}</span>
+          </span>
+        ))}
       </div>
 
       {/* Live summary of the current point */}
@@ -184,8 +196,13 @@ export default function ScalingLawsChart() {
         ))}
       </div>
 
-      {/* Published models, scored through the same law */}
-      <div className="overflow-x-auto rounded-lg border border-border">
+      {/* Published models, scored through the same law (collapsed to keep the
+          widget inside one laptop screen; expand the widget for full detail) */}
+      <details className="rounded-lg border border-border bg-surface-raised/30 px-3 py-2">
+        <summary className="cursor-pointer text-xs font-medium text-ink-muted transition hover:text-ink">
+          Published configs table (9 models, scored through the law)
+        </summary>
+        <div className="overflow-x-auto pt-2">
         <table className="w-full min-w-[560px] text-sm">
           <caption className="sr-only">Published training configs and their predicted loss under the Chinchilla fitted law</caption>
           <thead>
@@ -201,7 +218,12 @@ export default function ScalingLawsChart() {
           <tbody>
             {MODELS.map((m) => (
               <tr key={m.name} className="border-t border-border">
-                <td className="px-3 py-2 font-medium text-ink/90">{m.name}</td>
+                <td className="px-3 py-2 font-medium text-ink/90">
+                  {m.name}
+                  {m.params >= 2e11 && ['DeepSeek-V3', 'Llama 4 Scout', 'Llama 4 Maverick', 'Qwen3-235B', 'Kimi K2'].includes(m.name) && (
+                    <span className="ml-1.5 rounded bg-surface-raised px-1 py-0.5 font-mono text-[10px] text-ink-muted">MoE, total</span>
+                  )}
+                </td>
                 <td className="px-3 py-2 font-mono text-ink/80">{fmtBig(m.params)}</td>
                 <td className="px-3 py-2 font-mono text-ink/80">{fmtBig(m.tokens)}</td>
                 <td className="px-3 py-2 font-mono text-ink/80">{(m.tokens / m.params).toFixed(1)}</td>
@@ -211,17 +233,19 @@ export default function ScalingLawsChart() {
             ))}
           </tbody>
         </table>
-      </div>
+        </div>
+      </details>
 
       <p className="text-xs text-ink-muted">
         All numbers are computed in your browser from the fitted constants E=1.69, A=406.4, B=410.7, α=0.34, β=0.28 of{' '}
         <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener noreferrer" className="text-accent underline underline-offset-2">
           Hoffmann et al., 2022
         </a>;
-        predictions from a 2022-era fit, not measured losses (modern models like Llama 3 beat this prediction thanks to
-        better data and stability tricks). Slide tokens/param away from ≈20 at fixed compute and watch the point rise off
-        the frontier: with total-parameter counting, the law's exact optimum sits a bit above 20, parameter-counting
-        details matter.
+        predictions from a 2022-era fit, not measured losses (modern models beat this prediction thanks to better data
+        and stability tricks). Published params/tokens are from each model's paper or card; MoE rows (DeepSeek-V3, Llama
+        4, Qwen3, Kimi K2) count total parameters, and 2025-era models deliberately over-train far past ≈20 tokens per
+        param, so their dots sit slightly off the 2022 frontier. Slide tokens/param away from ≈20 at fixed compute and
+        watch the point rise off the frontier.
       </p>
     </div>
   )

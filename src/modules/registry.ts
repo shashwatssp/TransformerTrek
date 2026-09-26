@@ -532,6 +532,29 @@ export const MODULES: ModuleMeta[] = [
     ],
     component: lazy(() => import('./agents/BuildAnAgent')),
   },
+  {
+    id: 'agent-system-design', section: 'agents', order: 24,
+    title: 'System Design: Agentic Systems', blurb: 'Design a production agent end to end: requirements, back-of-envelope math, architecture, failure modes, scaling.',
+    steps: [
+      'The problem statement',
+      'Functional requirements',
+      'Non-functional requirements',
+      'Back-of-envelope math: load, tokens, cost',
+      'The architecture, end to end',
+      'Failure modes and guardrails',
+      'Scaling levers',
+    ],
+    prerequisites: ['tools-react', 'memory-planning'],
+    related: ['build-an-agent', 'agent-case-studies', 'frameworks', 'rag'],
+    sources: [
+      { title: 'Anthropic, Building effective agents', url: 'https://www.anthropic.com/engineering/building-effective-agents', note: 'Workflows vs agents; the patterns this design draws on.' },
+      { title: 'OpenAI, A practical guide to building agents', url: 'https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf', note: 'A production checklist that mirrors this design order.' },
+      { title: 'Anthropic, Writing effective tools for agents', url: 'https://www.anthropic.com/engineering/writing-tools-for-agents', note: 'Tool design as an interface problem.' },
+      { title: 'LangGraph, official docs', url: 'https://langchain-ai.github.io/langgraph/', note: 'Durable state machines for agent orchestration.' },
+      { title: 'MCP, official docs', url: 'https://modelcontextprotocol.io/introduction', note: 'The tool-server interface used in the design.' },
+    ],
+    component: lazy(() => import('./agents/AgentSystemDesign')),
+  },
   // ── Evals ────────────────────────────────────────────────────
   {
     id: 'evals', section: 'evals', order: 22,
