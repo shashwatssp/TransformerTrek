@@ -3,58 +3,76 @@ import { useRoute, useScrollTopOnRoute } from './router'
 import { TopNav } from './components/layout/TopNav'
 import { Sidebar } from './components/layout/Sidebar'
 import { ModuleLayout } from './components/layout/ModuleLayout'
-import { Prose } from './components/ui'
+import VisualizationsGallery from './components/VisualizationsGallery'
+import { Prose, Reveal } from './components/ui'
+import { motion, useReducedMotion } from 'motion/react'
+import type { ReactNode } from 'react'
 
 function Home() {
+  const reduced = useReducedMotion()
   return (
     <main className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-        See how AI
-        <span className="text-primary-bright"> actually </span>
-        works.
-      </h1>
-      <p className="mt-4 max-w-2xl text-lg text-ink-muted">
-        Interactive, visual explanations of transformers, LLMs, and agents — from tokens
-        and attention to RAG, MCP, and beyond. Step by step, first thing first.
-      </p>
-      <div className="mt-6 flex gap-3">
-        <a
-          href="#/modules/what-is-an-llm"
-          className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary/85"
-        >
-          Start the trek →
-        </a>
-        <a
-          href="#/glossary"
-          className="rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-ink transition hover:bg-surface-raised"
-        >
-          Browse the glossary
-        </a>
-      </div>
+      <motion.div
+        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      >
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          See how AI
+          <span className="text-primary-bright"> actually </span>
+          works.
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg text-ink-muted">
+          Interactive, visual explanations of transformers, LLMs, and agents, from tokens
+          and attention to RAG, MCP, and beyond. Step by step, first thing first.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a
+            href="#/modules/what-is-an-llm"
+            className="min-h-11 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-primary/85 active:scale-[0.98]"
+          >
+            Start the trek →
+          </a>
+          <a
+            href="#/visualizations"
+            className="min-h-11 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-ink transition-all hover:bg-surface-raised active:scale-[0.98]"
+          >
+            Tour the visualizations
+          </a>
+          <a
+            href="#/glossary"
+            className="min-h-11 rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-ink transition-all hover:bg-surface-raised active:scale-[0.98]"
+          >
+            Browse the glossary
+          </a>
+        </div>
+      </motion.div>
 
       {/* Module map */}
       <div className="mt-16 space-y-10">
         {SECTIONS.map((section, si) => (
-          <section key={section.id}>
-            <h2 className="text-lg font-semibold tracking-tight">
-              <span className="font-mono text-sm text-ink-muted">{si + 1}.</span> {section.title}
-            </h2>
-            <p className="mt-1 text-sm text-ink-muted">{section.blurb}</p>
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {modulesBySection(section.id).map((m) => (
-                <li key={m.id}>
-                  <a
-                    href={`#/modules/${m.id}`}
-                    className="block h-full rounded-xl border border-border bg-surface p-4 transition hover:border-accent/50 hover:bg-surface-raised/40"
-                  >
-                    <span className="font-mono text-[10px] text-ink-muted">Module {moduleNumber(m)}</span>
-                    <h3 className="mt-1 text-sm font-semibold text-ink">{m.title}</h3>
-                    <p className="mt-1 text-xs leading-5 text-ink-muted">{m.blurb}</p>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <Reveal key={section.id} delay={Math.min(si * 0.05, 0.2)}>
+            <section>
+              <h2 className="text-lg font-semibold tracking-tight">
+                <span className="font-mono text-sm text-ink-muted">{si + 1}.</span> {section.title}
+              </h2>
+              <p className="mt-1 text-sm text-ink-muted">{section.blurb}</p>
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {modulesBySection(section.id).map((m) => (
+                  <li key={m.id}>
+                    <a
+                      href={`#/modules/${m.id}`}
+                      className="block h-full rounded-xl border border-border bg-surface p-4 transition-all hover:-translate-y-0.5 hover:border-accent/50 hover:bg-surface-raised/40 hover:shadow-[0_8px_24px_rgba(0,0,0,0.25)]"
+                    >
+                      <span className="font-mono text-[10px] text-ink-muted">Module {moduleNumber(m)}</span>
+                      <h3 className="mt-1 text-sm font-semibold text-ink">{m.title}</h3>
+                      <p className="mt-1 text-xs leading-5 text-ink-muted">{m.blurb}</p>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </Reveal>
         ))}
       </div>
     </main>
@@ -137,6 +155,7 @@ const WIDGET_LABELS: Record<string, string> = {
   a2a: 'A2A task lifecycle',
   'agent-graph': 'Agent graph builder',
   evals: 'Benchmark charts + perplexity lab',
+  'system-prompt': 'System prompt lab',
 }
 
 function Playground() {
@@ -150,7 +169,7 @@ function Playground() {
     <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
       <h1 className="text-3xl font-bold tracking-tight">Playground</h1>
       <p className="mt-2 text-sm text-ink-muted">
-        Every interactive demo, free of narrative — each one lives inside its module; jump straight in.
+        Every interactive demo, free of narrative, each one lives inside its module; jump straight in.
       </p>
       <ul className="mt-8 grid gap-3 sm:grid-cols-2">
         {[...byWidget.entries()].map(([w, mods]) => (
@@ -177,6 +196,21 @@ function Playground() {
   )
 }
 
+/** Subtle fade-up when the route path changes (skip animation for reduced motion). */
+function PageFade({ pageKey, children }: { pageKey: string; children: ReactNode }) {
+  const reduced = useReducedMotion()
+  return (
+    <motion.div
+      key={pageKey}
+      initial={reduced ? { opacity: 1 } : { opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 export default function App() {
   const route = useRoute()
   useScrollTopOnRoute(route.path)
@@ -185,6 +219,7 @@ export default function App() {
   if (route.parts[0] === 'modules' && route.parts[1]) page = <ModulePage id={route.parts[1]} />
   else if (route.parts[0] === 'glossary') page = <Glossary />
   else if (route.parts[0] === 'playground') page = <Playground />
+  else if (route.parts[0] === 'visualizations') page = <VisualizationsGallery />
   else page = <Home />
 
   return (
@@ -203,9 +238,11 @@ export default function App() {
         Skip to content
       </a>
       <TopNav activePath={route.path} />
-      <div id="main-content" tabIndex={-1}>{page}</div>
+      <div id="main-content" tabIndex={-1}>
+        <PageFade pageKey={route.path}>{page}</PageFade>
+      </div>
       <footer className="border-t border-border py-8 text-center text-xs text-ink-muted">
-        TransformerTrek — learn how AI actually works. Everything computed client-side.
+        TransformerTrek, learn how AI actually works. Everything computed client-side.
       </footer>
     </div>
   )

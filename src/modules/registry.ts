@@ -20,7 +20,7 @@ export type ModuleMeta = {
   title: string
   blurb: string
   widget?: string
-  /** Ordered outline — the "first thing first" reading sequence for this module. */
+  /** Ordered outline, the "first thing first" reading sequence for this module. */
   steps: string[]
   /** Module ids that should be understood first (prerequisite DAG). */
   prerequisites: string[]
@@ -32,7 +32,7 @@ export type ModuleMeta = {
 }
 
 export const SECTIONS: Section[] = [
-  { id: 'foundations', title: 'Foundations', blurb: 'Start here — what LLMs are and how they behave.' },
+  { id: 'foundations', title: 'Foundations', blurb: 'Start here, what LLMs are and how they behave.' },
   { id: 'transformers', title: 'Transformers', blurb: 'Tokens, embeddings, attention, and the architecture that changed everything.' },
   { id: 'training', title: 'Training LLMs', blurb: 'Pretraining, scaling laws, post-training, and how different LLMs are made.' },
   { id: 'retrieval', title: 'Retrieval & Search', blurb: 'RAG, vector search, BM25, MiniLM, and hybrid retrieval.' },
@@ -59,7 +59,7 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: [],
     related: ['how-llms-work', 'tokenization-embeddings'],
     sources: [
-      { title: 'Karpathy — Intro to Large Language Models', url: 'https://www.youtube.com/watch?v=zjkBMFhNj_g', note: 'The 1-hour big-picture talk.' },
+      { title: 'Karpathy, Intro to Large Language Models', url: 'https://www.youtube.com/watch?v=zjkBMFhNj_g', note: 'The 1-hour big-picture talk.' },
       { title: 'Language Models are Few-Shot Learners (GPT-3)', url: 'https://arxiv.org/abs/2005.14165', note: 'The paper that defined the modern LLM paradigm.' },
       { title: 'Hugging Face LLM Course, ch. 1', url: 'https://huggingface.co/learn/llm-course/chapter1/1', note: 'Hands-on companion.' },
     ],
@@ -78,16 +78,16 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['what-is-an-llm'],
     related: ['next-token-lab', 'tokenization-embeddings'],
     sources: [
-      { title: "Karpathy — Let's build GPT from scratch", url: 'https://www.youtube.com/watch?v=kCc8FmEb1nY', note: 'Build the loop yourself, line by line.' },
+      { title: "Karpathy, Let's build GPT from scratch", url: 'https://www.youtube.com/watch?v=kCc8FmEb1nY', note: 'Build the loop yourself, line by line.' },
       { title: 'The Illustrated GPT-2 (Visualizing the Language Model)', url: 'https://jalammar.github.io/illustrated-gpt2/' },
-      { title: 'OpenAI — Better Language Models (GPT-2)', url: 'https://openai.com/index/better-language-models/' },
+      { title: 'OpenAI, Better Language Models (GPT-2)', url: 'https://openai.com/index/better-language-models/' },
     ],
     component: lazy(() => import('./foundations/HowLLMsWork')),
   },
   // ── Transformers ─────────────────────────────────────────────
   {
     id: 'tokenization-embeddings', section: 'transformers', order: 3,
-    title: 'Tokenization & Embeddings', blurb: 'How text becomes numbers — subwords, vocab IDs, dense vectors.',
+    title: 'Tokenization & Embeddings', blurb: 'How text becomes numbers, subwords, vocab IDs, dense vectors.',
     widget: 'tokenizer',
     steps: [
       'Characters → subwords → tokens',
@@ -98,19 +98,19 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['what-is-an-llm'],
     related: ['attention', 'vector-search'],
     sources: [
-      { title: 'Hugging Face — Summary of the tokenizers', url: 'https://huggingface.co/docs/transformers/tokenizer_summary' },
-      { title: 'Sennrich et al. — Neural Machine Translation of Rare Words with Subword Units (BPE)', url: 'https://arxiv.org/abs/1508.07909' },
+      { title: 'Hugging Face, Summary of the tokenizers', url: 'https://huggingface.co/docs/transformers/tokenizer_summary' },
+      { title: 'Sennrich et al., Neural Machine Translation of Rare Words with Subword Units (BPE)', url: 'https://arxiv.org/abs/1508.07909' },
       { title: 'The Illustrated Word2Vec', url: 'https://jalammar.github.io/illustrated-word2vec/' },
     ],
     component: lazy(() => import('./transformer/TokenizationEmbeddings')),
   },
   {
     id: 'attention', section: 'transformers', order: 4,
-    title: 'Attention, step by step', blurb: 'Q, K, V, scores, masking, softmax, outputs — every number visible.',
+    title: 'Attention, step by step', blurb: 'Q, K, V, scores, masking, softmax, outputs, every number visible.',
     widget: 'attention',
     steps: [
       'The problem: one vector per word is not enough',
-      'Queries, Keys, Values — the library metaphor',
+      'Queries, Keys, Values, the library metaphor',
       'Scores: dot products, row by row',
       'Softmax: turning scores into weights',
       'Masking: what a decoder may not see',
@@ -119,10 +119,10 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['tokenization-embeddings'],
     related: ['architecture', 'how-llms-work'],
     sources: [
-      { title: 'Vaswani et al. — Attention Is All You Need', url: 'https://arxiv.org/abs/1706.03762', note: 'The original transformer paper.' },
+      { title: 'Vaswani et al., Attention Is All You Need', url: 'https://arxiv.org/abs/1706.03762', note: 'The original transformer paper.' },
       { title: 'The Illustrated Transformer', url: 'https://jalammar.github.io/illustrated-transformer/' },
       { title: 'Transformer Explainer (Polo Club)', url: 'https://poloclub.github.io/transformer-explainer/', note: 'Interactive Sankey-style walkthrough.' },
-      { title: 'BertViz — attention head visualization', url: 'https://github.com/jessevig/bertviz' },
+      { title: 'BertViz, attention head visualization', url: 'https://github.com/jessevig/bertviz' },
     ],
     component: lazy(() => import('./transformer/Attention')),
   },
@@ -140,14 +140,14 @@ export const MODULES: ModuleMeta[] = [
     related: ['attention', 'how-llms-are-trained'],
     sources: [
       { title: 'The Annotated Transformer (Harvard NLP)', url: 'https://nlp.seas.harvard.edu/annotated-transformer/', note: 'The paper, implemented line by line.' },
-      { title: 'Vaswani et al. — Attention Is All You Need', url: 'https://arxiv.org/abs/1706.03762' },
+      { title: 'Vaswani et al., Attention Is All You Need', url: 'https://arxiv.org/abs/1706.03762' },
       { title: 'Transformer Explainer (Polo Club)', url: 'https://poloclub.github.io/transformer-explainer/' },
     ],
     component: lazy(() => import('./transformer/Architecture')),
   },
   {
     id: 'next-token-lab', section: 'transformers', order: 6,
-    title: 'Next-Token Prediction Lab', blurb: 'Temperature, top-k, top-p — shape the distribution yourself.',
+    title: 'Next-Token Prediction Lab', blurb: 'Temperature, top-k, top-p, shape the distribution yourself.',
     widget: 'sampler',
     steps: [
       'Logits → probabilities review',
@@ -159,8 +159,8 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['how-llms-work'],
     related: ['how-llms-work', 'attention'],
     sources: [
-      { title: 'Hugging Face — Generation strategies', url: 'https://huggingface.co/docs/transformers/generation_strategies' },
-      { title: 'Holtzman et al. — The Curious Case of Neural Text Degeneration (top-p)', url: 'https://arxiv.org/abs/1904.09751' },
+      { title: 'Hugging Face, Generation strategies', url: 'https://huggingface.co/docs/transformers/generation_strategies' },
+      { title: 'Holtzman et al., The Curious Case of Neural Text Degeneration (top-p)', url: 'https://arxiv.org/abs/1904.09751' },
     ],
     component: lazy(() => import('./transformer/NextTokenLab')),
   },
@@ -179,9 +179,9 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['architecture'],
     related: ['how-llms-are-trained', 'evals'],
     sources: [
-      { title: 'Kaplan et al. — Scaling Laws for Neural Language Models', url: 'https://arxiv.org/abs/2001.08361' },
-      { title: 'Hoffmann et al. — Training Compute-Optimal Large Language Models (Chinchilla)', url: 'https://arxiv.org/abs/2203.15556' },
-      { title: 'Gao et al. — The Pile (training corpus)', url: 'https://arxiv.org/abs/2101.00027' },
+      { title: 'Kaplan et al., Scaling Laws for Neural Language Models', url: 'https://arxiv.org/abs/2001.08361' },
+      { title: 'Hoffmann et al., Training Compute-Optimal Large Language Models (Chinchilla)', url: 'https://arxiv.org/abs/2203.15556' },
+      { title: 'Gao et al., The Pile (training corpus)', url: 'https://arxiv.org/abs/2101.00027' },
     ],
     component: lazy(() => import('./llm/Pretraining')),
   },
@@ -199,8 +199,8 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['pretraining'],
     related: ['fine-tuning', 'architecture'],
     sources: [
-      { title: 'Devlin et al. — BERT', url: 'https://arxiv.org/abs/1810.04805' },
-      { title: 'Raffel et al. — T5 (Exploring the Limits of Transfer Learning)', url: 'https://arxiv.org/abs/1910.10683' },
+      { title: 'Devlin et al., BERT', url: 'https://arxiv.org/abs/1810.04805' },
+      { title: 'Raffel et al., T5 (Exploring the Limits of Transfer Learning)', url: 'https://arxiv.org/abs/1910.10683' },
       { title: 'The Llama 3 Herd of Models', url: 'https://arxiv.org/abs/2407.21783' },
       { title: 'DeepSeek-V3 Technical Report', url: 'https://arxiv.org/abs/2412.19437' },
     ],
@@ -208,7 +208,7 @@ export const MODULES: ModuleMeta[] = [
   },
   {
     id: 'fine-tuning', section: 'training', order: 9,
-    title: 'Fine-tuning & Alignment', blurb: 'SFT, LoRA/QLoRA, RLHF/PPO, DPO, GRPO — and reward hacking.',
+    title: 'Fine-tuning & Alignment', blurb: 'SFT, LoRA/QLoRA, RLHF/PPO, DPO, GRPO, and reward hacking.',
     widget: 'pipeline',
     steps: [
       'SFT: teaching format and behavior',
@@ -221,13 +221,35 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['pretraining'],
     related: ['rag-vs-fine-tuning', 'how-llms-are-trained'],
     sources: [
-      { title: 'Hu et al. — LoRA', url: 'https://arxiv.org/abs/2106.09685' },
-      { title: 'Dettmers et al. — QLoRA', url: 'https://arxiv.org/abs/2305.14314' },
-      { title: 'Ouyang et al. — InstructGPT (RLHF)', url: 'https://arxiv.org/abs/2203.02155' },
-      { title: 'Rafailov et al. — DPO', url: 'https://arxiv.org/abs/2305.18290' },
-      { title: 'Shao et al. — DeepSeekMath (GRPO)', url: 'https://arxiv.org/abs/2402.03300' },
+      { title: 'Hu et al., LoRA', url: 'https://arxiv.org/abs/2106.09685' },
+      { title: 'Dettmers et al., QLoRA', url: 'https://arxiv.org/abs/2305.14314' },
+      { title: 'Ouyang et al., InstructGPT (RLHF)', url: 'https://arxiv.org/abs/2203.02155' },
+      { title: 'Rafailov et al., DPO', url: 'https://arxiv.org/abs/2305.18290' },
+      { title: 'Shao et al., DeepSeekMath (GRPO)', url: 'https://arxiv.org/abs/2402.03300' },
     ],
     component: lazy(() => import('./llm/FineTuning')),
+  },
+  {
+    id: 'open-source-models', section: 'training', order: 10,
+    title: 'Open-Source Models, Compared', blurb: 'Llama, Mistral, Qwen, Gemma, DeepSeek, Phi: training recipes, licenses, and how to pick.',
+    steps: [
+      'What open weights are and why they matter',
+      'The big open-weight families',
+      'How they are trained: four recipes',
+      'Which one should you pick?',
+      'Run one tonight',
+    ],
+    prerequisites: ['pretraining'],
+    related: ['how-llms-are-trained', 'fine-tuning'],
+    sources: [
+      { title: 'Llama model collection on Hugging Face', url: 'https://huggingface.co/meta-llama' },
+      { title: 'Mistral AI docs', url: 'https://docs.mistral.ai/' },
+      { title: 'Qwen on GitHub', url: 'https://github.com/QwenLM/' },
+      { title: 'Gemma docs (Google AI)', url: 'https://ai.google.dev/gemma' },
+      { title: 'DeepSeek on GitHub', url: 'https://github.com/deepseek-ai' },
+      { title: 'Phi-4 model card', url: 'https://huggingface.co/microsoft/phi-4' },
+    ],
+    component: lazy(() => import('./llm/OpenSourceModels')),
   },
   // ── Retrieval & Search ───────────────────────────────────────
   {
@@ -245,15 +267,15 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['how-llms-work'],
     related: ['rag-vs-fine-tuning', 'vector-search', 'hybrid-search'],
     sources: [
-      { title: 'Lewis et al. — Retrieval-Augmented Generation (original RAG paper)', url: 'https://arxiv.org/abs/2005.11401' },
-      { title: 'AWS Prescriptive Guidance — RAG options and architectures', url: 'https://docs.aws.amazon.com/prescriptive-guidance/latest/retrieval-augmented-generation-options/' },
-      { title: 'LangChain — RAG tutorial', url: 'https://python.langchain.com/docs/tutorials/rag/' },
+      { title: 'Lewis et al., Retrieval-Augmented Generation (original RAG paper)', url: 'https://arxiv.org/abs/2005.11401' },
+      { title: 'AWS Prescriptive Guidance, RAG options and architectures', url: 'https://docs.aws.amazon.com/prescriptive-guidance/latest/retrieval-augmented-generation-options/' },
+      { title: 'LangChain, RAG tutorial', url: 'https://python.langchain.com/docs/tutorials/rag/' },
     ],
     component: lazy(() => import('./retrieval/WhatIsRag')),
   },
   {
     id: 'rag-vs-fine-tuning', section: 'retrieval', order: 11,
-    title: 'RAG vs Fine-tuning', blurb: 'When to retrieve, when to train, when to combine — side by side.',
+    title: 'RAG vs Fine-tuning', blurb: 'When to retrieve, when to train, when to combine, side by side.',
     widget: 'comparison',
     steps: [
       'The core distinction: knowledge vs behavior',
@@ -265,9 +287,9 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['rag', 'fine-tuning'],
     related: ['rag', 'fine-tuning', 'vector-search'],
     sources: [
-      { title: 'AWS Prescriptive Guidance — Comparing RAG and fine-tuning', url: 'https://docs.aws.amazon.com/prescriptive-guidance/latest/retrieval-augmented-generation-options/rag-vs-fine-tuning.html', note: 'Advantages/disadvantages table and recommendations.' },
-      { title: 'Balaguer et al. — RAG vs Fine-tuning: Pipelines, Tradeoffs, and a Case Study on Agriculture', url: 'https://arxiv.org/abs/2401.08406', note: 'Measured: fine-tuning +6pp, RAG +5pp further, combined best.' },
-      { title: 'AWS ML Blog — Tailoring foundation models: RAG, fine-tuning, and hybrid approaches', url: 'https://aws.amazon.com/blogs/machine-learning/tailoring-foundation-models-for-your-business-needs-a-comprehensive-guide-to-rag-fine-tuning-and-hybrid-approaches/' },
+      { title: 'AWS Prescriptive Guidance, Comparing RAG and fine-tuning', url: 'https://docs.aws.amazon.com/prescriptive-guidance/latest/retrieval-augmented-generation-options/rag-vs-fine-tuning.html', note: 'Advantages/disadvantages table and recommendations.' },
+      { title: 'Balaguer et al., RAG vs Fine-tuning: Pipelines, Tradeoffs, and a Case Study on Agriculture', url: 'https://arxiv.org/abs/2401.08406', note: 'Measured: fine-tuning +6pp, RAG +5pp further, combined best.' },
+      { title: 'AWS ML Blog, Tailoring foundation models: RAG, fine-tuning, and hybrid approaches', url: 'https://aws.amazon.com/blogs/machine-learning/tailoring-foundation-models-for-your-business-needs-a-comprehensive-guide-to-rag-fine-tuning-and-hybrid-approaches/' },
     ],
     component: lazy(() => import('./retrieval/RagVsFineTuning')),
   },
@@ -278,22 +300,22 @@ export const MODULES: ModuleMeta[] = [
     steps: [
       'Embeddings as geometry',
       'Cosine similarity in practice',
-      'Brute force — and why it fails at scale',
+      'Brute force, and why it fails at scale',
       'ANN and the HNSW graph',
       'Recall vs speed tradeoffs',
     ],
     prerequisites: ['tokenization-embeddings'],
     related: ['minilm', 'bm25', 'rag'],
     sources: [
-      { title: 'Malkov & Yashunin — HNSW', url: 'https://arxiv.org/abs/1603.09320' },
-      { title: 'Pinecone — Vector databases', url: 'https://www.pinecone.io/learn/vector-database/' },
-      { title: 'Hugging Face — Sentence similarity task', url: 'https://huggingface.co/tasks/sentence-similarity' },
+      { title: 'Malkov & Yashunin, HNSW', url: 'https://arxiv.org/abs/1603.09320' },
+      { title: 'Pinecone, Vector databases', url: 'https://www.pinecone.io/learn/vector-database/' },
+      { title: 'Hugging Face, Sentence similarity task', url: 'https://huggingface.co/tasks/sentence-similarity' },
     ],
     component: lazy(() => import('./retrieval/VectorSearch')),
   },
   {
     id: 'bm25', section: 'retrieval', order: 13,
-    title: 'How BM25 Works', blurb: 'Term saturation, IDF, length normalization — with live k1/b sliders.',
+    title: 'How BM25 Works', blurb: 'Term saturation, IDF, length normalization, with live k1/b sliders.',
     widget: 'bm25',
     steps: [
       'TF-IDF refresher',
@@ -305,8 +327,8 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: [],
     related: ['vector-search', 'hybrid-search'],
     sources: [
-      { title: 'Robertson & Zaragoza — The Probabilistic Relevance Framework: BM25 and Beyond', url: 'https://dl.acm.org/doi/10.1561/1500000019' },
-      { title: 'Elastic — Practical BM25: the algorithm and its variables', url: 'https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables' },
+      { title: 'Robertson & Zaragoza, The Probabilistic Relevance Framework: BM25 and Beyond', url: 'https://dl.acm.org/doi/10.1561/1500000019' },
+      { title: 'Elastic, Practical BM25: the algorithm and its variables', url: 'https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables' },
     ],
     component: lazy(() => import('./retrieval/Bm25')),
   },
@@ -324,8 +346,8 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['vector-search'],
     related: ['vector-search', 'hybrid-search'],
     sources: [
-      { title: 'Wang et al. — MiniLM: Deep Self-Attention Distillation', url: 'https://arxiv.org/abs/1908.06954' },
-      { title: 'Reimers & Gurevych — Sentence-BERT', url: 'https://arxiv.org/abs/1908.10084' },
+      { title: 'Wang et al., MiniLM: Deep Self-Attention Distillation', url: 'https://arxiv.org/abs/1908.06954' },
+      { title: 'Reimers & Gurevych, Sentence-BERT', url: 'https://arxiv.org/abs/1908.10084' },
       { title: 'SBERT documentation', url: 'https://sbert.net/' },
     ],
     component: lazy(() => import('./retrieval/Minilm')),
@@ -343,16 +365,16 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['bm25', 'vector-search'],
     related: ['rag', 'minilm'],
     sources: [
-      { title: 'Cormack et al. — Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods', url: 'https://dl.acm.org/doi/10.1145/1571941.1571977' },
-      { title: 'Weaviate — Hybrid search explained', url: 'https://weaviate.io/blog/hybrid-search-explained' },
-      { title: 'Hugging Face — ms-marco cross-encoder rerankers', url: 'https://huggingface.co/cross-encoders/ms-marco-MiniLM-L-6-v2' },
+      { title: 'Cormack et al., Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods', url: 'https://dl.acm.org/doi/10.1145/1571941.1571977' },
+      { title: 'Weaviate, Hybrid search explained', url: 'https://weaviate.io/blog/hybrid-search-explained' },
+      { title: 'Hugging Face, ms-marco cross-encoder rerankers', url: 'https://huggingface.co/cross-encoders/ms-marco-MiniLM-L-6-v2' },
     ],
     component: lazy(() => import('./retrieval/HybridSearch')),
   },
   // ── Agents & Protocols ───────────────────────────────────────
   {
     id: 'what-is-an-agent', section: 'agents', order: 16,
-    title: 'What is an Agent?', blurb: 'Perceive → reason → act → observe — the loop that changes everything.',
+    title: 'What is an Agent?', blurb: 'Perceive → reason → act → observe, the loop that changes everything.',
     widget: 'agent-loop',
     steps: [
       'From chatbot to agent: the loop',
@@ -363,8 +385,8 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['how-llms-work'],
     related: ['tools-react', 'frameworks'],
     sources: [
-      { title: 'Yao et al. — ReAct', url: 'https://arxiv.org/abs/2210.03629' },
-      { title: 'Anthropic — Building effective agents', url: 'https://www.anthropic.com/engineering/building-effective-agents' },
+      { title: 'Yao et al., ReAct', url: 'https://arxiv.org/abs/2210.03629' },
+      { title: 'Anthropic, Building effective agents', url: 'https://www.anthropic.com/engineering/building-effective-agents' },
     ],
     component: lazy(() => import('./agents/WhatIsAnAgent')),
   },
@@ -381,9 +403,9 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['what-is-an-agent'],
     related: ['what-is-an-agent', 'mcp'],
     sources: [
-      { title: 'Yao et al. — ReAct', url: 'https://arxiv.org/abs/2210.03629' },
-      { title: 'Schick et al. — Toolformer', url: 'https://arxiv.org/abs/2302.04761' },
-      { title: 'OpenAI — Function calling guide', url: 'https://platform.openai.com/docs/guides/function-calling' },
+      { title: 'Yao et al., ReAct', url: 'https://arxiv.org/abs/2210.03629' },
+      { title: 'Schick et al., Toolformer', url: 'https://arxiv.org/abs/2302.04761' },
+      { title: 'OpenAI, Function calling guide', url: 'https://platform.openai.com/docs/guides/function-calling' },
     ],
     component: lazy(() => import('./agents/ToolsReact')),
   },
@@ -400,14 +422,14 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['tools-react', 'vector-search'],
     related: ['tools-react', 'a2a-multiagent'],
     sources: [
-      { title: 'Park et al. — Generative Agents', url: 'https://arxiv.org/abs/2304.03442' },
-      { title: 'Shinn et al. — Reflexion', url: 'https://arxiv.org/abs/2303.11366' },
+      { title: 'Park et al., Generative Agents', url: 'https://arxiv.org/abs/2304.03442' },
+      { title: 'Shinn et al., Reflexion', url: 'https://arxiv.org/abs/2303.11366' },
     ],
     component: lazy(() => import('./agents/MemoryPlanning')),
   },
   {
     id: 'mcp', section: 'agents', order: 19,
-    title: 'MCP — Model Context Protocol', blurb: 'The 2026 spec: stateless core, discovery, Tasks, MCP Apps.',
+    title: 'MCP, Model Context Protocol', blurb: 'The 2026 spec: stateless core, discovery, Tasks, MCP Apps.',
     widget: 'mcp',
     steps: [
       'The N×M problem MCP solves',
@@ -419,7 +441,7 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['tools-react'],
     related: ['a2a-multiagent', 'frameworks'],
     sources: [
-      { title: 'Model Context Protocol — official docs', url: 'https://modelcontextprotocol.io/introduction' },
+      { title: 'Model Context Protocol, official docs', url: 'https://modelcontextprotocol.io/introduction' },
       { title: 'MCP TypeScript SDK', url: 'https://github.com/modelcontextprotocol/typescript-sdk' },
     ],
     component: lazy(() => import('./agents/Mcp')),
@@ -437,14 +459,14 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['mcp'],
     related: ['mcp', 'memory-planning'],
     sources: [
-      { title: 'A2A protocol — official docs', url: 'https://google.github.io/A2A/' },
-      { title: 'Wu et al. — AutoGen', url: 'https://arxiv.org/abs/2308.08155' },
+      { title: 'A2A protocol, official docs', url: 'https://google.github.io/A2A/' },
+      { title: 'Wu et al., AutoGen', url: 'https://arxiv.org/abs/2308.08155' },
     ],
     component: lazy(() => import('./agents/A2aMultiagent')),
   },
   {
     id: 'frameworks', section: 'agents', order: 21,
-    title: 'LangChain vs LangGraph vs ADK', blurb: 'State, nodes, edges, reducers — graphs with cycles for agent control flow.',
+    title: 'LangChain vs LangGraph vs ADK', blurb: 'State, nodes, edges, reducers, graphs with cycles for agent control flow.',
     widget: 'agent-graph',
     steps: [
       'LangChain: the chained abstractions',
@@ -456,11 +478,59 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['tools-react'],
     related: ['mcp', 'what-is-an-agent'],
     sources: [
-      { title: 'LangGraph — official docs', url: 'https://langchain-ai.github.io/langgraph/' },
-      { title: 'LangChain — introduction', url: 'https://python.langchain.com/docs/introduction/' },
-      { title: 'Google ADK — documentation', url: 'https://google.github.io/adk-docs/' },
+      { title: 'LangGraph, official docs', url: 'https://langchain-ai.github.io/langgraph/' },
+      { title: 'LangChain, introduction', url: 'https://python.langchain.com/docs/introduction/' },
+      { title: 'Google ADK, documentation', url: 'https://google.github.io/adk-docs/' },
     ],
     component: lazy(() => import('./agents/Frameworks')),
+  },
+  {
+    id: 'agent-case-studies', section: 'agents', order: 22,
+    title: 'Case Studies: How Agent Products Work', blurb: 'Perplexity, ChatGPT, Claude, Cursor, Windsurf, and Devin, read as architecture diagrams.',
+    steps: [
+      'Why products beat abstractions',
+      'Perplexity: search-first RAG',
+      'ChatGPT: the assistant that grew tools',
+      'Claude: built for agent workloads',
+      'Cursor & Windsurf: agents that know your codebase',
+      'Devin: the planner-executor profile',
+      'The common architecture',
+    ],
+    prerequisites: ['what-is-an-agent'],
+    related: ['build-an-agent', 'rag', 'a2a-multiagent'],
+    sources: [
+      { title: 'Anthropic, Building effective agents', url: 'https://www.anthropic.com/engineering/building-effective-agents' },
+      { title: 'Cursor docs', url: 'https://docs.cursor.com/' },
+      { title: 'Windsurf docs: Cascade', url: 'https://docs.windsurf.com/windsurf/cascade' },
+      { title: 'Devin docs', url: 'https://docs.devin.ai/' },
+      { title: 'Perplexity docs and API', url: 'https://docs.perplexity.ai/' },
+      { title: 'OpenAI function calling guide', url: 'https://platform.openai.com/docs/guides/function-calling' },
+    ],
+    component: lazy(() => import('./agents/CaseStudies')),
+  },
+  {
+    id: 'build-an-agent', section: 'agents', order: 23,
+    title: 'Build Your Own Agent', blurb: 'The loop, the system prompt, tool design, memory, MCP authoring, and evaluation.',
+    widget: 'system-prompt',
+    steps: [
+      'Start with the simplest loop',
+      'Write the system prompt like an engineer',
+      'Define tools like products',
+      'Add memory only when memory is the problem',
+      'Ship your tools as an MCP server',
+      'Evaluate like a product, not a demo',
+    ],
+    prerequisites: ['tools-react'],
+    related: ['agent-case-studies', 'mcp', 'frameworks'],
+    sources: [
+      { title: 'MCP docs: build your first server', url: 'https://modelcontextprotocol.io/tutorials/building-a-simple-server' },
+      { title: 'MCP TypeScript SDK', url: 'https://github.com/modelcontextprotocol/typescript-sdk' },
+      { title: 'MCP Python SDK (FastMCP)', url: 'https://github.com/modelcontextprotocol/python-sdk' },
+      { title: 'OpenAI function calling guide', url: 'https://platform.openai.com/docs/guides/function-calling' },
+      { title: 'Anthropic tool use docs', url: 'https://docs.anthropic.com/en/docs/agents-and-tools/tool-use' },
+      { title: 'LangGraph docs', url: 'https://langchain-ai.github.io/langgraph/' },
+    ],
+    component: lazy(() => import('./agents/BuildAnAgent')),
   },
   // ── Evals ────────────────────────────────────────────────────
   {
@@ -476,9 +546,9 @@ export const MODULES: ModuleMeta[] = [
     prerequisites: ['pretraining'],
     related: ['pretraining', 'how-llms-are-trained'],
     sources: [
-      { title: 'Hendrycks et al. — MMLU', url: 'https://arxiv.org/abs/2009.03300' },
-      { title: 'Liang et al. — HELM', url: 'https://arxiv.org/abs/2209.01946' },
-      { title: 'Chen et al. — Evaluating Codex (HumanEval)', url: 'https://arxiv.org/abs/2107.03374' },
+      { title: 'Hendrycks et al., MMLU', url: 'https://arxiv.org/abs/2009.03300' },
+      { title: 'Liang et al., HELM', url: 'https://arxiv.org/abs/2209.01946' },
+      { title: 'Chen et al., Evaluating Codex (HumanEval)', url: 'https://arxiv.org/abs/2107.03374' },
     ],
     component: lazy(() => import('./evals/Evals')),
   },
@@ -492,7 +562,7 @@ export function getModule(id: string): ModuleMeta | undefined {
   return MODULES.find((m) => m.id === id)
 }
 
-/** Stable display number "section.module" — e.g. retrieval section, 3rd module → "4.3". */
+/** Stable display number "section.module", e.g. retrieval section, 3rd module → "4.3". */
 export function moduleNumber(m: ModuleMeta): string {
   const sIdx = SECTIONS.findIndex((s) => s.id === m.section) + 1
   const inSection = modulesBySection(m.section).findIndex((x) => x.id === m.id) + 1
@@ -510,35 +580,35 @@ export function neighbors(id: string): { prev?: ModuleMeta; next?: ModuleMeta } 
 /** Terms for the glossary page */
 export const GLOSSARY: { term: string; def: string; module?: string }[] = [
   { term: 'Agent', def: 'A system that perceives, reasons, acts via tools, and observes results in a loop until a goal is met.', module: 'what-is-an-agent' },
-  { term: 'A2A', def: 'Agent-to-Agent protocol — standardized agent cards, task delegation, and inter-agent communication.', module: 'a2a-multiagent' },
-  { term: 'ANN', def: 'Approximate Nearest Neighbor search — sublinear vector search trading a little recall for a lot of speed.', module: 'vector-search' },
+  { term: 'A2A', def: 'Agent-to-Agent protocol, standardized agent cards, task delegation, and inter-agent communication.', module: 'a2a-multiagent' },
+  { term: 'ANN', def: 'Approximate Nearest Neighbor search, sublinear vector search trading a little recall for a lot of speed.', module: 'vector-search' },
   { term: 'Attention', def: 'Mechanism where each token computes weighted relevance (query·key) to all others and mixes their values.', module: 'attention' },
   { term: 'BM25', def: 'Probabilistic lexical ranking function with term-frequency saturation (k1) and length normalization (b).', module: 'bm25' },
   { term: 'Chinchilla scaling', def: 'Compute-optimal training: scale parameters and data proportionally (~20 tokens per parameter).', module: 'pretraining' },
   { term: 'Context window', def: 'The maximum number of tokens a model can attend to in one inference pass.', module: 'how-llms-work' },
-  { term: 'Cosine similarity', def: 'Dot product of normalized vectors — the standard similarity metric for embeddings.', module: 'vector-search' },
+  { term: 'Cosine similarity', def: 'Dot product of normalized vectors, the standard similarity metric for embeddings.', module: 'vector-search' },
   { term: 'Cross-encoder', def: 'A reranker that jointly encodes (query, document) pairs for much better relevance scoring than bi-encoders.', module: 'hybrid-search' },
   { term: 'Dense retrieval', def: 'Semantic search over embedding vectors, as opposed to sparse lexical matching like BM25.', module: 'vector-search' },
-  { term: 'DPO', def: 'Direct Preference Optimization — alignment via a closed-form loss on preference pairs, no reward model or RL loop.', module: 'fine-tuning' },
+  { term: 'DPO', def: 'Direct Preference Optimization, alignment via a closed-form loss on preference pairs, no reward model or RL loop.', module: 'fine-tuning' },
   { term: 'Embedding', def: 'A dense vector representation of text where semantic closeness ≈ geometric closeness.', module: 'tokenization-embeddings' },
   { term: 'Embedding model', def: 'A model (like MiniLM) trained to map sentences into a shared vector space for search/clustering.', module: 'minilm' },
-  { term: 'GRPO', def: 'Group Relative Policy Optimization — critic-free RL that normalizes rewards within sampled groups.', module: 'fine-tuning' },
-  { term: 'HNSW', def: 'Hierarchical Navigable Small World — layered graph index powering fast ANN search in vector DBs.', module: 'vector-search' },
+  { term: 'GRPO', def: 'Group Relative Policy Optimization, critic-free RL that normalizes rewards within sampled groups.', module: 'fine-tuning' },
+  { term: 'HNSW', def: 'Hierarchical Navigable Small World, layered graph index powering fast ANN search in vector DBs.', module: 'vector-search' },
   { term: 'Hybrid search', def: 'Combining BM25 lexical scores with dense vector scores (often via RRF) for better recall.', module: 'hybrid-search' },
   { term: 'LangGraph', def: 'Orchestration runtime modeling agent workflows as state graphs: nodes, edges, reducers, cycles.', module: 'frameworks' },
   { term: 'LoRA / QLoRA', def: 'Parameter-efficient fine-tuning: train tiny adapter matrices instead of full weights (QLoRA adds 4-bit quantization).', module: 'fine-tuning' },
-  { term: 'MCP', def: 'Model Context Protocol — standard protocol connecting agents to tools, resources, and prompts (2026: stateless core, Tasks).', module: 'mcp' },
+  { term: 'MCP', def: 'Model Context Protocol, standard protocol connecting agents to tools, resources, and prompts (2026: stateless core, Tasks).', module: 'mcp' },
   { term: 'MiniLM', def: 'Distilled 6-layer transformer encoder producing 384-dim sentence embeddings via mean pooling.', module: 'minilm' },
-  { term: 'MoE', def: 'Mixture of Experts — route each token to a few specialized feed-forward experts for huge capacity at sub-linear cost.', module: 'how-llms-are-trained' },
-  { term: 'Perplexity', def: 'exp(cross-entropy) — how "surprised" a model is by held-out text. Lower is better.', module: 'evals' },
-  { term: 'RAG', def: 'Retrieval-Augmented Generation — retrieve relevant chunks at inference time and inject them into the prompt.', module: 'rag' },
+  { term: 'MoE', def: 'Mixture of Experts, route each token to a few specialized feed-forward experts for huge capacity at sub-linear cost.', module: 'how-llms-are-trained' },
+  { term: 'Perplexity', def: 'exp(cross-entropy), how "surprised" a model is by held-out text. Lower is better.', module: 'evals' },
+  { term: 'RAG', def: 'Retrieval-Augmented Generation, retrieve relevant chunks at inference time and inject them into the prompt.', module: 'rag' },
   { term: 'ReAct', def: 'Reasoning + Acting pattern: interleave Thought → Action → Observation until done.', module: 'tools-react' },
   { term: 'Reward hacking', def: 'Policy exploits reward-model errors (verbosity, flattery) to score high without being genuinely good.', module: 'fine-tuning' },
-  { term: 'RLHF', def: 'RL from Human Feedback — train a reward model on preferences, optimize the policy against it (usually PPO).', module: 'fine-tuning' },
-  { term: 'RRF', def: 'Reciprocal Rank Fusion — combine multiple ranked lists via Σ 1/(k + rank).', module: 'hybrid-search' },
-  { term: 'SFT', def: 'Supervised Fine-Tuning — next-token training on curated (instruction, response) pairs; loss on response tokens only.', module: 'fine-tuning' },
+  { term: 'RLHF', def: 'RL from Human Feedback, train a reward model on preferences, optimize the policy against it (usually PPO).', module: 'fine-tuning' },
+  { term: 'RRF', def: 'Reciprocal Rank Fusion, combine multiple ranked lists via Σ 1/(k + rank).', module: 'hybrid-search' },
+  { term: 'SFT', def: 'Supervised Fine-Tuning, next-token training on curated (instruction, response) pairs; loss on response tokens only.', module: 'fine-tuning' },
   { term: 'Softmax', def: 'Exponentiate and normalize a score vector into a probability distribution.', module: 'attention' },
   { term: 'Temperature', def: 'Divide logits by T before softmax: T→0 sharpens (deterministic), T→∞ flattens (random).', module: 'how-llms-work' },
-  { term: 'Token', def: 'Subword unit from a fixed vocabulary — the atoms LLMs read and write.', module: 'tokenization-embeddings' },
+  { term: 'Token', def: 'Subword unit from a fixed vocabulary, the atoms LLMs read and write.', module: 'tokenization-embeddings' },
   { term: 'Top-k / Top-p', def: 'Sampling filters: keep k highest-probability tokens, or the smallest nucleus whose mass ≥ p.', module: 'next-token-lab' },
 ]

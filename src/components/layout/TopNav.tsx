@@ -11,7 +11,7 @@ export function TopNav({ activePath }: { activePath: string }) {
       <a
         key={href}
         href={href}
-        className={`rounded-md px-2.5 py-1 transition ${
+        className={`flex min-h-9 items-center rounded-md px-2 py-1.5 transition sm:px-2.5 sm:py-1 ${
           active ? 'bg-surface-raised text-ink' : 'text-ink-muted hover:text-ink'
         }`}
       >
@@ -21,12 +21,13 @@ export function TopNav({ activePath }: { activePath: string }) {
   }
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-void/90 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-        <a href="#/" className="text-base font-semibold tracking-tight sm:text-lg">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
+        <a href="#/" className="shrink-0 text-base font-semibold tracking-tight sm:text-lg">
           Transformer<span className="text-accent">Trek</span>
         </a>
-        <nav className="flex items-center gap-1 text-sm">
+        <nav className="flex min-w-0 items-center gap-0.5 text-sm sm:gap-1">
           {link('#/', 'Trek')}
+          {link('#/visualizations', 'Visuals')}
           {link('#/playground', 'Playground')}
           {link('#/glossary', 'Glossary')}
           <span
@@ -39,7 +40,7 @@ export function TopNav({ activePath }: { activePath: string }) {
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            className="ml-1 rounded-md border border-border p-1.5 text-ink-muted transition hover:text-ink"
+            className="ml-0.5 rounded-md border border-border p-2 text-ink-muted transition hover:text-ink sm:ml-1"
           >
             {theme === 'dark' ? (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
