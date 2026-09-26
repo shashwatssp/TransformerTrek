@@ -183,7 +183,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Hoffmann et al. — Training Compute-Optimal Large Language Models (Chinchilla)', url: 'https://arxiv.org/abs/2203.15556' },
       { title: 'Gao et al. — The Pile (training corpus)', url: 'https://arxiv.org/abs/2101.00027' },
     ],
-    component: null,
+    component: lazy(() => import('./llm/Pretraining')),
   },
   {
     id: 'how-llms-are-trained', section: 'training', order: 8,
@@ -204,7 +204,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'The Llama 3 Herd of Models', url: 'https://arxiv.org/abs/2407.21783' },
       { title: 'DeepSeek-V3 Technical Report', url: 'https://arxiv.org/abs/2412.19437' },
     ],
-    component: null,
+    component: lazy(() => import('./llm/HowLLMsAreTrained')),
   },
   {
     id: 'fine-tuning', section: 'training', order: 9,
@@ -227,7 +227,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Rafailov et al. — DPO', url: 'https://arxiv.org/abs/2305.18290' },
       { title: 'Shao et al. — DeepSeekMath (GRPO)', url: 'https://arxiv.org/abs/2402.03300' },
     ],
-    component: null,
+    component: lazy(() => import('./llm/FineTuning')),
   },
   // ── Retrieval & Search ───────────────────────────────────────
   {
