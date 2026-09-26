@@ -366,7 +366,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Yao et al. — ReAct', url: 'https://arxiv.org/abs/2210.03629' },
       { title: 'Anthropic — Building effective agents', url: 'https://www.anthropic.com/engineering/building-effective-agents' },
     ],
-    component: null,
+    component: lazy(() => import('./agents/WhatIsAnAgent')),
   },
   {
     id: 'tools-react', section: 'agents', order: 17,
@@ -385,7 +385,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Schick et al. — Toolformer', url: 'https://arxiv.org/abs/2302.04761' },
       { title: 'OpenAI — Function calling guide', url: 'https://platform.openai.com/docs/guides/function-calling' },
     ],
-    component: null,
+    component: lazy(() => import('./agents/ToolsReact')),
   },
   {
     id: 'memory-planning', section: 'agents', order: 18,
@@ -403,7 +403,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Park et al. — Generative Agents', url: 'https://arxiv.org/abs/2304.03442' },
       { title: 'Shinn et al. — Reflexion', url: 'https://arxiv.org/abs/2303.11366' },
     ],
-    component: null,
+    component: lazy(() => import('./agents/MemoryPlanning')),
   },
   {
     id: 'mcp', section: 'agents', order: 19,
@@ -422,7 +422,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Model Context Protocol — official docs', url: 'https://modelcontextprotocol.io/introduction' },
       { title: 'MCP TypeScript SDK', url: 'https://github.com/modelcontextprotocol/typescript-sdk' },
     ],
-    component: null,
+    component: lazy(() => import('./agents/Mcp')),
   },
   {
     id: 'a2a-multiagent', section: 'agents', order: 20,
@@ -440,7 +440,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'A2A protocol — official docs', url: 'https://google.github.io/A2A/' },
       { title: 'Wu et al. — AutoGen', url: 'https://arxiv.org/abs/2308.08155' },
     ],
-    component: null,
+    component: lazy(() => import('./agents/A2aMultiagent')),
   },
   {
     id: 'frameworks', section: 'agents', order: 21,
@@ -460,7 +460,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'LangChain — introduction', url: 'https://python.langchain.com/docs/introduction/' },
       { title: 'Google ADK — documentation', url: 'https://google.github.io/adk-docs/' },
     ],
-    component: null,
+    component: lazy(() => import('./agents/Frameworks')),
   },
   // ── Evals ────────────────────────────────────────────────────
   {
@@ -480,7 +480,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Liang et al. — HELM', url: 'https://arxiv.org/abs/2209.01946' },
       { title: 'Chen et al. — Evaluating Codex (HumanEval)', url: 'https://arxiv.org/abs/2107.03374' },
     ],
-    component: null,
+    component: lazy(() => import('./evals/Evals')),
   },
 ]
 
