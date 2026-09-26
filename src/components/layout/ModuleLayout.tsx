@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { getModule, moduleNumber, neighbors, SECTIONS, type ModuleMeta } from '../../modules/registry'
 import { toggleCompleted, useIsCompleted } from '../../lib/progress'
+import { Quiz } from '../Quiz'
 import { SourceList, StepList } from '../ui'
 
 /**
@@ -69,6 +70,9 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
 
       {/* Content */}
       <div className="mt-8">{children}</div>
+
+      {/* Knowledge check, when this module has quiz questions */}
+      <Quiz moduleId={meta.id} title={meta.title} />
 
       {/* Sources & further reading */}
       {meta.sources.length > 0 && (
