@@ -249,7 +249,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'AWS Prescriptive Guidance — RAG options and architectures', url: 'https://docs.aws.amazon.com/prescriptive-guidance/latest/retrieval-augmented-generation-options/' },
       { title: 'LangChain — RAG tutorial', url: 'https://python.langchain.com/docs/tutorials/rag/' },
     ],
-    component: null,
+    component: lazy(() => import('./retrieval/WhatIsRag')),
   },
   {
     id: 'rag-vs-fine-tuning', section: 'retrieval', order: 11,
@@ -269,7 +269,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Balaguer et al. — RAG vs Fine-tuning: Pipelines, Tradeoffs, and a Case Study on Agriculture', url: 'https://arxiv.org/abs/2401.08406', note: 'Measured: fine-tuning +6pp, RAG +5pp further, combined best.' },
       { title: 'AWS ML Blog — Tailoring foundation models: RAG, fine-tuning, and hybrid approaches', url: 'https://aws.amazon.com/blogs/machine-learning/tailoring-foundation-models-for-your-business-needs-a-comprehensive-guide-to-rag-fine-tuning-and-hybrid-approaches/' },
     ],
-    component: null,
+    component: lazy(() => import('./retrieval/RagVsFineTuning')),
   },
   {
     id: 'vector-search', section: 'retrieval', order: 12,
@@ -289,7 +289,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Pinecone — Vector databases', url: 'https://www.pinecone.io/learn/vector-database/' },
       { title: 'Hugging Face — Sentence similarity task', url: 'https://huggingface.co/tasks/sentence-similarity' },
     ],
-    component: null,
+    component: lazy(() => import('./retrieval/VectorSearch')),
   },
   {
     id: 'bm25', section: 'retrieval', order: 13,
@@ -308,7 +308,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Robertson & Zaragoza — The Probabilistic Relevance Framework: BM25 and Beyond', url: 'https://dl.acm.org/doi/10.1561/1500000019' },
       { title: 'Elastic — Practical BM25: the algorithm and its variables', url: 'https://www.elastic.co/blog/practical-bm25-part-2-the-bm25-algorithm-and-its-variables' },
     ],
-    component: null,
+    component: lazy(() => import('./retrieval/Bm25')),
   },
   {
     id: 'minilm', section: 'retrieval', order: 14,
@@ -328,7 +328,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Reimers & Gurevych — Sentence-BERT', url: 'https://arxiv.org/abs/1908.10084' },
       { title: 'SBERT documentation', url: 'https://sbert.net/' },
     ],
-    component: null,
+    component: lazy(() => import('./retrieval/Minilm')),
   },
   {
     id: 'hybrid-search', section: 'retrieval', order: 15,
@@ -347,7 +347,7 @@ export const MODULES: ModuleMeta[] = [
       { title: 'Weaviate — Hybrid search explained', url: 'https://weaviate.io/blog/hybrid-search-explained' },
       { title: 'Hugging Face — ms-marco cross-encoder rerankers', url: 'https://huggingface.co/cross-encoders/ms-marco-MiniLM-L-6-v2' },
     ],
-    component: null,
+    component: lazy(() => import('./retrieval/HybridSearch')),
   },
   // ── Agents & Protocols ───────────────────────────────────────
   {
