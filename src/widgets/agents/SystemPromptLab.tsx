@@ -57,6 +57,10 @@ const BLOCK_META: { id: BlockId; label: string; why: string }[] = [
 
 const estTokens = (s: string) => Math.ceil(s.length / 4)
 
+// What survives when the prompt must fit the budget, in keep-first order:
+// role is never cut; examples and tone go first, matching the hint below.
+const KEEP_ORDER: BlockId[] = ['role', 'tools', 'constraints', 'format', 'stop', 'examples', 'tone']
+
 export function SystemPromptLab() {
   const reduced = useReducedMotion()
   const [model, setModel] = useState<ModelKey>('claude')
@@ -67,11 +71,24 @@ export function SystemPromptLab() {
   const [budget, setBudget] = useState(400)
 
   const activeBlocks = BLOCK_META.filter((b) => enabled.has(b.id))
-  const assembled = useMemo(
-    () => activeBlocks.map((b) => blocks[b.id]).join('\n\n'),
-    [activeBlocks, blocks],
-  )
-  const tokens = estTokens(assembled)
+
+  // The budget slider actively shapes the prompt: when the assembly does
+  // not fit, lowest-priority blocks are trimmed (and return when the
+  // budget rises), so the control teaches budgeting instead of just
+  // displaying a number.
+  const fit = useMemo(() => {
+    const textOf = (ids: BlockId[]) => ids.map((id) => blocks[id]).join('\n\n')
+    const keep = KEEP_ORDER.filter((id) => enabled.has(id))
+    const trimmed: BlockId[] = []
+    while (estTokens(textOf(keep)) > budget && keep.length > 1) {
+      trimmed.push(keep.pop()!)
+    }
+    const assembled = textOf(keep)
+    return { keep, trimmed, assembled, tokens: estTokens(assembled) }
+  }, [enabled, blocks, budget])
+
+  const assembled = fit.assembled
+  const tokens = fit.tokens
   const overBudget = tokens > budget
   const modelNote = MODELS.find((m) => m.key === model)!.note
 
@@ -119,6 +136,11 @@ export function SystemPromptLab() {
               <span className={`flex items-center gap-2 text-sm font-medium ${on ? 'text-accent' : 'text-ink-muted'}`}>
                 <span aria-hidden className={`h-2 w-2 rounded-full ${on ? 'bg-accent' : 'bg-border'}`} />
                 {b.label}
+                {on && fit.trimmed.includes(b.id) && (
+                  <span className="ml-auto rounded-full border border-highlight/40 px-1.5 py-0.5 font-mono text-[9px] text-highlight">
+                    trimmed
+                  </span>
+                )}
               </span>
               <span className="mt-1 block text-[11px] leading-4 text-ink-muted">{b.why}</span>
             </button>
@@ -162,7 +184,12 @@ export function SystemPromptLab() {
         </div>
         <p aria-live="polite" className={`font-mono text-xs ${overBudget ? 'text-danger' : 'text-ink-muted'}`}>
           assembled: ~{tokens} tokens of a ~{budget} budget
-          {overBudget ? ' (over: cut examples or tone first)' : ''}
+          {fit.trimmed.length > 0 && (
+            <span className="text-highlight">
+              {' '}· auto-trimmed: {fit.trimmed.map((id) => BLOCK_META.find((b) => b.id === id)!.label).join(', ')}
+            </span>
+          )}
+          {overBudget ? ' (over budget even after trimming)' : ''}
         </p>
       </div>
 

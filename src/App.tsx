@@ -8,7 +8,7 @@ import VisualizationsGallery from './components/VisualizationsGallery'
 import RapidReview from './components/RapidReview'
 import { Prose, Reveal } from './components/ui'
 import { motion, useReducedMotion } from 'motion/react'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 function Home() {
   const reduced = useReducedMotion()
@@ -171,14 +171,30 @@ function ModulePage({ id }: { id: string }) {
 }
 
 function Glossary() {
+  const [query, setQuery] = useState('')
+  const q = query.trim().toLowerCase()
+  const entries = GLOSSARY.filter(
+    (g) => !q || g.term.toLowerCase().includes(q) || g.def.toLowerCase().includes(q),
+  )
   return (
     <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <h1 className="text-3xl font-bold tracking-tight">Glossary</h1>
       <p className="mt-2 text-sm text-ink-muted">
         Every term, defined in one line, with a link to the module that explains it.
       </p>
-      <dl className="mt-8 space-y-5">
-        {GLOSSARY.map((g) => (
+      <input
+        type="search"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Filter terms, e.g. attention, RAG, temperature..."
+        aria-label="Filter glossary terms"
+        className="mt-4 w-full max-w-sm rounded-lg border border-border bg-surface px-4 py-2.5 text-sm text-ink placeholder:text-ink-muted/60 focus:border-accent/60 focus:outline-none"
+      />
+      <p className="mt-2 font-mono text-xs text-ink-muted" aria-live="polite">
+        {entries.length} of {GLOSSARY.length} terms
+      </p>
+      <dl className="mt-6 space-y-5">
+        {entries.map((g) => (
           <div key={g.term} className="border-b border-border pb-4">
             <dt className="text-sm font-semibold text-ink">{g.term}</dt>
             <dd className="mt-1 text-sm text-ink/80">
@@ -192,6 +208,11 @@ function Glossary() {
           </div>
         ))}
       </dl>
+      {entries.length === 0 && (
+        <p className="mt-6 text-sm text-ink-muted">
+          No terms match "{query}". Try a shorter fragment.
+        </p>
+      )}
     </main>
   )
 }
