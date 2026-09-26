@@ -1,6 +1,6 @@
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { getModule, moduleNumber, neighbors, SECTIONS, type ModuleMeta } from '../../modules/registry'
-import { isCompleted, toggleCompleted } from '../../lib/progress'
+import { toggleCompleted, useIsCompleted } from '../../lib/progress'
 import { SourceList, StepList } from '../ui'
 
 /**
@@ -9,7 +9,8 @@ import { SourceList, StepList } from '../ui'
  * outline, sources, see-also cross-references, and progress tracking.
  */
 export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: ReactNode }) {
-  const [done, setDone] = useState(() => isCompleted(meta.id))
+  // Live from the reactive localStorage store — sidebar + badge update instantly
+  const done = useIsCompleted(meta.id)
   const section = SECTIONS.find((s) => s.id === meta.section)
   const { prev, next } = neighbors(meta.id)
   const prereqs = meta.prerequisites.map(getModule).filter((m): m is ModuleMeta => !!m)
@@ -106,7 +107,9 @@ export function ModuleLayout({ meta, children }: { meta: ModuleMeta; children: R
       {/* Footer: mark as read + prev/next */}
       <div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
         <button
-          onClick={() => setDone(toggleCompleted(meta.id))}
+          onClick={() => toggleCompleted(meta.id)}
+          aria-pressed={done}
+          aria-label={done ? `"${meta.title}" marked as read — click to unmark` : `Mark "${meta.title}" as read (saved on this device)`}
           className={`inline-flex w-fit items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition ${
             done
               ? 'border border-success/40 bg-success/10 text-success'

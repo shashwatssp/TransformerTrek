@@ -149,8 +149,21 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-void text-ink">
+      <a
+        href="#main-content"
+        onClick={(e) => {
+          // Don't let the hash router treat this as a navigation
+          e.preventDefault()
+          const main = document.getElementById('main-content')
+          main?.focus()
+          main?.scrollIntoView()
+        }}
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:text-accent"
+      >
+        Skip to content
+      </a>
       <TopNav activePath={route.path} />
-      {page}
+      <div id="main-content" tabIndex={-1}>{page}</div>
       <footer className="border-t border-border py-8 text-center text-xs text-ink-muted">
         TransformerTrek — learn how AI actually works. Everything computed client-side.
       </footer>

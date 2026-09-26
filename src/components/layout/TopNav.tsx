@@ -1,7 +1,8 @@
-import { completedCount } from '../../lib/progress'
+import { useCompletedCount } from '../../lib/progress'
 import { MODULES } from '../../modules/registry'
 
 export function TopNav({ activePath }: { activePath: string }) {
+  const completed = useCompletedCount()
   const link = (href: string, label: string) => {
     const active = activePath === href.replace(/^#/, '') || (href === '#/' && activePath === '/')
     return (
@@ -26,8 +27,11 @@ export function TopNav({ activePath }: { activePath: string }) {
           {link('#/', 'Trek')}
           {link('#/playground', 'Playground')}
           {link('#/glossary', 'Glossary')}
-          <span className="ml-2 hidden rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 font-mono text-xs text-success sm:inline">
-            {completedCount()}/{MODULES.length}
+          <span
+            aria-label={`${completed} of ${MODULES.length} modules marked as read on this device`}
+            className="ml-2 hidden rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 font-mono text-xs text-success sm:inline"
+          >
+            {completed}/{MODULES.length}
           </span>
         </nav>
       </div>
