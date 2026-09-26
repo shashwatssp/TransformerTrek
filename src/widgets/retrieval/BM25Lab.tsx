@@ -65,7 +65,7 @@ export default function BM25Lab() {
   const [b, setB] = useState(0.75)
 
   const index = useMemo(() => buildIndex(DOCS), [])
-  const results = useMemo(() => scoreAll(index, query, k1, b), [index, k1, b])
+  const results = useMemo(() => scoreAll(index, query, k1, b), [index, query, k1, b])
   const top = results[0]
 
   const curve = useMemo(() => {

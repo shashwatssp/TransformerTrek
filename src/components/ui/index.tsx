@@ -3,7 +3,6 @@
  * Design tokens come from Tailwind v4 @theme in global.css.
  */
 import { useEffect, useState, type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { getModule, moduleNumber, type SourceRef } from '../../modules/registry'
 
@@ -141,7 +140,13 @@ export function FadeSwitch({
   )
 }
 
-/** Frames an interactive widget with a consistent header and a full-screen expand mode */
+/**
+ * Frames an interactive widget with a consistent header and a full-screen
+ * expand mode. Expand is a true full-screen takeover: the same section node
+ * switches to fixed inset-0 (no margins, edge to edge) so all widget state
+ * (sliders, animations) is preserved. Works on mobile via dvh sizing and
+ * safe-area padding; Escape or the collapse button exits.
+ */
 export function WidgetFrame({
   title,
   subtitle,
@@ -169,79 +174,52 @@ export function WidgetFrame({
     }
   }, [expanded])
 
-  return (
-    <>
-      <motion.section
-        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.985 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ type: 'spring', stiffness: 110, damping: 22 }}
-        className="my-8 overflow-hidden rounded-xl border border-border bg-surface"
-      >
-        <header className="flex items-center gap-3 border-b border-border bg-surface-raised/50 px-4 py-3">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-          </span>
-          <div className="min-w-0">
-            <h3 className="text-sm font-semibold tracking-tight text-ink">{title}</h3>
-            {subtitle && <p className="mt-0.5 text-xs text-ink-muted">{subtitle}</p>}
-          </div>
-          <button
-            onClick={() => setExpanded(true)}
-            aria-label={`Expand ${title} full screen`}
-            title="Expand full screen"
-            className="ml-auto shrink-0 rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-ink-muted transition hover:border-accent/50 hover:text-accent"
-          >
-            ⤢ Expand
-          </button>
-        </header>
-        <div className="p-4">{children}</div>
-      </motion.section>
+  const shell = expanded
+    ? 'fixed inset-0 z-[100] my-0 flex h-dvh flex-col rounded-none border-0 bg-surface'
+    : 'my-8 overflow-hidden rounded-xl border border-border bg-surface'
 
-      {expanded &&
-        createPortal(
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${title} (full screen)`}
-            className="fixed inset-0 z-[100]"
-          >
-            <div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={() => setExpanded(false)}
-            />
-            <motion.div
-              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.985 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 140, damping: 24 }}
-              className="absolute inset-x-3 inset-y-5 flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-2xl sm:inset-x-10 sm:inset-y-10"
-            >
-              <header className="flex shrink-0 items-center gap-3 border-b border-border bg-surface-raised/50 px-4 py-3">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-                </span>
-                <div className="min-w-0">
-                  <h3 className="text-sm font-semibold tracking-tight text-ink">{title}</h3>
-                  {subtitle && <p className="mt-0.5 truncate text-xs text-ink-muted">{subtitle}</p>}
-                </div>
-                <button
-                  onClick={() => setExpanded(false)}
-                  aria-label={`Close ${title} full screen`}
-                  className="ml-auto shrink-0 rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-ink-muted transition hover:border-accent/50 hover:text-accent"
-                >
-                  ✕ Close
-                </button>
-              </header>
-              <div className="min-h-0 flex-1 overflow-y-auto p-4">
-                <div className="mx-auto max-w-5xl">{children}</div>
-              </div>
-            </motion.div>
-          </div>,
-          document.body,
-        )}
-    </>
+  return (
+    <motion.section
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.985 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ type: 'spring', stiffness: 110, damping: 22 }}
+      className={shell}
+      aria-label={title}
+    >
+      <header
+        className={`flex items-center gap-3 border-b border-border bg-surface-raised/50 px-4 py-3 ${
+          expanded ? 'sticky top-0 z-10 shrink-0 pt-[max(0.75rem,env(safe-area-inset-top))]' : ''
+        }`}
+      >
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+        </span>
+        <div className="min-w-0">
+          <h3 className="text-sm font-semibold tracking-tight text-ink">{title}</h3>
+          {subtitle && <p className="mt-0.5 truncate text-xs text-ink-muted">{subtitle}</p>}
+        </div>
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-label={expanded ? `Collapse ${title}, back to the page` : `Expand ${title} full screen`}
+          title={expanded ? 'Collapse' : 'Expand full screen'}
+          className="ml-auto flex min-h-9 shrink-0 items-center rounded-lg border border-border px-2.5 py-1 text-xs font-medium text-ink-muted transition hover:border-accent/50 hover:text-accent sm:min-h-0"
+        >
+          {expanded ? '⤡ Collapse' : '⤢ Expand'}
+        </button>
+      </header>
+      <div
+        className={
+          expanded
+            ? 'min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-6'
+            : 'p-4'
+        }
+      >
+        <div className={expanded ? 'mx-auto max-w-5xl' : undefined}>{children}</div>
+      </div>
+    </motion.section>
   )
 }
 
