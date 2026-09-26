@@ -8,7 +8,7 @@ import VisualizationsGallery from './components/VisualizationsGallery'
 import RapidReview from './components/RapidReview'
 import { Prose, Reveal } from './components/ui'
 import { motion, useReducedMotion } from 'motion/react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { Suspense, useEffect, useState, type ReactNode } from 'react'
 
 function Home() {
   const reduced = useReducedMotion()
@@ -139,6 +139,24 @@ function NotFound() {
   )
 }
 
+/**
+ * Stand-in while a lazy module chunk downloads. Without this boundary,
+ * tapping a link could not commit the new page: the previous screen (often
+ * the homepage, mid-scroll on a phone) stayed frozen until the chunk
+ * arrived. The skeleton commits instantly instead.
+ */
+function ModuleSkeleton() {
+  return (
+    <div className="mt-8 space-y-4" aria-busy="true">
+      <div className="h-48 animate-pulse rounded-xl border border-border bg-surface" />
+      <div className="h-4 w-2/3 animate-pulse rounded bg-surface" />
+      <div className="h-4 w-full animate-pulse rounded bg-surface" />
+      <div className="h-4 w-5/6 animate-pulse rounded bg-surface" />
+      <p className="text-xs text-ink-muted">Loading the interactive module...</p>
+    </div>
+  )
+}
+
 function ModulePage({ id }: { id: string }) {
   const meta = getModule(id)
   if (!meta) {
@@ -154,7 +172,9 @@ function ModulePage({ id }: { id: string }) {
       <Sidebar activeModuleId={meta.id} />
       <ModuleLayout meta={meta}>
         {meta.component ? (
-          <meta.component />
+          <Suspense fallback={<ModuleSkeleton />}>
+            <meta.component />
+          </Suspense>
         ) : (
           <Prose>
             <div className="rounded-xl border border-border bg-surface p-6 text-center">
