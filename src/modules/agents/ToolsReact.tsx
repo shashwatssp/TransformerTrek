@@ -2,8 +2,6 @@
  * Module 5.2: Tool Calling & ReAct
  * Body content follows the registry steps for id 'tools-react'.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   CodeBlock,
@@ -15,7 +13,6 @@ import {
 } from '../../components/ui'
 import { ReActStepper } from '../../widgets/agents/ReActStepper'
 
-const meta = getModule('tools-react')!
 
 const schemaCode = `{
   "name": "get_weather",
@@ -44,7 +41,7 @@ def react_turn(llm, tools, history, user_msg):
 
 export default function ToolsReact() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           <ModuleLink id="what-is-an-agent" /> ended with a loop that needs two things it doesn't
@@ -149,6 +146,6 @@ export default function ToolsReact() {
           'Chains fail by propagated errors, infinite loops, and hallucinated arguments, budget steps, validate schemas, feed errors back as observations.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }

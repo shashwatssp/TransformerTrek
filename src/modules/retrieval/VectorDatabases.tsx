@@ -4,8 +4,6 @@
  * Product details (pricing, index support) evolve quickly; figures are
  * approximate and each claim links to a primary source.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   H2,
@@ -15,7 +13,6 @@ import {
 } from '../../components/ui'
 import { extClass } from '../../widgets/retrieval/shared'
 
-const meta = getModule('vector-databases')!
 
 const th = 'py-1 pr-3 font-medium text-left'
 const td = 'py-1.5 pr-3 text-left align-top'
@@ -30,7 +27,7 @@ function Ext({ href, children }: { href: string; children: React.ReactNode }) {
 
 export default function VectorDatabases() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           <ModuleLink id="vector-search" /> showed why brute force dies at scale and how HNSW saves
@@ -265,6 +262,6 @@ export default function VectorDatabases() {
           'Choose with data: recall@10 vs p99 latency vs RAM on your own corpus, and prefer the boring option that lives where your data already is.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }

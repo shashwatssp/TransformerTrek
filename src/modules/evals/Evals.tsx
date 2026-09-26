@@ -2,8 +2,6 @@
  * Module 6.1: How LLMs Are Evaluated
  * Body content follows the registry steps for id 'evals'.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   CodeBlock,
@@ -17,7 +15,6 @@ import { BenchmarksChart } from '../../widgets/agents/BenchmarksChart'
 import { PerplexityLab } from '../../widgets/agents/PerplexityLab'
 import { LlmJudgeExplainer } from '../../widgets/agents/LlmJudgeExplainer'
 
-const meta = getModule('evals')!
 
 const pplCode = `import math
 # PPL from per-token logprobs (what HF's perplexity guide does with real models)
@@ -28,7 +25,7 @@ ppl = math.exp(avg_nll)          # exp(cross-entropy) == branching factor
 
 export default function Evals() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           Everything you've built so far, models (<ModuleLink id="pretraining" />), agents (
@@ -212,6 +209,6 @@ export default function Evals() {
           'Tooling sorts into tracing (LangSmith, Langfuse, Phoenix), datasets/experiments (Braintrust, Weave), CI frameworks (promptfoo, DeepEval), and RAG metrics (RAGAS); run evals as code offline and sampled judges online.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }

@@ -2,8 +2,6 @@
  * Module 5.5: A2A & Multi-Agent Patterns
  * Body content follows the registry steps for id 'a2a-multiagent'.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   CodeBlock,
@@ -15,7 +13,6 @@ import {
 } from '../../components/ui'
 import { A2AFlow } from '../../widgets/agents/A2AFlow'
 
-const meta = getModule('a2a-multiagent')!
 
 const clientCode = `# Delegating to a remote A2A agent (a2a-python sketch)
 from a2a.client import A2ACardResolver, A2AClient
@@ -37,7 +34,7 @@ if task.status.state == TaskState.completed:
 
 export default function A2aMultiagent() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           MCP (<ModuleLink id="mcp" />) standardized how one agent reaches <em>tools</em>. A2A
@@ -146,6 +143,6 @@ export default function A2aMultiagent() {
           'Go multi-agent only for real forces: context isolation, parallelism, org boundaries, or role separation. Otherwise a single well-tooled agent wins on cost, latency, and debuggability.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }

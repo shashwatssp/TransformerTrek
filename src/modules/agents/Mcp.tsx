@@ -2,8 +2,6 @@
  * Module 5.4: MCP, Model Context Protocol
  * Body content follows the registry steps for id 'mcp'.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   CodeBlock,
@@ -15,7 +13,6 @@ import {
 } from '../../components/ui'
 import { MCPFlow } from '../../widgets/agents/MCPFlow'
 
-const meta = getModule('mcp')!
 
 const sdkCode = `// Connecting to an MCP server with the official TypeScript SDK
 import { Client } from "@modelcontextprotocol/sdk/client/index.js"
@@ -32,7 +29,7 @@ const result = await client.callTool({              // one standardized call sha
 
 export default function Mcp() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           <ModuleLink id="tools-react" /> ended on a problem: every app hand-wires its own tool
@@ -165,6 +162,6 @@ export default function Mcp() {
           'The 2026 direction, stateless core, Tasks, MCP Apps, makes servers scalable cloud infrastructure fit for long-running agents.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }

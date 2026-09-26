@@ -2,8 +2,6 @@
  * Module 5.3: Memory & Planning
  * Body content follows the registry steps for id 'memory-planning'.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   CodeBlock,
@@ -15,7 +13,6 @@ import {
 } from '../../components/ui'
 import { MemoryPlanningViz } from '../../widgets/agents/MemoryPlanningViz'
 
-const meta = getModule('memory-planning')!
 
 const planCode = `# Plan-and-execute with reflection (sketch)
 plan = planner_llm(f"Goal: {goal}\\nBreak into steps with dependencies.")
@@ -32,7 +29,7 @@ memory.write(summary_of(results))   # persist the lessons to long-term memory`
 
 export default function MemoryPlanning() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           The loop from <ModuleLink id="what-is-an-agent" /> has a hidden assumption: everything
@@ -144,6 +141,6 @@ export default function MemoryPlanning() {
           'Reflection turns failures into stored critiques that condition the next attempt, real learning with no gradient steps, but only as good as the evidence it critiques against.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }

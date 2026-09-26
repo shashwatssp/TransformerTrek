@@ -4,8 +4,6 @@
  * Benchmark and pricing figures are approximate and labeled as such:
  * this landscape shifts monthly, the method for choosing does not.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   H2,
@@ -15,7 +13,6 @@ import {
 } from '../../components/ui'
 import { extClass } from '../../widgets/retrieval/shared'
 
-const meta = getModule('embedding-models')!
 
 const th = 'py-1 pr-3 font-medium text-left'
 const td = 'py-1.5 pr-3 text-left align-top'
@@ -30,7 +27,7 @@ function Ext({ href, children }: { href: string; children: React.ReactNode }) {
 
 export default function EmbeddingModels() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           <ModuleLink id="minilm" /> dissected one model end to end. This module zooms out to the
@@ -285,6 +282,6 @@ export default function EmbeddingModels() {
           'The model is one leg of the stool: chunking, prefixes, and the similarity metric move recall as much as the model swap does.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }

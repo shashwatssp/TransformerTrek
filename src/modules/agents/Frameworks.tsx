@@ -2,8 +2,6 @@
  * Module 5.6: LangChain vs LangGraph vs ADK
  * Body content follows the registry steps for id 'frameworks'.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   CodeBlock,
@@ -16,7 +14,6 @@ import {
 } from '../../components/ui'
 import { AgentGraphBuilder } from '../../widgets/agents/AgentGraphBuilder'
 
-const meta = getModule('frameworks')!
 
 const lcelCode = `# LangChain: composable components piped into a chain (LCEL)
 from langchain_core.prompts import ChatPromptTemplate
@@ -64,7 +61,7 @@ app = g.compile()                          # runs steps, checkpoints state`
 
 export default function Frameworks() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           You could build every agent so far with raw HTTP calls. Frameworks exist to take the
@@ -231,6 +228,6 @@ export default function Frameworks() {
           'ADK rises a level: agent roles, workflow agents, and native multi-agent trees, tightest around Gemini/Vertex, A2A-friendly.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }

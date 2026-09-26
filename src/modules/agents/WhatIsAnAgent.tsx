@@ -2,8 +2,6 @@
  * Module 5.1: What is an Agent?
  * Body content follows the registry steps for id 'what-is-an-agent'.
  */
-import { getModule } from '../registry'
-import { ModuleLayout } from '../../components/layout/ModuleLayout'
 import {
   Callout,
   CodeBlock,
@@ -16,7 +14,6 @@ import {
 } from '../../components/ui'
 import { AgentLoopViz } from '../../widgets/agents/AgentLoopViz'
 
-const meta = getModule('what-is-an-agent')!
 
 const loopCode = `# The agent loop in its simplest form (pseudocode)
 context = user_message
@@ -30,7 +27,7 @@ for step in range(max_steps):          # the loop is the agent
 
 export default function WhatIsAnAgent() {
   return (
-    <ModuleLayout meta={meta}>
+    <>
       <Prose>
         <p>
           A chatbot answers; an agent <em>acts</em>. The difference is not the model, it is the
@@ -157,6 +154,6 @@ export default function WhatIsAnAgent() {
           'Agents amplify errors and cost with every turn, if you can pre-write the steps, build a workflow instead.',
         ]}
       />
-    </ModuleLayout>
+    </>
   )
 }
