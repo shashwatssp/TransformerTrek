@@ -6,12 +6,13 @@ TransformerTrek is an interactive, client-side application for learning how tran
 
 ## Where we are
 
-The core curriculum is in place: 25 modules across 6 sections (Foundations, Transformers, Training, Retrieval & Search, Agents & Protocols, Evals), each with step-by-step prose, real citations, prerequisites, and key takeaways.
+The core curriculum is in place: 28 modules across 7 sections (Foundations, Transformers, Training, Retrieval & Search, Agents & Protocols, System Design, Evals), each with step-by-step prose, real citations, prerequisites, and key takeaways.
 
 Shipped highlights:
 
 - 20+ interactive widgets: tokenizer, attention playground, architecture flow, next-token sampler, training-loop simulator, MoE routing lab, RAG pipeline, BM25 lab, HNSW walk, hybrid fusion, agent loop, MCP flow, A2A lifecycle, agent graph builder, benchmark charts, and more.
 - A Visualizations gallery collecting every widget on one page, grouped by theme.
+- A Playground page listing every demo as a one-tap jump that deep-links straight into the widget inside its module.
 - Topical deep dives: case studies of real agent products (Perplexity, ChatGPT, Claude, Cursor, Windsurf, Devin), a build-your-own-agent guide with a system prompt lab, and an honest comparison of open-weight model families.
 - Dark and light themes, mobile-first responsive layout, reduced-motion support, keyboard-friendly widgets, and reading progress saved locally.
 
@@ -28,6 +29,9 @@ Shipped highlights:
 - Real embeddings in the browser: run an actual MiniLM-class model via ONNX in the Embedding Explorer so similarity scores come from a trained model instead of a toy space.
 - Progress export and import: let readers move their reading progress between devices without accounts.
 - Shareable widget links: deep links that open a widget pre-set to an interesting state (a chosen attention head, a specific query, a tuned k1/b pair).
+- Agent security and safety: prompt injection, tool permissions, and sandboxing, taught with the same live-widget approach.
+- Evaluating retrieval: recall@k, MRR, nDCG, and RAG faithfulness metrics with a live metric lab over the BM25 corpus.
+- Inference efficiency: KV cache, flash attention, quantization, and speculative decoding as a visual module.
 - Guided paths: curated routes through the material, such as "RAG engineer in a weekend" or "Agent fundamentals", each pairing modules with exercises.
 - More case studies: coding agents, customer-support agents, and a failure-story teardown of a real production incident.
 

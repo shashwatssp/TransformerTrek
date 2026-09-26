@@ -54,6 +54,11 @@ function subscribe(listener: () => void): () => void {
 
 // ── Reactive hooks ─────────────────────────────────────────────
 
+/** Reactive snapshot of the raw progress map (module id -> timestamp). */
+export function useProgressMap(): ProgressData {
+  return useSyncExternalStore(subscribe, read, () => ({}))
+}
+
 /** Live count of modules marked as read. */
 export function useCompletedCount(): number {
   return useSyncExternalStore(

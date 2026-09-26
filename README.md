@@ -20,7 +20,6 @@ TransformerTrek walks learners through:
 - [Motion](https://motion.dev/) for animation
 - [@xyflow/react](https://reactflow.dev/) for node graphs
 - [Recharts](https://recharts.org/) for data visualization
-- [three.js](https://threejs.org/) + [@react-three/fiber](https://docs.pmnd.rs/) for 3D scenes
 
 ## Getting started
 
