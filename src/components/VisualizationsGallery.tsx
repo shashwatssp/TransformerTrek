@@ -3,7 +3,7 @@
  * order, grouped by theme. For people short on time: scroll through, play
  * with each demo, and read the full module only where you want depth.
  */
-import type { ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { getModule, moduleNumber } from '../modules/registry'
 import { WidgetFrame } from './ui'
 import { NextTokenSampler } from '../widgets/transformer/NextTokenSampler'
@@ -102,6 +102,42 @@ const GROUPS: Group[] = [
   },
 ]
 
+/**
+ * Mounts heavy widgets only once they come near the viewport. The gallery
+ * stacks ~20 interactive widgets; mounting them all at once makes phones
+ * janky and slow to become interactive. The placeholder keeps the scroll
+ * position roughly stable until the real widget mounts.
+ */
+function LazyMount({ children, minHeight = 320 }: { children: ReactNode; minHeight?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    if (mounted || !ref.current) return
+    if (typeof IntersectionObserver === 'undefined') {
+      setMounted(true)
+      return
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setMounted(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '600px 0px' },
+    )
+    io.observe(ref.current)
+    return () => io.disconnect()
+  }, [mounted])
+
+  return (
+    <div ref={ref} style={mounted ? undefined : { minHeight }}>
+      {mounted ? children : null}
+    </div>
+  )
+}
+
 function ModuleRef({ id }: { id: string }) {
   const m = getModule(id)
   if (!m) return null
@@ -146,13 +182,9 @@ export default function VisualizationsGallery() {
           <div className="mt-6 space-y-4">
             {g.entries.map((e, ei) => (
               <div key={`${g.id}-${ei}`}>
-                {e.selfFramed ? (
-                  e.node
-                ) : (
-                  <WidgetFrame title={e.title}>
-                    {e.node}
-                  </WidgetFrame>
-                )}
+                <LazyMount>
+                  {e.selfFramed ? e.node : <WidgetFrame title={e.title}>{e.node}</WidgetFrame>}
+                </LazyMount>
                 <ModuleRef id={e.moduleId} />
               </div>
             ))}

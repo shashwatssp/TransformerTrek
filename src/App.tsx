@@ -6,7 +6,7 @@ import { ModuleLayout } from './components/layout/ModuleLayout'
 import VisualizationsGallery from './components/VisualizationsGallery'
 import { Prose, Reveal } from './components/ui'
 import { motion, useReducedMotion } from 'motion/react'
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
 
 function Home() {
   const reduced = useReducedMotion()
@@ -154,7 +154,7 @@ const WIDGET_LABELS: Record<string, string> = {
   mcp: 'MCP message flow',
   a2a: 'A2A task lifecycle',
   'agent-graph': 'Agent graph builder',
-  evals: 'Benchmark charts + perplexity lab',
+  evals: 'Benchmarks, perplexity & LLM judge',
   'system-prompt': 'System prompt lab',
 }
 
@@ -169,42 +169,74 @@ function Playground() {
     <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
       <h1 className="text-3xl font-bold tracking-tight">Playground</h1>
       <p className="mt-2 text-sm text-ink-muted">
-        Every interactive demo, free of narrative, each one lives inside its module; jump straight in.
+        Every interactive demo, free of narrative, each one lives inside its module; tap a card to jump straight in.
       </p>
       <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-        {[...byWidget.entries()].map(([w, mods]) => (
-          <li key={w} className="rounded-xl border border-border bg-surface p-4">
-            <span className="font-mono text-xs font-semibold text-accent">{WIDGET_LABELS[w] ?? w}</span>
-            <ul className="mt-2 space-y-1">
-              {mods.map((m) => (
-                <li key={m.id}>
-                  <a
-                    href={`#/modules/${m.id}`}
-                    className="text-xs text-ink-muted transition hover:text-accent"
-                  >
-                    <span className="font-mono text-[10px]">{moduleNumber(m)}</span>
-                    {' '}
-                    {m.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
+        {[...byWidget.entries()].map(([w, mods]) => {
+          const label = WIDGET_LABELS[w] ?? w
+          return (
+            <li key={w} className="h-full">
+              {mods.length === 1 ? (
+                // Single module: the entire card is one large tap/click target
+                <a
+                  href={`#/modules/${mods[0].id}`}
+                  aria-label={`Open ${label} (${mods[0].title})`}
+                  className="flex h-full flex-col rounded-xl border border-border bg-surface p-4 transition hover:border-accent/50 hover:bg-surface-raised/40"
+                >
+                  <span className="font-mono text-xs font-semibold text-accent">{label}</span>
+                  <span className="mt-2 flex min-h-11 flex-1 items-center justify-between gap-2 text-sm font-medium text-ink">
+                    {mods[0].title}
+                    <span aria-hidden className="text-ink-muted">→</span>
+                  </span>
+                  <span className="mt-0.5 text-xs text-ink-muted">
+                    Module <span className="font-mono text-[10px]">{moduleNumber(mods[0])}</span>
+                  </span>
+                </a>
+              ) : (
+                // Shared widget: each module gets its own comfortable tap row
+                <div className="h-full rounded-xl border border-border bg-surface p-4">
+                  <span className="font-mono text-xs font-semibold text-accent">{label}</span>
+                  <ul className="mt-2 space-y-1">
+                    {mods.map((m) => (
+                      <li key={m.id}>
+                        <a
+                          href={`#/modules/${m.id}`}
+                          className="flex min-h-11 items-center justify-between gap-2 rounded-lg px-2 text-sm text-ink-muted transition hover:bg-surface-raised hover:text-accent"
+                        >
+                          <span>
+                            <span className="mr-2 font-mono text-[10px]">{moduleNumber(m)}</span>
+                            {m.title}
+                          </span>
+                          <span aria-hidden>→</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </li>
+          )
+        })}
       </ul>
     </main>
   )
 }
 
-/** Subtle fade-up when the route path changes (skip animation for reduced motion). */
+/**
+ * Subtle fade when the route path changes (skip animation for reduced motion).
+ * Opacity-only on purpose: animating y here leaves a transform (or
+ * will-change: transform) on every page's wrapper, which would turn it into
+ * the containing block for the expanded widget frames' position: fixed and
+ * detach them from the viewport, especially on mobile.
+ */
 function PageFade({ pageKey, children }: { pageKey: string; children: ReactNode }) {
   const reduced = useReducedMotion()
   return (
     <motion.div
       key={pageKey}
-      initial={reduced ? { opacity: 1 } : { opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      initial={reduced ? { opacity: 1 } : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
     >
       {children}
     </motion.div>
@@ -221,6 +253,21 @@ export default function App() {
   else if (route.parts[0] === 'playground') page = <Playground />
   else if (route.parts[0] === 'visualizations') page = <VisualizationsGallery />
   else page = <Home />
+
+  // The browser tab title follows the route
+  const pageTitle =
+    route.parts[0] === 'modules' && route.parts[1]
+      ? `${getModule(route.parts[1])?.title ?? 'Module not found'} · TransformerTrek`
+      : route.parts[0] === 'visualizations'
+        ? 'Visualizations · TransformerTrek'
+        : route.parts[0] === 'playground'
+          ? 'Playground · TransformerTrek'
+          : route.parts[0] === 'glossary'
+            ? 'Glossary · TransformerTrek'
+            : 'TransformerTrek · See how AI actually works'
+  useEffect(() => {
+    document.title = pageTitle
+  }, [pageTitle])
 
   return (
     <div className="min-h-screen bg-void text-ink">

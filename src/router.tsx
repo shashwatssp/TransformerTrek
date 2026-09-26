@@ -25,9 +25,26 @@ export function useRoute(): Route {
   return route
 }
 
+/**
+ * Instant jump to the very top of the document. Bypasses the CSS
+ * `scroll-behavior: smooth` on <html>, which turns scrollTo into an
+ * interruptible animation that routinely fails to complete when the route
+ * swap re-renders the page mid-scroll (most visible on phones).
+ */
+function scrollToTopInstantly() {
+  const html = document.documentElement
+  const prevBehavior = html.style.scrollBehavior
+  html.style.scrollBehavior = 'auto'
+  window.scrollTo(0, 0)
+  // Older iOS Safari scrolls <body>, not <html>; set both to be safe.
+  document.body.scrollTop = 0
+  document.documentElement.scrollTop = 0
+  html.style.scrollBehavior = prevBehavior
+}
+
 export function navigate(to: string) {
   window.location.hash = to
-  window.scrollTo(0, 0)
+  scrollToTopInstantly()
 }
 
 export function useNavigate() {
@@ -37,6 +54,6 @@ export function useNavigate() {
 /** Scroll to top on route path change */
 export function useScrollTopOnRoute(path: string) {
   useEffect(() => {
-    window.scrollTo(0, 0)
+    scrollToTopInstantly()
   }, [path])
 }

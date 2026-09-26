@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useCompletedCount } from '../../lib/progress'
 import { toggleTheme, useTheme } from '../../lib/theme'
 import { MODULES } from '../../modules/registry'
@@ -5,13 +6,13 @@ import { MODULES } from '../../modules/registry'
 export function TopNav({ activePath }: { activePath: string }) {
   const completed = useCompletedCount()
   const theme = useTheme()
-  const link = (href: string, label: string) => {
+  const link = (href: string, label: ReactNode) => {
     const active = activePath === href.replace(/^#/, '') || (href === '#/' && activePath === '/')
     return (
       <a
         key={href}
         href={href}
-        className={`flex min-h-9 items-center rounded-md px-2 py-1.5 transition sm:px-2.5 sm:py-1 ${
+        className={`flex min-h-9 items-center whitespace-nowrap rounded-md px-2 py-1.5 transition sm:px-2.5 sm:py-1 ${
           active ? 'bg-surface-raised text-ink' : 'text-ink-muted hover:text-ink'
         }`}
       >
@@ -21,14 +22,22 @@ export function TopNav({ activePath }: { activePath: string }) {
   }
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-void/90 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-2.5 sm:gap-4 sm:px-6 sm:py-3">
-        <a href="#/" className="shrink-0 text-base font-semibold tracking-tight sm:text-lg">
+      {/* Wraps to a second row on narrow phones instead of overflowing the
+          viewport, so Glossary and the theme toggle are always on screen. */}
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-3 gap-y-1 px-3 py-2 sm:flex-nowrap sm:gap-4 sm:px-6 sm:py-3">
+        <a href="#/" className="shrink-0 text-sm font-semibold tracking-tight sm:text-lg">
           Transformer<span className="text-accent">Trek</span>
         </a>
-        <nav className="flex min-w-0 items-center gap-0.5 text-sm sm:gap-1">
+        <nav className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5 text-xs sm:gap-1 sm:text-sm">
           {link('#/', 'Trek')}
           {link('#/visualizations', 'Visuals')}
-          {link('#/playground', 'Playground')}
+          {link(
+            '#/playground',
+            <>
+              <span className="sm:hidden">Play</span>
+              <span className="hidden sm:inline">Playground</span>
+            </>,
+          )}
           {link('#/glossary', 'Glossary')}
           <span
             aria-label={`${completed} of ${MODULES.length} modules marked as read on this device`}

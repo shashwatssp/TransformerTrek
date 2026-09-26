@@ -54,7 +54,7 @@ export default function EmbeddingExplorer() {
       <div>
         <svg
           viewBox="-3.4 -3.4 6.8 6.8"
-          className="h-72 w-72 max-w-full rounded-lg border border-border bg-void/60 sm:h-80 sm:w-80"
+          className="aspect-square w-full max-w-[288px] rounded-lg border border-border bg-void/60 sm:max-w-[320px] lg:w-80 lg:max-w-none lg:shrink-0"
           role="img"
           aria-label={`Scatter plot of toy 2D embeddings with ${queryLabel} selected as the query. Click any point to make it the query.`}
         >
@@ -119,7 +119,7 @@ export default function EmbeddingExplorer() {
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="min-w-0 space-y-3">
         <div role="group" aria-label="Pick the query word" className="flex flex-wrap gap-1.5">
           {POINTS.map((p) => (
             <button

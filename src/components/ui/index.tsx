@@ -2,7 +2,7 @@
  * Shared UI primitives for module content and widgets.
  * Design tokens come from Tailwind v4 @theme in global.css.
  */
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { getModule, moduleNumber, type SourceRef } from '../../modules/registry'
 
@@ -102,11 +102,14 @@ export function Reveal({
 }) {
   const reduced = useReducedMotion()
   return (
+    // Opacity-only: a lingering transform (or will-change: transform) here
+    // would make transformed ancestors the containing block for the
+    // position: fixed full-screen widget frames below.
     <motion.div
-      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ type: 'spring', stiffness: 120, damping: 20, delay }}
+      transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 120, damping: 20, delay }}
       className={className}
     >
       {children}
@@ -158,6 +161,7 @@ export function WidgetFrame({
 }) {
   const reduced = useReducedMotion()
   const [expanded, setExpanded] = useState(false)
+  const frameRef = useRef<HTMLElement>(null)
 
   // Full-screen mode: Escape closes, body scroll locks.
   useEffect(() => {
@@ -174,12 +178,45 @@ export function WidgetFrame({
     }
   }, [expanded])
 
+  // position: fixed positions against the nearest ancestor with a transform,
+  // filter, or will-change: transform. Animated page wrappers can leave those
+  // inline styles behind, which would detach the expanded frame from the
+  // viewport (it renders at the top of the document instead, invisible to the
+  // user mid-page). Neutralize them while expanded, restore on collapse.
+  useEffect(() => {
+    if (!expanded) return
+    const saved: { el: HTMLElement; cssText: string }[] = []
+    let el = frameRef.current?.parentElement
+    while (el && el !== document.body) {
+      const cs = window.getComputedStyle(el)
+      if (
+        cs.transform !== 'none' ||
+        cs.willChange.includes('transform') ||
+        cs.filter !== 'none' ||
+        cs.perspective !== 'none' ||
+        cs.backdropFilter !== 'none'
+      ) {
+        saved.push({ el, cssText: el.style.cssText })
+        el.style.transform = 'none'
+        el.style.willChange = 'auto'
+        el.style.filter = 'none'
+        el.style.perspective = 'none'
+        el.style.backdropFilter = 'none'
+      }
+      el = el.parentElement
+    }
+    return () => {
+      for (const s of saved) s.el.style.cssText = s.cssText
+    }
+  }, [expanded])
+
   const shell = expanded
     ? 'fixed inset-0 z-[100] my-0 flex h-dvh flex-col rounded-none border-0 bg-surface'
     : 'my-8 overflow-hidden rounded-xl border border-border bg-surface'
 
   return (
     <motion.section
+      ref={frameRef}
       initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24, scale: 0.985 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-60px' }}
