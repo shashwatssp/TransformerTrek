@@ -118,18 +118,58 @@ function Glossary() {
   )
 }
 
+const WIDGET_LABELS: Record<string, string> = {
+  sampler: 'Next-token sampler',
+  'next-token': 'Next-token demo',
+  tokenizer: 'Tokenizer playground',
+  attention: 'Attention playground',
+  architecture: 'Architecture flow',
+  'training-loop': 'Training-loop simulator',
+  pipeline: 'Post-training pipeline',
+  rag: 'RAG pipeline flow',
+  comparison: 'Decision framework',
+  'vector-search': 'Vector search + HNSW',
+  bm25: 'BM25 lab',
+  minilm: 'MiniLM visualizer',
+  fusion: 'Hybrid fusion (RRF)',
+  'agent-loop': 'Agent loop / ReAct stepper',
+  mcp: 'MCP message flow',
+  a2a: 'A2A task lifecycle',
+  'agent-graph': 'Agent graph builder',
+  evals: 'Benchmark charts + perplexity lab',
+}
+
 function Playground() {
+  const byWidget = new Map<string, typeof MODULES>()
+  for (const m of MODULES) {
+    if (!m.widget) continue
+    if (!byWidget.has(m.widget)) byWidget.set(m.widget, [])
+    byWidget.get(m.widget)!.push(m)
+  }
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
       <h1 className="text-3xl font-bold tracking-tight">Playground</h1>
       <p className="mt-2 text-sm text-ink-muted">
-        Standalone interactive demos, free of narrative — every widget from the modules in one place.
+        Every interactive demo, free of narrative — each one lives inside its module; jump straight in.
       </p>
       <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-        {[...new Set(MODULES.map((m) => m.widget).filter(Boolean))].map((w) => (
-          <li key={w} className="rounded-xl border border-border bg-surface p-4 text-sm">
-            <span className="font-mono text-xs text-accent">{w}</span>
-            <p className="mt-1 text-xs text-ink-muted">Widget track — coming with the module build.</p>
+        {[...byWidget.entries()].map(([w, mods]) => (
+          <li key={w} className="rounded-xl border border-border bg-surface p-4">
+            <span className="font-mono text-xs font-semibold text-accent">{WIDGET_LABELS[w] ?? w}</span>
+            <ul className="mt-2 space-y-1">
+              {mods.map((m) => (
+                <li key={m.id}>
+                  <a
+                    href={`#/modules/${m.id}`}
+                    className="text-xs text-ink-muted transition hover:text-accent"
+                  >
+                    <span className="font-mono text-[10px]">{moduleNumber(m)}</span>
+                    {' '}
+                    {m.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </li>
         ))}
       </ul>
