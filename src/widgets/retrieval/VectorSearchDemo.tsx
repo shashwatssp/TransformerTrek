@@ -156,7 +156,7 @@ export default function VectorSearchDemo() {
       <div className="grid gap-5 lg:grid-cols-[auto_1fr]">
         <svg
           viewBox="0 0 100 100"
-          className="h-72 w-72 max-w-full rounded-lg border border-border bg-void/60 sm:h-96 sm:w-96"
+          className="aspect-square w-full max-w-[288px] rounded-lg border border-border bg-void/60 sm:max-w-[384px] lg:w-96 lg:max-w-none lg:shrink-0"
           role="img"
           aria-label={
             view === 'HNSW walk'
@@ -239,7 +239,7 @@ export default function VectorSearchDemo() {
           />
         </svg>
 
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3">
           <div role="group" aria-label="Pick a target node" className="flex flex-wrap items-center gap-1.5">
             <span className="text-xs text-ink-muted">Target:</span>
             {[3, 11, 19, 27, 35, 39].map((i) => (
