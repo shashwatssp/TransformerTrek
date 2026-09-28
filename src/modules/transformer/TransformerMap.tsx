@@ -25,7 +25,12 @@ export default function TransformerMap() {
           clickable diagram, with real tensor shapes. The modules after it (<ModuleLink id="tokenization-embeddings" />,{' '}
           <ModuleLink id="attention" />, <ModuleLink id="architecture" />) come back and dissect each piece.
         </p>
-        <p>Read the diagram top to bottom, it is drawn in the order data flows:</p>
+        <p>
+          New here? Keep the diagram in <strong>Story mode</strong> and press play: the same picture told as an
+          editing room, shorthand notes become meaning cards, editors discuss and rewrite, and the line ends with one
+          guessed word that feeds back into the start. The technical names are always one click away.
+        </p>
+        <p>Read the diagram left to right, it is drawn in the order data flows:</p>
         <StepList
           steps={[
             'Text enters as tokens: integer IDs from the tokenizer.',
