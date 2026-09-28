@@ -175,8 +175,8 @@ function labelsFor(part: PartId, lens: Lens, mini: boolean): { title: string; su
     embed: { story: ['Meaning cards', 'one per token'], tech: ['Embedding lookup', 'row of W_e'] },
     pos: { story: ['Position stamp', 'knows word order'], tech: ['Positional signal', 'RoPE'] },
     memory: { story: ["Reader's summary", 'one card per word'], tech: ['Encoder memory', 'keys + values'] },
-    shifted: { story: ['Draft so far', 'starts with begin token'], tech: ['Target shifted right', 'begin token first'] },
-    unembed: { story: ['Guess the next word', 'score all 50,257'], tech: ['Unembedding', 'to vocab logits'] },
+    shifted: { story: ['Draft so far', 'begin token first'], tech: ['Target shifted', 'begin token first'] },
+    unembed: { story: ['Guess next word', 'score all 50,257'], tech: ['Unembedding', 'to vocab logits'] },
     softmax: { story: ['Pick one word', 'append, go again'], tech: ['Softmax: sampling', 'probabilities'] },
   }
   const b = bigLabels[part]
@@ -199,12 +199,20 @@ type BoxProps = {
   onPick: (p: PartId) => void
 }
 
+/** Shrink a font size until the text fits the box width (char-width estimate). */
+function fitFont(text: string, boxW: number, base: number, min: number): number {
+  const est = text.length * base * 0.52
+  return est <= boxW - 6 ? base : Math.max(min, Math.floor((boxW - 6) / (text.length * 0.52)))
+}
+
 function Box({ x, y, w, h, part, lens, mini, big, muted, highlight, onPick }: BoxProps) {
   const { title, sub } = labelsFor(part, lens, !!mini)
   const stroke = highlight ? 'var(--color-accent)' : muted ? 'var(--color-border)' : 'var(--color-ink-muted)'
   const fill = highlight ? 'color-mix(in srgb, var(--color-accent) 20%, var(--color-surface))' : 'var(--color-surface)'
-  const titleSize = big ? 12 : mini ? 9.5 : 11
-  const subSize = big ? 9 : mini ? 7.5 : 8.5
+  const baseTitle = big ? 12 : mini ? 9.5 : 11
+  const baseSub = big ? 9 : mini ? 7.5 : 8.5
+  const titleSize = fitFont(title, w, baseTitle, 6.5)
+  const subSize = sub ? fitFont(sub, w, baseSub, 6) : baseSub
   return (
     <g onClick={() => onPick(part)} style={{ cursor: 'pointer' }} role="button" aria-label={`${title}: click for details`}>
       <rect x={x} y={y} width={w} height={h} rx={6} fill={fill} stroke={stroke} strokeWidth={highlight ? 2 : 1.2} />
@@ -450,7 +458,7 @@ export function ArchitectureDiagram() {
             <Arrow x1={722} y1={64} x2={742} y2={64} />
 
             <Box x={746} y={40} w={120} h={48} part="memory" lens={lens} big highlight={isHot('memory')} onPick={pick} />
-            <ShapeLabel x={806} y={104} text="(src, 512)" />
+            <ShapeLabel x={764} y={104} text="(src, 512)" />
 
             {/* decoder lane */}
             <text x={164} y={278} textAnchor="middle" fontSize={11} fill="var(--color-highlight)" fontFamily="ui-monospace, monospace">
@@ -462,7 +470,7 @@ export function ArchitectureDiagram() {
             <Arrow x1={228} y1={328} x2={248} y2={328} />
 
             <rect x={252} y={290} width={620} height={118} rx={10} fill="none" stroke="var(--color-highlight)" strokeWidth={1.2} strokeDasharray="6 5" opacity={0.8} />
-            <text x={562} y={308} textAnchor="middle" fontSize={10.5} fill="var(--color-highlight)" fontFamily="ui-monospace, monospace">
+            <text x={380} y={308} textAnchor="middle" fontSize={10.5} fill="var(--color-highlight)" fontFamily="ui-monospace, monospace">
               {lens === 'story' ? 'Writing pass x N (2017: 6)' : 'Decoder layer x N (2017: N = 6)'}
             </text>
             <line x1={262} y1={350} x2={862} y2={350} stroke="var(--color-border)" strokeWidth={1.1} />
@@ -473,7 +481,7 @@ export function ArchitectureDiagram() {
             <Box x={552} y={328} w={120} h={44} part="cross" lens={lens} mini highlight={isHot('cross')} onPick={pick} />
             <ResidDot x={686} y={350} highlight={isHot('residual')} />
             <Box x={708} y={328} w={60} h={44} part="ln" lens={lens} mini highlight={isHot('ln')} onPick={pick} />
-            <Box x={780} y={328} w={92} h={44} part="mlp" lens={lens} mini highlight={isHot('mlp')} onPick={pick} />
+            <Box x={778} y={328} w={86} h={44} part="mlp" lens={lens} mini highlight={isHot('mlp')} onPick={pick} />
             <ShapeLabel x={562} y={424} text="(tgt, 512) shape unchanged" />
             <Arrow x1={872} y1={328} x2={892} y2={328} />
 
@@ -484,14 +492,14 @@ export function ArchitectureDiagram() {
 
             {/* memory -> cross-attention bridge */}
             <polyline
-              points="806,88 806,240 612,240 612,322"
+              points="806,88 806,246 612,246 612,322"
               fill="none"
               stroke="var(--color-primary-bright)"
               strokeWidth={1.5}
               strokeDasharray="5 3"
               markerEnd="url(#arrow)"
             />
-            <text x={622} y={232} fontSize={9.5} fill="var(--color-primary-bright)" fontFamily="ui-monospace, monospace">
+            <text x={618} y={264} fontSize={9.5} fill="var(--color-primary-bright)" fontFamily="ui-monospace, monospace">
               {lens === 'story' ? 'the writer consults the summary, every pass' : 'keys + values into cross-attention'}
             </text>
           </svg>
