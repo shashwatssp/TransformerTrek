@@ -86,6 +86,85 @@ Most AI content is either hand-wavy blog posts or research papers with no bridge
 - **How LLMs Are Evaluated** Perplexity, MMLU/HumanEval/GSM8K, LLM-as-judge, contamination, and the tooling platforms.
 - **Measuring Retrieval Quality** Recall@k, MRR, nDCG, and faithfulness: why generation metrics hide retrieval failures, implemented in TypeScript.
 
+## Inside a transformer: the visual tour
+
+A static, five-minute version of the site's transformer section: how text becomes vectors, what dimensions are, and how the encoder and decoder differ. Every number below is the same one the live widgets compute.
+
+### 1. How an embedding is created
+
+A transformer cannot multiply letters, so text passes through six small steps before any attention happens:
+
+```mermaid
+flowchart LR
+  A["Raw text"] --> B["Tokens"]
+  B --> C["Vocab IDs"]
+  C --> D["One-hot row"]
+  D --> E["Embedding matrix lookup"]
+  E --> F["Dense vector"]
+```
+
+1. **Raw text**, e.g. "the cat sat". The last moment the model ever sees characters.
+2. **Tokens**, a BPE tokenizer splits the string into subwords from a learned vocabulary.
+3. **Vocab IDs**, each token becomes an integer (its position in the vocabulary). IDs are opaque categories: ID 437 has no numeric relationship to ID 438.
+4. **One-hot row**, the ID is expanded to a vector as long as the vocabulary (about 50,000 entries for GPT-2 class models), with a single 1 at the token's position and zeros everywhere else.
+5. **Matrix lookup**, the one-hot row multiplies the embedding matrix `W_e` (shape `vocab_size x d_model`). Because of all those zeros, the multiply does exactly one thing: it selects the row at the position of the 1.
+6. **Dense vector**, the selected row is the embedding: `d_model` numbers, every one of them live. Stack one row per token and the model's input is a matrix of shape `(seq_len, d_model)`.
+
+### 2. What an embedding is
+
+A dense vector that places a token as a point in a learned space where geometric proximity tracks meaning:
+
+| word   | royalty | gender | animal | size |
+|--------|---------|--------|--------|------|
+| king   | 0.9     | 0.7    | 0.1    | 0.3  |
+| queen  | 0.9     | -0.7   | 0.1    | 0.3  |
+| cat    | 0.0     | 0.1    | 0.95   | 0.2  |
+
+Nothing here is programmed. Pretraining adjusts these numbers until similarity (cosine of the angle between vectors) matches relatedness of meaning, and until interpretable directions emerge, like the royalty axis above.
+
+### 3. What dimensions do
+
+Each dimension is a **feature slot**: a number recording how strongly the token exhibits one learned concept. When you compare two embeddings, each dimension contributes its own share to the similarity, and the shares sum to the total. In the table above, the royalty dimension pulls king and queen together while the gender dimension pushes them apart.
+
+More dimensions means more concepts can be represented at once, which is exactly what "a more detailed representation" means. Real published widths (`d_model`):
+
+| Model                      | Embedding dims | Layers    | Source                              |
+|----------------------------|----------------|-----------|-------------------------------------|
+| MiniLM-L6 (sentence embed) | 384            | 6         | Wang et al. 2019                    |
+| BERT-base / GPT-1          | 768            | 12        | Devlin et al. 2018 / Radford 2018   |
+| GPT-2 XL                   | 1,600          | 48        | Radford et al. 2019                 |
+| text-embedding-3-large     | up to 3,072    | n/a       | OpenAI embeddings docs              |
+| Llama 3 405B               | 16,384         | 126       | Llama 3 paper, Table 3              |
+| GPT-3 175B                 | 12,288         | 96        | Brown et al. 2020, Table 2.1        |
+| Claude (Anthropic)         | not disclosed  | n/a       | Decoder-only; Anthropic publishes no dims, layers, or parameter count. Third-party figures online are unverified estimates. |
+
+The trend: width grew 16-fold from GPT-1 to GPT-3, and closed models stopped publishing it. Treat any specific Claude dimension you see on social media as a rumor.
+
+### 4. How the encoder and the decoder work
+
+The 2017 paper is two towers built from the same block (attention + MLP), differing only in attention masks:
+
+```mermaid
+flowchart LR
+  SRC["Source: the cat sat"] --> ENC["Encoder stack<br/>N layers"]
+  ENC --> MEM["Encoder memory<br/>keys + values"]
+  DECIN["Target so far: le chat"] --> DEC["Decoder stack<br/>N layers"]
+  MEM --> DEC
+  DEC --> OUT["Next-token probabilities"]
+```
+
+- **Encoder (the reader).** Self-attention is *bidirectional*: every source token attends to every other source token, forward and backward. Its output, the memory, is its entire report to the decoder.
+- **Decoder (the writer).** Generates left to right. Self-attention is *causally masked*: position i sees only positions <= i, so it cannot peek at tokens that do not exist yet. It also has one sub-layer the encoder lacks: **cross-attention**, where queries come from the decoder and keys and values come from the encoder memory, with the mask fully open. That is the only channel between the towers.
+- **Decoder-only (modern LLMs).** GPT-style models keep only the decoder tower, no encoder and no cross-attention, generating from their own previous tokens. That one change of mask is the family tree of BERT (encoder-only), GPT (decoder-only), and T5/translation models (both towers).
+
+### 5. See it live
+
+All of the above runs as interactive widgets with every number computed in the browser:
+
+- [Embedding builder, dimension lab, and model dimensions reference](https://transformertrek.vercel.app/modules/tokenization-embeddings)
+- [Token flow through the stack and the two-tower encoder-decoder diagram](https://transformertrek.vercel.app/modules/architecture)
+- [Attention playground: Q, K, V, scores, masking, softmax](https://transformertrek.vercel.app/modules/attention)
+
 ## Beyond the modules
 
 - **Playground** Every interactive demo on one page, free of narrative. Each card deep-links straight into the widget inside its module.
