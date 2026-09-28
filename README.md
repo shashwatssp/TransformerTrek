@@ -23,7 +23,7 @@ Most AI content is either hand-wavy blog posts or research papers with no bridge
 
 ## The curriculum
 
-33 modules across 7 sections. Every module pairs step-by-step prose with live widgets, real citations, prerequisites, related modules, and key takeaways.
+34 modules across 7 sections. Every module pairs step-by-step prose with live widgets, real citations, prerequisites, related modules, and key takeaways.
 
 ### 1. Foundations
 *Start here, what LLMs are and how they behave.*
@@ -36,6 +36,7 @@ Most AI content is either hand-wavy blog posts or research papers with no bridge
 ### 2. Transformers
 *Tokens, embeddings, attention, and the architecture that changed everything.*
 
+- **The Transformer, Mapped** The whole architecture as one clickable diagram: shapes, blocks, towers, and how data flows. Start here.
 - **Tokenization & Embeddings** How text becomes numbers, subwords, vocab IDs, dense vectors.
 - **Attention, step by step** Q, K, V, scores, masking, softmax, outputs, every number visible.
 - **Transformer Architecture** Embedding, then N blocks (attention + MLP), then output. Encoder vs decoder.
@@ -161,6 +162,7 @@ flowchart LR
 
 All of the above runs as interactive widgets with every number computed in the browser:
 
+- [The full transformer architecture diagram, clickable and explorable](https://transformertrek.vercel.app/modules/transformer-map)
 - [Embedding builder, dimension lab, and model dimensions reference](https://transformertrek.vercel.app/modules/tokenization-embeddings)
 - [Token flow through the stack and the two-tower encoder-decoder diagram](https://transformertrek.vercel.app/modules/architecture)
 - [Attention playground: Q, K, V, scores, masking, softmax](https://transformertrek.vercel.app/modules/attention)
@@ -169,7 +171,7 @@ All of the above runs as interactive widgets with every number computed in the b
 
 - **Playground** Every interactive demo on one page, free of narrative. Each card deep-links straight into the widget inside its module.
 - **Visualizations** The full gallery, grouped by theme, in reading order, with a one-line explanation and a jump into the module for depth.
-- **Rapid review** Say-it-out-loud flashcards for the whole trek (72 cards), with section filters, shuffle, and per-module entry points. Answers are tight, speakable, and backed by short TypeScript snippets where code helps.
+- **Rapid review** Say-it-out-loud flashcards for the whole trek (74 cards), with section filters, shuffle, and per-module entry points. Answers are tight, speakable, and backed by short TypeScript snippets where code helps.
 - **Knowledge checks** A three-question quiz at the end of every module: instant right/wrong feedback, a one-line explanation, a score, and a retry.
 - **Glossary** Every term defined in one line, filterable as you type, each linked to the module that explains it.
 - **Reading progress** Mark modules as read, resume where you left off, and watch per-section progress update live. Stored only on your device.
@@ -201,7 +203,7 @@ src/
                               # legacy #/ redirects, scroll management
   main.tsx                    # entry point
   modules/
-    registry.ts               # the curriculum: 33 modules, sections, prerequisites, sources
+    registry.ts               # the curriculum: 34 modules, sections, prerequisites, sources
     foundations/              # module content components (one file per module)
     transformer/
     llm/

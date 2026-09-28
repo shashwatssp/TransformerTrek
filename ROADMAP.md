@@ -6,7 +6,7 @@ TransformerTrek is an interactive, client-side application for learning how tran
 
 ## Where we are
 
-The core curriculum is in place: 33 modules across 7 sections (Foundations, Transformers, Training, Retrieval & Search, Agents & Protocols, System Design, Evals), each with step-by-step prose, real citations, prerequisites, and key takeaways.
+The core curriculum is in place: 34 modules across 7 sections (Foundations, Transformers, Training, Retrieval & Search, Agents & Protocols, System Design, Evals), each with step-by-step prose, real citations, prerequisites, and key takeaways. The Transformers section now opens with The Transformer, Mapped: the complete architecture as one clickable diagram (decoder-only and encoder-decoder views) with real tensor shapes.
 
 Shipped highlights:
 

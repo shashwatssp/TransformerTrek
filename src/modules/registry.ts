@@ -125,6 +125,25 @@ export const MODULES: ModuleMeta[] = [
   },
   // ── Transformers ─────────────────────────────────────────────
   {
+    id: 'transformer-map', section: 'transformers', order: 2,
+    title: 'The Transformer, Mapped', blurb: 'The whole architecture as one clickable diagram: shapes, blocks, towers, and how data flows.',
+    widget: 'diagram',
+    steps: [
+      'The whole model on one screen',
+      'Follow the shapes: from 6 tokens to next-token probabilities',
+      'Two towers or one? The three model families',
+    ],
+    prerequisites: ['what-is-an-llm'],
+    related: ['tokenization-embeddings', 'attention', 'architecture'],
+    sources: [
+      { title: 'Vaswani et al., Attention Is All You Need', url: 'https://arxiv.org/abs/1706.03762', note: 'The original two-tower architecture.' },
+      { title: 'The Illustrated Transformer', url: 'https://jalammar.github.io/illustrated-transformer/' },
+      { title: 'Brown et al., Language Models are Few-Shot Learners (GPT-3), Table 2.1', url: 'https://arxiv.org/abs/2005.14165', note: 'Shape numbers used in the diagram.' },
+      { title: 'Transformer Explainer (Polo Club)', url: 'https://poloclub.github.io/transformer-explainer/' },
+    ],
+    component: lazy(() => import('./transformer/TransformerMap')),
+  },
+  {
     id: 'tokenization-embeddings', section: 'transformers', order: 3,
     title: 'Tokenization & Embeddings', blurb: 'How text becomes numbers, subwords, vocab IDs, dense vectors.',
     widget: 'tokenizer',

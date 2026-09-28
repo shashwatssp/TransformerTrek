@@ -242,6 +242,7 @@ const WIDGET_LABELS: Record<string, string> = {
   'next-token': 'Next-token demo',
   tokenizer: 'Tokenizer playground',
   attention: 'Attention playground',
+  diagram: 'Full architecture diagram',
   architecture: 'Architecture flow',
   'training-loop': 'Training-loop simulator',
   pipeline: 'Post-training pipeline',

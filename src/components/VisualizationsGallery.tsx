@@ -8,6 +8,7 @@ import { getModule, moduleNumber } from '../modules/registry'
 import { WidgetFrame } from './ui'
 import { NextTokenSampler } from '../widgets/transformer/NextTokenSampler'
 import { AttentionPlayground } from '../widgets/transformer/AttentionPlayground'
+import { ArchitectureDiagram } from '../widgets/transformer/ArchitectureDiagram'
 import { ArchitectureFlow } from '../widgets/transformer/ArchitectureFlow'
 import { EncoderDecoderFlow } from '../widgets/transformer/EncoderDecoderFlow'
 import { EmbeddingBuilder } from '../widgets/transformer/EmbeddingBuilder'
@@ -70,6 +71,7 @@ const GROUPS: Group[] = [
     title: 'Inside a transformer',
     blurb: 'Tokenize, attend, stack blocks. Every matrix in the attention playground is computed in your browser.',
     entries: [
+      { title: 'Full architecture diagram', moduleId: 'transformer-map', selfFramed: true, node: <ArchitectureDiagram /> },
       { title: 'Tokenizer playground', moduleId: 'tokenization-embeddings', selfFramed: true, node: <TokenizerPlayground /> },
       { title: 'Embedding builder', moduleId: 'tokenization-embeddings', selfFramed: true, node: <EmbeddingBuilder /> },
       { title: 'Dimension lab', moduleId: 'tokenization-embeddings', selfFramed: true, node: <DimensionLab /> },

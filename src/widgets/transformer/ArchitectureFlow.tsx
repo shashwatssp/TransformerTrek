@@ -28,7 +28,7 @@ const STAGES: Stage[] = [
     id: 'b1-attn',
     label: 'Block 1 · multi-head self-attention',
     detail:
-      'Tokens exchange information: every token computes queries, keys and values, then replaces its own vector with a weighted mix of its neighbors\' values (see Module 2.4).',
+      'Tokens exchange information: every token computes queries, keys and values, then replaces its own vector with a weighted mix of its neighbors\' values (see Module 2.3).',
   },
   {
     id: 'b1-mlp',

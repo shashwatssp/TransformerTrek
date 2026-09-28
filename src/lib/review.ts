@@ -37,6 +37,16 @@ export const REVIEW: Record<string, ReviewCard[]> = {
       a: 'They reshape the next-token distribution before sampling; none of them change the model. Temperature divides the logits: near zero is near-deterministic, high is near-random. Top-k keeps the k highest-probability tokens; top-p keeps the smallest set whose probability mass reaches p. Low randomness for factual tasks, more for creative ones.',
     },
   ],
+  'transformer-map': [
+    {
+      q: 'Draw the transformer from memory. What are the parts, top to bottom?',
+      a: 'Tokens in, embedding lookup plus a positional signal, then N identical blocks (LayerNorm, multi-head attention, residual add, LayerNorm, MLP, residual add), then unembedding to vocab logits and softmax to probabilities. Sample one token, append, repeat. At GPT-3 scale: N is 96, d_model is 12,288, vocab is 50,257.',
+    },
+    {
+      q: 'What differs between encoder-only, decoder-only, and encoder-decoder?',
+      a: 'Only the attention masks and which towers you keep. Encoder-only: bidirectional, good for understanding and embeddings (BERT, MiniLM). Decoder-only: causal mask, generates (GPT, Claude, Llama). Encoder-decoder: both towers joined by cross-attention from decoder queries to encoder memory (the 2017 paper, T5, Whisper).',
+    },
+  ],
   'tokenization-embeddings': [
     {
       q: 'Explain byte-pair encoding.',
