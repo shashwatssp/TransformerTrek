@@ -7,9 +7,13 @@ import {
   KeyTakeaways,
   ModuleLink,
   Prose,
+  StepList,
   WidgetFrame,
 } from '../../components/ui'
 import { TokenizerPlayground } from '../../widgets/transformer/TokenizerPlayground'
+import { EmbeddingBuilder } from '../../widgets/transformer/EmbeddingBuilder'
+import { DimensionLab } from '../../widgets/transformer/DimensionLab'
+import { ModelDimensions } from '../../widgets/transformer/ModelDimensions'
 import { cosineSimilarity } from '../../lib/math'
 
 const BPE_SNIPPET = `# BPE training: grow the vocabulary, most-frequent-pair first
@@ -176,21 +180,36 @@ export default function TokenizationEmbeddings() {
           catalogs the practical details across model families.
         </p>
 
-        {/* Step 4: From token IDs to dense embeddings */}
-        <H2>Step 4: From token IDs to dense embeddings</H2>
+        {/* Step 4: What exactly is an embedding? */}
+        <H2>Step 4: What exactly is an embedding?</H2>
         <p>
           Categorical IDs are useless as inputs, you can't multiply "token 437" by a weight. The
           transformer's first real layer is an <strong>embedding table</strong>: a giant learnable
-          matrix that maps every ID to a dense vector (typically 768–12,288 dimensions).
+          matrix that maps every ID to a dense vector (typically 768–12,288 dimensions). But what
+          does that actually mean, mechanically? Six small steps, each one visible:
         </p>
+        <StepList
+          steps={[
+            'Raw text goes in, ordinary characters.',
+            'The tokenizer splits it into subword tokens.',
+            'Each token becomes its integer vocab ID.',
+            'The ID is expressed as a one-hot row: one 1, rest zeros.',
+            'The one-hot row multiplies the embedding matrix, which simply selects one row.',
+            'That row is the embedding: a dense vector, one number per dimension.',
+          ]}
+        />
         <CodeBlock language="python" filename="embeddings.py" code={EMBED_SNIPPET} />
+      </Prose>
+      <EmbeddingBuilder />
+      <Prose>
         <p>
-          "Dense" is the operative word. Every dimension participates in every computation, and
-          the model learns during pretraining which directions of this space mean what. The
-          classic result, from{' '}
+          "Dense" is the operative word. In the one-hot, 49,999 of 50,000 numbers were zero and
+          carried no information; in the dense vector, <em>every dimension participates in every
+          computation</em>. During pretraining the model learns which directions of this space
+          mean what. The classic result, from{' '}
           <a href="https://jalammar.github.io/illustrated-word2vec/" target="_blank" rel="noopener noreferrer">word2vec-era research</a>, 
           is that geometric proximity comes to track semantic similarity, so "directions" in the
-          space encode features. A toy version you can actually see:
+          space encode features. A toy version you can actually read, number by number:
         </p>
       </Prose>
       <WidgetFrame
@@ -199,6 +218,42 @@ export default function TokenizationEmbeddings() {
       >
         <EmbeddingPeek />
       </WidgetFrame>
+
+      <Prose>
+        {/* Step 5: Dimensions: the detail dial */}
+        <H2>Step 5: Dimensions: the detail dial</H2>
+        <p>
+          So what <em>is</em> a dimension? Each one is a direction in the vector space, and you can
+          think of it as a <strong>feature slot</strong>: a number that records how strongly the
+          token exhibits one learned concept. One slot might end up tracking gender, another
+          animacy, another register or sentiment. Nobody assigns those meanings; training does.
+          The lab below makes the slots <em>named</em> so you can watch them work:
+        </p>
+        <ul className="list-disc space-y-1 pl-6">
+          <li>Slide the <strong>dimension count</strong> and watch a live cosine matrix recompute: too few dimensions and unrelated words collide or collapse to zero.</li>
+          <li>Pick a word <strong>pair</strong> and read the per-dimension contribution bars: they sum to the cosine exactly, which is what "dimensions contribute" means numerically.</li>
+          <li>More dimensions = more (and more subtle) concepts representable: that is the whole sense in which "bigger embedding" means "more detailed".</li>
+        </ul>
+      </Prose>
+      <DimensionLab />
+
+      <Prose>
+        {/* Step 6: How many dimensions do real models use? */}
+        <H2>Step 6: How many dimensions do real models use?</H2>
+        <p>
+          The lab capped at 10 dimensions for readability. Real models use hundreds to tens of
+          thousands: <strong>GPT-1 and BERT-base embed into 768 dims</strong>, GPT-2 XL into 1,600,
+          and <strong>GPT-3 into 12,288 dims</strong> across 96 layers (96 attention heads of 128
+          dims each, vocabulary 50,257; all published in{' '}
+          <a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener noreferrer">the GPT-3 paper</a>, Table 2.1).{' '}
+          <strong>Claude is different only in disclosure</strong>: it is also a decoder-only
+          transformer, but Anthropic does not publish its dimensions, layer count, or parameter
+          count, so any specific figure you see online is an unverified estimate. The reference
+          below collects what is actually published, with sources:
+        </p>
+      </Prose>
+      <ModelDimensions />
+
       <Prose>
         <H3>One more ingredient: position</H3>
         <p>
@@ -215,7 +270,9 @@ export default function TokenizationEmbeddings() {
           'Subword tokenization is the compromise between character-level and word-level vocabularies.',
           'BPE trains by repeatedly merging the most frequent adjacent pair, the vocabulary emerges from the corpus.',
           'Tokens are opaque categorical IDs; their blind spots (spelling, digits, multilingual cost) are encoding artifacts, not reasoning failures.',
-          'An embedding table maps each ID to a dense learned vector, the space where meaning lives.',
+          'An embedding is created by a matrix lookup: token ID → row of the embedding table, a dense vector where every dimension is live.',
+          'A dimension is a feature slot; similarities decompose into per-dimension contributions, and more dimensions mean more concepts representable.',
+          'Real widths: 768 (BERT-base, GPT-1) to 12,288 (GPT-3); Claude is decoder-only but its dimensions are not publicly disclosed.',
           'Position information must be added explicitly; embeddings alone are order-blind.',
         ]}
       />

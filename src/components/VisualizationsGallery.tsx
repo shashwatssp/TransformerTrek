@@ -9,6 +9,10 @@ import { WidgetFrame } from './ui'
 import { NextTokenSampler } from '../widgets/transformer/NextTokenSampler'
 import { AttentionPlayground } from '../widgets/transformer/AttentionPlayground'
 import { ArchitectureFlow } from '../widgets/transformer/ArchitectureFlow'
+import { EncoderDecoderFlow } from '../widgets/transformer/EncoderDecoderFlow'
+import { EmbeddingBuilder } from '../widgets/transformer/EmbeddingBuilder'
+import { DimensionLab } from '../widgets/transformer/DimensionLab'
+import { ModelDimensions } from '../widgets/transformer/ModelDimensions'
 import { TokenizerPlayground } from '../widgets/transformer/TokenizerPlayground'
 import TrainingLoopViz from '../widgets/llm/TrainingLoopViz'
 import ScalingLawsChart from '../widgets/llm/ScalingLawsChart'
@@ -67,8 +71,12 @@ const GROUPS: Group[] = [
     blurb: 'Tokenize, attend, stack blocks. Every matrix in the attention playground is computed in your browser.',
     entries: [
       { title: 'Tokenizer playground', moduleId: 'tokenization-embeddings', selfFramed: true, node: <TokenizerPlayground /> },
+      { title: 'Embedding builder', moduleId: 'tokenization-embeddings', selfFramed: true, node: <EmbeddingBuilder /> },
+      { title: 'Dimension lab', moduleId: 'tokenization-embeddings', selfFramed: true, node: <DimensionLab /> },
+      { title: 'Model dimensions reference', moduleId: 'tokenization-embeddings', selfFramed: true, node: <ModelDimensions /> },
       { title: 'Attention playground', moduleId: 'attention', selfFramed: true, node: <AttentionPlayground /> },
       { title: 'Architecture flow', moduleId: 'architecture', selfFramed: true, node: <ArchitectureFlow /> },
+      { title: 'Encoder-decoder flow', moduleId: 'architecture', selfFramed: true, node: <EncoderDecoderFlow /> },
     ],
   },
   {

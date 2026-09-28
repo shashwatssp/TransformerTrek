@@ -8,6 +8,7 @@ import {
   Prose,
 } from '../../components/ui'
 import { ArchitectureFlow } from '../../widgets/transformer/ArchitectureFlow'
+import { EncoderDecoderFlow } from '../../widgets/transformer/EncoderDecoderFlow'
 
 const BLOCK_SNIPPET = `def block(x):                          # x: (seq_len, d_model)
     x = x + attention(layer_norm(x))   # pre-norm: attention sub-layer + residual
@@ -98,9 +99,38 @@ export default function Architecture() {
         {/* Step 4: Encoder vs decoder vs decoder-only */}
         <H2>Step 4: Encoder vs decoder vs decoder-only</H2>
         <p>
-          The 2017 paper had two towers: an encoder that reads the input (bidirectional
-          attention) and a decoder that writes the output (masked attention, peeking back at the
-          encoder). Every modern LLM you know descends from just one of those towers. The family
+          The 2017 paper had two towers, and each tower is just the block from Step 2 with a
+          different attention mask. How each one works:
+        </p>
+        <ul className="list-disc space-y-1 pl-6">
+          <li>
+            <strong>Encoder</strong>, the reader. Its self-attention is <em>bidirectional</em>:
+            every input token may attend to every other input token, forward and backward. It
+            builds a context-aware vector for each source token, and that output (the "memory") is
+            its entire report to the decoder.
+          </li>
+          <li>
+            <strong>Decoder</strong>, the writer. It generates left to right, so its
+            self-attention is <em>causally masked</em>: position i may look only at positions ≤ i.
+            And it has one extra sub-layer the encoder lacks: <strong>cross-attention</strong>,
+            where queries come from the decoder, keys and values come from the encoder memory,
+            with the mask fully open. That is the only channel connecting the two towers.
+          </li>
+          <li>
+            <strong>Decoder-only</strong>, what every modern LLM actually is: the decoder tower
+            alone, no encoder, no cross-attention, generating autoregressively from its own
+            previous tokens.
+          </li>
+        </ul>
+        <p>
+          Step through the two towers below with a tiny translation example, and click a decoder
+          token to trace exactly what its causal mask allows and what cross-attention can reach:
+        </p>
+      </Prose>
+      <EncoderDecoderFlow />
+      <Prose>
+        <p>
+          Every modern LLM you know descends from just one of those towers. The family
           tree:
         </p>
         <ComparisonTable
@@ -160,6 +190,7 @@ export default function Architecture() {
           'A transformer = embedding → N identical blocks (attention + MLP, each wrapped in residuals) → unembedding + softmax.',
           'Attention lets positions communicate; the MLP processes each position independently and holds most of the parameters.',
           'Residual connections give gradients a clear path through the stack; LayerNorm keeps activations well-scaled (pre-norm in modern models).',
+          'The two towers talk through cross-attention: decoder queries against encoder keys/values, with the mask fully open.',
           'Encoder-only, decoder-only, and encoder–decoder differ mainly in the attention mask and training objective.',
           'Decoder-only won for LLMs: one objective, one stack, trainable on every position at once.',
         ]}
